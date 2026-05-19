@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIE.AI — Model Explorer</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1e1e1e;
+    --border-hover: #2e2e2e;
+    --text: #e8e8e8;
+    --muted: #555;
+    --accent: #e8ff47;
+    --accent2: #47c8ff;
+    --accent3: #ff6b6b;
+    --accent4: #b47fff;
+    --accent5: #47ffb4;
+    --font-mono: 'JetBrains Mono', 'Fira Mono', 'Cascadia Code', monospace;
+    --font-sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 52px;
+  }
+
+  .logo {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .logo span { color: var(--muted); font-weight: 400; }
+
+  .search-wrap {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+  }
+
+  #search {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 6px 10px 6px 30px;
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  #search:focus { border-color: var(--accent); }
+
+  .search-icon {
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 12px;
+    pointer-events: none;
+  }
+
+  .header-stats {
+    margin-left: auto;
+    display: flex;
+    gap: 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .header-stats span b { color: var(--text); }
+
+  .api-key-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #apiKey {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 5px 10px;
+    outline: none;
+    width: 200px;
+    transition: border-color .15s;
+  }
+
+  #apiKey:focus { border-color: var(--accent); }
+
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    border-radius: 4px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  .btn.primary:hover { opacity: 0.85; color: #000; }
+
+  /* LAYOUT */
+  .app { display: flex; height: calc(100vh - 52px); overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 12px 0;
+    background: var(--surface);
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 2px; }
+
+  .cat-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    padding: 14px 16px 5px;
+    text-transform: uppercase;
+  }
+
+  .cat-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all .12s;
+    text-align: left;
+  }
+
+  .cat-btn:hover { color: var(--text); }
+  .cat-btn.active { color: var(--text); background: var(--border); }
+  .cat-btn .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .cat-btn .count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--border);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+
+  .main::-webkit-scrollbar { width: 4px; }
+  .main::-webkit-scrollbar-track { background: transparent; }
+  .main::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 2px; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+
+  .section-count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* MODEL GRID */
+  .models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .model-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all .15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .model-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 6px 0 0 6px;
+  }
+
+  .model-card[data-cat="image"]::before { background: var(--accent); }
+  .model-card[data-cat="video"]::before { background: var(--accent2); }
+  .model-card[data-cat="audio"]::before { background: var(--accent5); }
+  .model-card[data-cat="chat"]::before { background: var(--accent4); }
+  .model-card[data-cat="suno"]::before { background: var(--accent3); }
+  .model-card[data-cat="veo"]::before { background: var(--accent2); }
+  .model-card[data-cat="upload"]::before { background: var(--muted); }
+
+  .model-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+
+  .model-card.selected {
+    border-color: var(--accent);
+    background: rgba(232,255,71,0.04);
+  }
+
+  .model-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+    padding-left: 8px;
+  }
+
+  .model-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-left: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--border);
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .tag.img { background: rgba(232,255,71,0.1); color: var(--accent); }
+  .tag.vid { background: rgba(71,200,255,0.1); color: var(--accent2); }
+  .tag.aud { background: rgba(71,255,180,0.1); color: var(--accent5); }
+  .tag.chat { background: rgba(180,127,255,0.1); color: var(--accent4); }
+  .tag.music { background: rgba(255,107,107,0.1); color: var(--accent3); }
+
+  /* PANEL */
+  .panel {
+    width: 380px;
+    min-width: 380px;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+  }
+
+  .panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+
+  .panel-model-name {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 0 20px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-top: 12px;
+  }
+
+  .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .panel-body::-webkit-scrollbar { width: 4px; }
+  .panel-body::-webkit-scrollbar-thumb { background: var(--border-hover); }
+
+  .field-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color .15s;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus { border-color: var(--accent); }
+
+  .field select option { background: var(--bg); }
+
+  .file-upload-area {
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .15s;
+    background: var(--bg);
+  }
+
+  .file-upload-area:hover { border-color: var(--accent2); }
+
+  .file-upload-area input[type="file"] { display: none; }
+
+  .file-upload-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .file-upload-text b { color: var(--accent2); }
+
+  .panel-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .result-area {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-height: 100px;
+    word-break: break-all;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border-hover);
+    flex-shrink: 0;
+  }
+
+  .status-dot.ok { background: var(--accent5); }
+  .status-dot.err { background: var(--accent3); }
+  .status-dot.loading { background: var(--accent); animation: pulse 1s infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .result-img {
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    margin-top: 8px;
+    display: none;
+  }
+
+  .result-video {
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    margin-top: 8px;
+    display: none;
+  }
+
+  .result-audio {
+    width: 100%;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 8px;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .empty-icon {
+    font-size: 32px;
+    opacity: 0.2;
+    margin-bottom: 8px;
+  }
+
+  .empty-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .empty-sub {
+    font-size: 11px;
+    color: var(--border-hover);
+  }
+
+  /* group separators */
+  .group-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 4px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .group-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* no-results */
+  .no-results {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  /* upload method tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+  .tab {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all .12s;
+  }
+  .tab.active { background: var(--border); color: var(--text); }
+  .tab:hover { border-color: var(--border-hover); color: var(--text); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .inline-row { display: flex; gap: 8px; }
+  .inline-row .field { flex: 1; }
+
+  @media (max-width: 900px) {
+    .panel { display: none; }
+    .sidebar { width: 180px; min-width: 180px; }
+  }
+
+  @media (max-width: 640px) {
+    .sidebar { display: none; }
+    header { flex-wrap: wrap; height: auto; padding: 10px 14px; gap: 8px; }
+    .header-stats { display: none; }
+    #apiKey { width: 140px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#" class="logo">KIE<span>.AI</span></a>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="search models..." autocomplete="off">
+  </div>
+  <div class="header-stats">
+    <span><b id="totalModels">0</b> models</span>
+  </div>
+  <div class="api-key-area">
+    <input type="password" id="apiKey" placeholder="API Key (sk-...)">
+    <button class="btn" onclick="saveKey()">Save</button>
+    <a href="https://kie.ai/api-key" target="_blank" class="btn">Get Key ↗</a>
+  </div>
+</header>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="cat-label">Categories</div>
+    <button class="cat-btn active" data-filter="all" onclick="filterCat(this,'all')">
+      <span class="dot" style="background:#555"></span> All Models
+      <span class="count" id="cnt-all">0</span>
+    </button>
+    <button class="cat-btn" data-filter="image" onclick="filterCat(this,'image')">
+      <span class="dot" style="background:var(--accent)"></span> Image
+      <span class="count" id="cnt-image">0</span>
+    </button>
+    <button class="cat-btn" data-filter="video" onclick="filterCat(this,'video')">
+      <span class="dot" style="background:var(--accent2)"></span> Video
+      <span class="count" id="cnt-video">0</span>
+    </button>
+    <button class="cat-btn" data-filter="audio" onclick="filterCat(this,'audio')">
+      <span class="dot" style="background:var(--accent5)"></span> Audio
+      <span class="count" id="cnt-audio">0</span>
+    </button>
+    <button class="cat-btn" data-filter="chat" onclick="filterCat(this,'chat')">
+      <span class="dot" style="background:var(--accent4)"></span> Chat
+      <span class="count" id="cnt-chat">0</span>
+    </button>
+    <button class="cat-btn" data-filter="suno" onclick="filterCat(this,'suno')">
+      <span class="dot" style="background:var(--accent3)"></span> Suno
+      <span class="count" id="cnt-suno">0</span>
+    </button>
+    <button class="cat-btn" data-filter="veo" onclick="filterCat(this,'veo')">
+      <span class="dot" style="background:var(--accent2)"></span> Veo3.1
+      <span class="count" id="cnt-veo">0</span>
+    </button>
+    <button class="cat-btn" data-filter="upload" onclick="filterCat(this,'upload')">
+      <span class="dot" style="background:#555"></span> File Upload
+      <span class="count" id="cnt-upload">0</span>
+    </button>
+
+    <div class="cat-label" style="margin-top:16px">Quick Links</div>
+    <a href="https://kie.ai/market" target="_blank" class="cat-btn" style="text-decoration:none">
+      <span class="dot" style="background:#333"></span> Market ↗
+    </a>
+    <a href="https://kie.ai/pricing" target="_blank" class="cat-btn" style="text-decoration:none">
+      <span class="dot" style="background:#333"></span> Pricing ↗
+    </a>
+    <a href="https://kie.ai/logs" target="_blank" class="cat-btn" style="text-decoration:none">
+      <span class="dot" style="background:#333"></span> Logs ↗
+    </a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="main">
+    <!-- content injected by JS -->
+  </main>
+
+  <!-- PANEL -->
+  <aside class="panel" id="panel">
+    <div class="panel-header">
+      <span class="panel-title">API Tester</span>
+      <button class="btn" onclick="clearPanel()">Clear</button>
+    </div>
+    <div id="panelContent" style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+      <div class="empty-state">
+        <div class="empty-icon">◈</div>
+        <div class="empty-title">Select a model to test</div>
+        <div class="empty-sub">Click any model card on the left</div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const MODELS = [
+  // IMAGE — Seedream
+  { id:'seedream-3', name:'Seedream 3.0', cat:'image', group:'Seedream', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedream-3', doc:'https://docs.kie.ai/market/seedream/seedream' },
+  { id:'seedream-v4-t2i', name:'Seedream 4.0 T2I', cat:'image', group:'Seedream', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedream-v4', doc:'https://docs.kie.ai/market/seedream/seedream-v4-text-to-image' },
+  { id:'seedream-v4-edit', name:'Seedream 4.0 Edit', cat:'image', group:'Seedream', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedream-v4-edit', doc:'https://docs.kie.ai/market/seedream/seedream-v4-edit' },
+  { id:'seedream-4-5-t2i', name:'Seedream 4.5 T2I', cat:'image', group:'Seedream', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedream-4-5', doc:'https://docs.kie.ai/market/seedream/4-5-text-to-image' },
+  { id:'seedream-4-5-edit', name:'Seedream 4.5 Edit', cat:'image', group:'Seedream', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedream-4-5-edit', doc:'https://docs.kie.ai/market/seedream/4-5-edit' },
+  { id:'seedream-5-lite-t2i', name:'Seedream 5.0 Lite T2I', cat:'image', group:'Seedream', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedream-5-lite', doc:'https://docs.kie.ai/market/seedream/5-lite-text-to-image' },
+  { id:'seedream-5-lite-i2i', name:'Seedream 5.0 Lite I2I', cat:'image', group:'Seedream', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedream-5-lite-i2i', doc:'https://docs.kie.ai/market/seedream-5-lite-image-to-image' },
+  // IMAGE — Z-Image
+  { id:'z-image', name:'Z-Image', cat:'image', group:'Z-Image', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'z-image', doc:'https://docs.kie.ai/market/z-image/z-image' },
+  // IMAGE — Google
+  { id:'google-nano2', name:'Google Nano Banana 2', cat:'image', group:'Google', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'google-nano-banana-2', doc:'https://docs.kie.ai/market/google/nanobanana2' },
+  { id:'google-imagen4-fast', name:'Google Imagen4 Fast', cat:'image', group:'Google', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'imagen4-fast', doc:'https://docs.kie.ai/market/google/imagen4-fast' },
+  { id:'google-imagen4-ultra', name:'Google Imagen4 Ultra', cat:'image', group:'Google', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'imagen4-ultra', doc:'https://docs.kie.ai/market/google/imagen4-ultra' },
+  { id:'google-imagen4', name:'Google Imagen4', cat:'image', group:'Google', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'imagen4', doc:'https://docs.kie.ai/market/google/imagen4' },
+  { id:'google-nano-edit', name:'Google Nano Banana Edit', cat:'image', group:'Google', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'google-nano-banana-edit', doc:'https://docs.kie.ai/market/google/nano-banana-edit' },
+  { id:'google-nano', name:'Google Nano Banana', cat:'image', group:'Google', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'google-nano-banana', doc:'https://docs.kie.ai/market/google/nano-banana' },
+  { id:'google-nano-pro', name:'Google Nano Banana Pro', cat:'image', group:'Google', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'google-nano-banana-pro', doc:'https://docs.kie.ai/market/google/pro-image-to-image' },
+  // IMAGE — Flux-2
+  { id:'flux2-pro-i2i', name:'Flux-2 Pro I2I', cat:'image', group:'Flux-2', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'flux-2-pro-i2i', doc:'https://docs.kie.ai/market/flux2/pro-image-to-image' },
+  { id:'flux2-pro-t2i', name:'Flux-2 Pro T2I', cat:'image', group:'Flux-2', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'flux-2-pro', doc:'https://docs.kie.ai/market/flux2/pro-text-to-image' },
+  { id:'flux2-i2i', name:'Flux-2 I2I', cat:'image', group:'Flux-2', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'flux-2-i2i', doc:'https://docs.kie.ai/market/flux2/flex-image-to-image' },
+  { id:'flux2-t2i', name:'Flux-2 T2I', cat:'image', group:'Flux-2', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'flux-2', doc:'https://docs.kie.ai/market/flux2/flex-text-to-image' },
+  // IMAGE — Grok Imagine
+  { id:'grok-t2i', name:'Grok Imagine T2I', cat:'image', group:'Grok Imagine', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'grok-imagine-t2i', doc:'https://docs.kie.ai/market/grok-imagine/text-to-image' },
+  { id:'grok-i2i', name:'Grok Imagine I2I', cat:'image', group:'Grok Imagine', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'grok-imagine-i2i', doc:'https://docs.kie.ai/market/grok-imagine/image-to-image' },
+  // IMAGE — GPT Image
+  { id:'gpt-img-1-5-t2i', name:'GPT Image-1.5 T2I', cat:'image', group:'GPT Image', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'gpt-image-1-5', doc:'https://docs.kie.ai/market/gpt-image/1-5-text-to-image' },
+  { id:'gpt-img-1-5-i2i', name:'GPT Image-1.5 I2I', cat:'image', group:'GPT Image', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'gpt-image-1-5-i2i', doc:'https://docs.kie.ai/market/gpt-image/1-5-image-to-image' },
+  { id:'gpt-img-2-t2i', name:'GPT Image-2 T2I', cat:'image', group:'GPT Image', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'gpt-image-2', doc:'https://docs.kie.ai/market/gpt/gpt-image-2-text-to-image' },
+  { id:'gpt-img-2-i2i', name:'GPT Image-2 I2I', cat:'image', group:'GPT Image', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'gpt-image-2-i2i', doc:'https://docs.kie.ai/market/gpt/gpt-image-2-image-to-image' },
+  // IMAGE — Topaz
+  { id:'topaz-img-upscale', name:'Topaz Image Upscale', cat:'image', group:'Topaz', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'topaz-image-upscale', doc:'https://docs.kie.ai/market/topaz/image-upscale' },
+  // IMAGE — Recraft
+  { id:'recraft-rmbg', name:'Recraft Remove BG', cat:'image', group:'Recraft', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'recraft-remove-bg', doc:'https://docs.kie.ai/market/recraft/remove-background' },
+  { id:'recraft-upscale', name:'Recraft Crisp Upscale', cat:'image', group:'Recraft', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'recraft-crisp-upscale', doc:'https://docs.kie.ai/market/recraft/crisp-upscale' },
+  // IMAGE — Ideogram
+  { id:'ideogram-char-edit', name:'Ideogram Character Edit', cat:'image', group:'Ideogram', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'ideogram-character-edit', doc:'https://docs.kie.ai/market/ideogram/character-edit' },
+  { id:'ideogram-char-remix', name:'Ideogram Character Remix', cat:'image', group:'Ideogram', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'ideogram-character-remix', doc:'https://docs.kie.ai/market/ideogram/character-remix' },
+  { id:'ideogram-char', name:'Ideogram Character', cat:'image', group:'Ideogram', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'ideogram-character', doc:'https://docs.kie.ai/market/ideogram/character' },
+  { id:'ideogram-v3-t2i', name:'Ideogram V3 T2I', cat:'image', group:'Ideogram', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'ideogram-v3', doc:'https://docs.kie.ai/market/ideogram/v3-text-to-image' },
+  { id:'ideogram-v3-edit', name:'Ideogram V3 Edit', cat:'image', group:'Ideogram', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'ideogram-v3-edit', doc:'https://docs.kie.ai/market/ideogram/v3-edit' },
+  { id:'ideogram-v3-remix', name:'Ideogram V3 Remix', cat:'image', group:'Ideogram', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'ideogram-v3-remix', doc:'https://docs.kie.ai/market/ideogram/v3-remix' },
+  // IMAGE — Qwen
+  { id:'qwen-t2i', name:'Qwen T2I', cat:'image', group:'Qwen', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'qwen-t2i', doc:'https://docs.kie.ai/market/qwen/text-to-image' },
+  { id:'qwen-i2i', name:'Qwen I2I', cat:'image', group:'Qwen', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'qwen-i2i', doc:'https://docs.kie.ai/market/qwen/image-to-image' },
+  { id:'qwen-edit', name:'Qwen Image Edit', cat:'image', group:'Qwen', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'qwen-edit', doc:'https://docs.kie.ai/market/qwen/image-edit' },
+  { id:'qwen2-edit', name:'Qwen2 Image Edit', cat:'image', group:'Qwen', type:'i2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'qwen2-edit', doc:'https://docs.kie.ai/market/qwen2/image-edit' },
+  { id:'qwen2-t2i', name:'Qwen2 T2I', cat:'image', group:'Qwen', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'qwen2', doc:'https://docs.kie.ai/market/qwen2/text-to-image' },
+  // IMAGE — Wan Image
+  { id:'wan-2-7-img', name:'Wan 2.7 Image', cat:'image', group:'Wan Image', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-7-image', doc:'https://docs.kie.ai/market/wan/2-7-image' },
+  { id:'wan-2-7-img-pro', name:'Wan 2.7 Image Pro', cat:'image', group:'Wan Image', type:'t2i', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-7-image-pro', doc:'https://docs.kie.ai/market/wan/2-7-image-pro' },
+  // IMAGE — 4o Image API
+  { id:'4o-image', name:'4o Image Generate', cat:'image', group:'4o Image API', type:'t2i', endpoint:'https://api.kie.ai/api/v1/4o-image/generate', model:'4o-image', doc:'https://docs.kie.ai/4o-image-api/generate-4-o-image' },
+  // IMAGE — Flux Kontext
+  { id:'flux-kontext', name:'Flux Kontext', cat:'image', group:'Flux Kontext', type:'t2i', endpoint:'https://api.kie.ai/api/v1/flux-kontext/generate', model:'flux-kontext', doc:'https://docs.kie.ai/flux-kontext-api/generate-or-edit-image' },
+
+  // VIDEO — Grok Imagine
+  { id:'grok-t2v', name:'Grok Imagine T2V', cat:'video', group:'Grok Imagine', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'grok-imagine-t2v', doc:'https://docs.kie.ai/market/grok-imagine/text-to-video' },
+  { id:'grok-i2v', name:'Grok Imagine I2V', cat:'video', group:'Grok Imagine', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'grok-imagine-i2v', doc:'https://docs.kie.ai/market/grok-imagine/image-to-video' },
+  { id:'grok-vid-upscale', name:'Grok Video Upscale', cat:'video', group:'Grok Imagine', type:'v2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'grok-video-upscale', doc:'https://docs.kie.ai/market/grok-imagine/upscale' },
+  { id:'grok-vid-extend', name:'Grok Video Extend', cat:'video', group:'Grok Imagine', type:'v2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'grok-video-extend', doc:'https://docs.kie.ai/market/grok-imagine/extend' },
+  // VIDEO — Kling
+  { id:'kling-2-6-t2v', name:'Kling 2.6 T2V', cat:'video', group:'Kling', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v2-6-text-to-video', doc:'https://docs.kie.ai/market/kling/text-to-video' },
+  { id:'kling-2-6-i2v', name:'Kling 2.6 I2V', cat:'video', group:'Kling', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v2-6-image-to-video', doc:'https://docs.kie.ai/market/kling/image-to-video' },
+  { id:'kling-2-5-turbo-i2v-pro', name:'Kling V2.5 Turbo I2V Pro', cat:'video', group:'Kling', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v2-5-turbo-i2v-pro', doc:'https://docs.kie.ai/market/kling/v25-turbo-image-to-video-pro' },
+  { id:'kling-2-5-turbo-t2v-pro', name:'Kling V2.5 Turbo T2V Pro', cat:'video', group:'Kling', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v2-5-turbo-t2v-pro', doc:'https://docs.kie.ai/market/kling/v25-turbo-text-to-video-pro' },
+  { id:'kling-avatar-std', name:'Kling AI Avatar Standard', cat:'video', group:'Kling', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-ai-avatar-standard', doc:'https://docs.kie.ai/market/kling/ai-avatar-standard' },
+  { id:'kling-avatar-pro', name:'Kling AI Avatar Pro', cat:'video', group:'Kling', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-ai-avatar-pro', doc:'https://docs.kie.ai/market/kling/ai-avatar-pro' },
+  { id:'kling-2-1-master-i2v', name:'Kling V2.1 Master I2V', cat:'video', group:'Kling', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v2-1-master-i2v', doc:'https://docs.kie.ai/market/kling/v2-1-master-image-to-video' },
+  { id:'kling-2-1-master-t2v', name:'Kling V2.1 Master T2V', cat:'video', group:'Kling', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v2-1-master-t2v', doc:'https://docs.kie.ai/market/kling/v2-1-master-text-to-video' },
+  { id:'kling-2-1-pro', name:'Kling V2.1 Pro', cat:'video', group:'Kling', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v2-1-pro', doc:'https://docs.kie.ai/market/kling/v2-1-pro' },
+  { id:'kling-2-1-std', name:'Kling V2.1 Standard', cat:'video', group:'Kling', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v2-1-standard', doc:'https://docs.kie.ai/market/kling/v2-1-standard' },
+  { id:'kling-2-6-mc', name:'Kling 2.6 Motion Control', cat:'video', group:'Kling', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v2-6-motion-control', doc:'https://docs.kie.ai/market/kling/motion-control' },
+  { id:'kling-3-0-mc', name:'Kling 3.0 Motion Control', cat:'video', group:'Kling', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v3-0-motion-control', doc:'https://docs.kie.ai/market/kling/motion-control-v3' },
+  { id:'kling-3-0', name:'Kling 3.0', cat:'video', group:'Kling', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'kling-v3-0', doc:'https://docs.kie.ai/market/kling/kling-3-0' },
+  // VIDEO — Bytedance
+  { id:'seedance-2', name:'Seedance 2.0', cat:'video', group:'Bytedance', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedance-2', doc:'https://docs.kie.ai/market/bytedance/seedance-2' },
+  { id:'seedance-2-fast', name:'Seedance 2.0 Fast', cat:'video', group:'Bytedance', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedance-2-fast', doc:'https://docs.kie.ai/market/bytedance/seedance-2-fast' },
+  { id:'seedance-1-5-pro', name:'Seedance 1.5 Pro', cat:'video', group:'Bytedance', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'seedance-1-5-pro', doc:'https://docs.kie.ai/market/bytedance/seedance-1-5-pro' },
+  { id:'bd-v1-pro-fast-i2v', name:'Bytedance V1 Pro Fast I2V', cat:'video', group:'Bytedance', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'bytedance-v1-pro-fast-i2v', doc:'https://docs.kie.ai/market/bytedance/v1-pro-fast-image-to-video' },
+  { id:'bd-v1-pro-i2v', name:'Bytedance V1 Pro I2V', cat:'video', group:'Bytedance', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'bytedance-v1-pro-i2v', doc:'https://docs.kie.ai/market/bytedance/v1-pro-image-to-video' },
+  { id:'bd-v1-pro-t2v', name:'Bytedance V1 Pro T2V', cat:'video', group:'Bytedance', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'bytedance-v1-pro-t2v', doc:'https://docs.kie.ai/market/bytedance/v1-pro-text-to-video' },
+  { id:'bd-v1-lite-i2v', name:'Bytedance V1 Lite I2V', cat:'video', group:'Bytedance', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'bytedance-v1-lite-i2v', doc:'https://docs.kie.ai/market/bytedance/v1-lite-image-to-video' },
+  { id:'bd-v1-lite-t2v', name:'Bytedance V1 Lite T2V', cat:'video', group:'Bytedance', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'bytedance-v1-lite-t2v', doc:'https://docs.kie.ai/market/bytedance/v1-lite-text-to-video' },
+  // VIDEO — Hailuo
+  { id:'hailuo-2-3-pro-i2v', name:'Hailuo 2.3 Pro I2V', cat:'video', group:'Hailuo', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'hailuo-2-3-i2v-pro', doc:'https://docs.kie.ai/market/hailuo/2-3-image-to-video-pro' },
+  { id:'hailuo-2-3-std-i2v', name:'Hailuo 2.3 Standard I2V', cat:'video', group:'Hailuo', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'hailuo-2-3-i2v-standard', doc:'https://docs.kie.ai/market/hailuo/2-3-image-to-video-standard' },
+  { id:'hailuo-pro-t2v', name:'Hailuo Pro T2V', cat:'video', group:'Hailuo', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'hailuo-02-t2v-pro', doc:'https://docs.kie.ai/market/hailuo/02-text-to-video-pro' },
+  { id:'hailuo-pro-i2v', name:'Hailuo Pro I2V', cat:'video', group:'Hailuo', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'hailuo-02-i2v-pro', doc:'https://docs.kie.ai/market/hailuo/02-image-to-video-pro' },
+  { id:'hailuo-std-t2v', name:'Hailuo Standard T2V', cat:'video', group:'Hailuo', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'hailuo-02-t2v-standard', doc:'https://docs.kie.ai/market/hailuo/02-text-to-video-standard' },
+  { id:'hailuo-std-i2v', name:'Hailuo Standard I2V', cat:'video', group:'Hailuo', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'hailuo-02-i2v-standard', doc:'https://docs.kie.ai/market/hailuo/02-image-to-video-standard' },
+  // VIDEO — Sora2
+  { id:'sora2-i2v', name:'Sora2 I2V', cat:'video', group:'Sora2', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'sora-2-i2v', doc:'https://docs.kie.ai/market/sora2/sora-2-image-to-video' },
+  { id:'sora2-t2v', name:'Sora2 T2V', cat:'video', group:'Sora2', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'sora-2-t2v', doc:'https://docs.kie.ai/market/sora2/sora-2-text-to-video' },
+  { id:'sora2-pro-i2v', name:'Sora2 Pro I2V', cat:'video', group:'Sora2', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'sora-2-pro-i2v', doc:'https://docs.kie.ai/market/sora2/sora-2-pro-image-to-video' },
+  { id:'sora2-pro-t2v', name:'Sora2 Pro T2V', cat:'video', group:'Sora2', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'sora-2-pro-t2v', doc:'https://docs.kie.ai/market/sora2/sora-2-pro-text-to-video' },
+  { id:'sora2-watermark', name:'Sora2 Watermark Remover', cat:'video', group:'Sora2', type:'v2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'sora-2-watermark-remover', doc:'https://docs.kie.ai/market/sora2/sora-watermark-remover' },
+  { id:'sora2-storyboard', name:'Sora2 Pro Storyboard', cat:'video', group:'Sora2', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'sora-2-pro-storyboard', doc:'https://docs.kie.ai/market/sora-2-pro-storyboard' },
+  { id:'sora2-chars', name:'Sora2 Characters', cat:'video', group:'Sora2', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'sora-2-characters', doc:'https://docs.kie.ai/market/sora2/sora-2-characters' },
+  { id:'sora2-chars-pro', name:'Sora2 Characters Pro', cat:'video', group:'Sora2', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'sora-2-characters-pro', doc:'https://docs.kie.ai/market/sora2/sora-2-characters-pro' },
+  // VIDEO — Wan
+  { id:'wan-i2v', name:'Wan I2V Turbo', cat:'video', group:'Wan Video', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-2-a14b-i2v-turbo', doc:'https://docs.kie.ai/market/wan/2-2-a14b-image-to-video-turbo' },
+  { id:'wan-s2v', name:'Wan Speech to Video', cat:'video', group:'Wan Video', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-2-a14b-s2v-turbo', doc:'https://docs.kie.ai/market/wan/2-2-a14b-speech-to-video-turbo' },
+  { id:'wan-t2v', name:'Wan T2V Turbo', cat:'video', group:'Wan Video', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-2-a14b-t2v-turbo', doc:'https://docs.kie.ai/market/wan/2-2-a14b-text-to-video-turbo' },
+  { id:'wan-animate-move', name:'Wan Animate Move', cat:'video', group:'Wan Video', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-2-animate-move', doc:'https://docs.kie.ai/market/wan/2-2-animate-move' },
+  { id:'wan-animate-replace', name:'Wan Animate Replace', cat:'video', group:'Wan Video', type:'v2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-2-animate-replace', doc:'https://docs.kie.ai/market/wan/2-2-animate-replace' },
+  { id:'wan-2-6-i2v', name:'Wan 2.6 I2V', cat:'video', group:'Wan Video', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-6-i2v', doc:'https://docs.kie.ai/market/wan/2-6-image-to-video' },
+  { id:'wan-2-6-t2v', name:'Wan 2.6 T2V', cat:'video', group:'Wan Video', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-6-t2v', doc:'https://docs.kie.ai/market/wan/2-6-text-to-video' },
+  { id:'wan-2-6-v2v', name:'Wan 2.6 V2V', cat:'video', group:'Wan Video', type:'v2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-6-v2v', doc:'https://docs.kie.ai/market/wan/2-6-video-to-video' },
+  { id:'wan-2-6-flash-i2v', name:'Wan 2.6 Flash I2V', cat:'video', group:'Wan Video', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-6-flash-i2v', doc:'https://docs.kie.ai/market/wan/2-6-flash-image-to-video' },
+  { id:'wan-2-6-flash-v2v', name:'Wan 2.6 Flash V2V', cat:'video', group:'Wan Video', type:'v2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-6-flash-v2v', doc:'https://docs.kie.ai/market/wan/2-6-flash-video-to-video' },
+  { id:'wan-2-5-i2v', name:'Wan 2.5 I2V', cat:'video', group:'Wan Video', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-5-i2v', doc:'https://docs.kie.ai/market/wan/2-5-image-to-video' },
+  { id:'wan-2-5-t2v', name:'Wan 2.5 T2V', cat:'video', group:'Wan Video', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-5-t2v', doc:'https://docs.kie.ai/market/wan/2-5-text-to-video' },
+  { id:'wan-2-7-t2v', name:'Wan 2.7 T2V', cat:'video', group:'Wan Video', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-7-t2v', doc:'https://docs.kie.ai/market/wan/2-7-text-to-video' },
+  { id:'wan-2-7-i2v', name:'Wan 2.7 I2V', cat:'video', group:'Wan Video', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-7-i2v', doc:'https://docs.kie.ai/market/wan/2-7-image-to-video' },
+  { id:'wan-2-7-vedit', name:'Wan 2.7 Video Edit', cat:'video', group:'Wan Video', type:'v2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-7-videoedit', doc:'https://docs.kie.ai/market/wan/2-7-videoedit' },
+  { id:'wan-2-7-r2v', name:'Wan 2.7 Ref to Video', cat:'video', group:'Wan Video', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'wan-2-7-r2v', doc:'https://docs.kie.ai/market/wan/2-7-r2v' },
+  // VIDEO — Topaz Video
+  { id:'topaz-vid-upscale', name:'Topaz Video Upscale', cat:'video', group:'Topaz', type:'v2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'topaz-video-upscale', doc:'https://docs.kie.ai/market/topaz/video-upscale' },
+  // VIDEO — Infinitalk
+  { id:'infinitalk-audio', name:'Infinitalk From Audio', cat:'video', group:'Infinitalk', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'infinitalk-from-audio', doc:'https://docs.kie.ai/market/infinitalk/from-audio' },
+  // VIDEO — Runway
+  { id:'runway-t2v', name:'Runway Generate Video', cat:'video', group:'Runway', type:'t2v', endpoint:'https://api.kie.ai/api/v1/runway/generate', model:'runway-gen4', doc:'https://docs.kie.ai/runway-api/generate-ai-video' },
+  { id:'runway-extend', name:'Runway Extend Video', cat:'video', group:'Runway', type:'v2v', endpoint:'https://api.kie.ai/api/v1/runway/extend', model:'runway-gen4', doc:'https://docs.kie.ai/runway-api/extend-ai-video' },
+  { id:'runway-aleph', name:'Runway Aleph Video', cat:'video', group:'Runway', type:'t2v', endpoint:'https://api.kie.ai/api/v1/runway/aleph/generate', model:'aleph', doc:'https://docs.kie.ai/runway-api/generate-aleph-video' },
+  // VIDEO — HappyHorse
+  { id:'hh-t2v', name:'HappyHorse T2V', cat:'video', group:'HappyHorse', type:'t2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'happyhorse-t2v', doc:'https://docs.kie.ai/market/happyhorse/text-to-video' },
+  { id:'hh-i2v', name:'HappyHorse I2V', cat:'video', group:'HappyHorse', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'happyhorse-i2v', doc:'https://docs.kie.ai/market/happyhorse/image-to-video' },
+  { id:'hh-r2v', name:'HappyHorse Ref to Video', cat:'video', group:'HappyHorse', type:'i2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'happyhorse-r2v', doc:'https://docs.kie.ai/market/happyhorse/reference-to-video' },
+  { id:'hh-vedit', name:'HappyHorse Video Edit', cat:'video', group:'HappyHorse', type:'v2v', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'happyhorse-vedit', doc:'https://docs.kie.ai/market/happyhorse/video-edit' },
+
+  // AUDIO — ElevenLabs
+  { id:'el-audio-isolation', name:'ElevenLabs Audio Isolation', cat:'audio', group:'ElevenLabs', type:'audio', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'elevenlabs/audio-isolation', doc:'https://docs.kie.ai/market/elevenlabs/audio-isolation' },
+  { id:'el-dialogue-v3', name:'ElevenLabs Text to Dialogue v3', cat:'audio', group:'ElevenLabs', type:'tts', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'elevenlabs/text-to-dialogue-v3', doc:'https://docs.kie.ai/market/elevenlabs/text-to-dialogue-v3' },
+  { id:'el-tts-ml-v2', name:'ElevenLabs TTS Multilingual v2', cat:'audio', group:'ElevenLabs', type:'tts', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'elevenlabs/text-to-speech-multilingual-v2', doc:'https://docs.kie.ai/market/elevenlabs/text-to-speech-multilingual-v2' },
+  { id:'el-tts-turbo-2-5', name:'ElevenLabs TTS Turbo 2.5', cat:'audio', group:'ElevenLabs', type:'tts', endpoint:'https://api.kie.ai/api/v1/market/task/create', model:'elevenlabs/text-to-speech-turbo-2-5', doc:'https://docs.kie.ai/market/elevenlabs/text-to-speech-turbo-2-5' },
+
+  // CHAT — GPT
+  { id:'gpt-5-2', name:'GPT 5.2', cat:'chat', group:'GPT', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gpt-5-2', doc:'https://docs.kie.ai/market/chat/gpt-5-2' },
+  { id:'gpt-5-4', name:'GPT 5.4', cat:'chat', group:'GPT', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gpt-5-4', doc:'https://docs.kie.ai/market/chat/gpt-5-4' },
+  { id:'gpt-5-5', name:'GPT 5.5', cat:'chat', group:'GPT', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gpt-5-5', doc:'https://docs.kie.ai/market/chat/gpt-5-5' },
+  // CHAT — Claude
+  { id:'claude-opus-4-7', name:'Claude Opus 4.7', cat:'chat', group:'Claude', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'claude-opus-4-7', doc:'https://docs.kie.ai/market/claude/claude-opus-4-7' },
+  { id:'claude-haiku-4-5', name:'Claude Haiku 4.5', cat:'chat', group:'Claude', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'claude-haiku-4-5', doc:'https://docs.kie.ai/market/claude/claude-haiku-4-5' },
+  { id:'claude-opus-4-5', name:'Claude Opus 4.5', cat:'chat', group:'Claude', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'claude-opus-4-5', doc:'https://docs.kie.ai/market/claude/claude-opus-4-5' },
+  { id:'claude-opus-4-6', name:'Claude Opus 4.6', cat:'chat', group:'Claude', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'claude-opus-4-6', doc:'https://docs.kie.ai/market/claude/claude-opus-4-6' },
+  { id:'claude-sonnet-4-5', name:'Claude Sonnet 4.5', cat:'chat', group:'Claude', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'claude-sonnet-4-5', doc:'https://docs.kie.ai/market/claude/claude-sonnet-4-5' },
+  { id:'claude-sonnet-4-6', name:'Claude Sonnet 4.6', cat:'chat', group:'Claude', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'claude-sonnet-4-6', doc:'https://docs.kie.ai/market/claude/claude-sonnet-4-6' },
+  // CHAT — Codex
+  { id:'gpt-codex', name:'GPT Codex', cat:'chat', group:'Codex', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gpt-codex', doc:'https://docs.kie.ai/market/codex/gpt-codex' },
+  // CHAT — Gemini
+  { id:'gemini-2-5-pro', name:'Gemini 2.5 Pro', cat:'chat', group:'Gemini', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gemini-2.5-pro', doc:'https://docs.kie.ai/market/gemini/gemini-2-5-pro' },
+  { id:'gemini-3-pro', name:'Gemini 3 Pro', cat:'chat', group:'Gemini', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gemini-3-pro', doc:'https://docs.kie.ai/market/gemini/gemini-3-pro' },
+  { id:'gemini-3-1-pro', name:'Gemini 3.1 Pro', cat:'chat', group:'Gemini', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gemini-3.1-pro', doc:'https://docs.kie.ai/market/gemini/gemini-3-1-pro' },
+  { id:'gemini-2-5-flash', name:'Gemini 2.5 Flash', cat:'chat', group:'Gemini', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gemini-2.5-flash', doc:'https://docs.kie.ai/market/gemini/gemini-2-5-flash' },
+  { id:'gemini-3-flash', name:'Gemini 3 Flash', cat:'chat', group:'Gemini', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gemini-3-flash', doc:'https://docs.kie.ai/market/gemini/gemini-3-flash' },
+  { id:'gemini-3-flash-v1b', name:'Gemini 3 Flash (v1beta)', cat:'chat', group:'Gemini', type:'chat', endpoint:'https://api.kie.ai/v1/chat/completions', model:'gemini-3-flash-v1beta', doc:'https://docs.kie.ai/market/gemini/gemini-3-flash-v1beta' },
+
+  // SUNO
+  { id:'suno-generate', name:'Suno Generate Music', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/generate', model:'suno', doc:'https://docs.kie.ai/suno-api/generate-music' },
+  { id:'suno-extend', name:'Suno Extend Music', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/extend', model:'suno', doc:'https://docs.kie.ai/suno-api/extend-music' },
+  { id:'suno-lyrics', name:'Suno Generate Lyrics', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/lyrics/generate', model:'suno', doc:'https://docs.kie.ai/suno-api/generate-lyrics' },
+  { id:'suno-cover', name:'Suno Music Cover', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/cover', model:'suno', doc:'https://docs.kie.ai/suno-api/cover-suno' },
+  { id:'suno-mashup', name:'Suno Mashup Music', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/mashup', model:'suno', doc:'https://docs.kie.ai/suno-api/generate-mashup' },
+  { id:'suno-music-video', name:'Suno Music Video', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/music-video', model:'suno', doc:'https://docs.kie.ai/suno-api/create-music-video' },
+  { id:'suno-sounds', name:'Suno Generate Sounds', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/sounds/generate', model:'suno', doc:'https://docs.kie.ai/suno-api/generate-sounds' },
+  { id:'suno-vocals', name:'Suno Add Vocals', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/vocals/add', model:'suno', doc:'https://docs.kie.ai/suno-api/add-vocals' },
+  { id:'suno-instrumental', name:'Suno Add Instrumental', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/instrumental/add', model:'suno', doc:'https://docs.kie.ai/suno-api/add-instrumental' },
+  { id:'suno-vocal-sep', name:'Suno Vocal Separation', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/vocals/separate', model:'suno', doc:'https://docs.kie.ai/suno-api/separate-vocals' },
+  { id:'suno-midi', name:'Suno Generate MIDI', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/midi/generate', model:'suno', doc:'https://docs.kie.ai/suno-api/generate-midi' },
+  { id:'suno-wav', name:'Suno Convert to WAV', cat:'suno', group:'Suno API', type:'music', endpoint:'https://api.kie.ai/api/v1/suno/wav/convert', model:'suno', doc:'https://docs.kie.ai/suno-api/convert-to-wav' },
+
+  // VEO3.1
+  { id:'veo3-generate', name:'Veo3.1 Generate Video', cat:'veo', group:'Veo3.1 API', type:'t2v', endpoint:'https://api.kie.ai/api/v1/veo3/generate', model:'veo-3-1', doc:'https://docs.kie.ai/veo3-api/generate-veo-3-video' },
+  { id:'veo3-extend', name:'Veo3.1 Extend Video', cat:'veo', group:'Veo3.1 API', type:'v2v', endpoint:'https://api.kie.ai/api/v1/veo3/extend', model:'veo-3-1', doc:'https://docs.kie.ai/veo3-api/extend-video' },
+
+  // FILE UPLOAD
+  { id:'upload-base64', name:'Upload File — Base64', cat:'upload', group:'File Upload API', type:'upload', endpoint:'https://kieai.redpandaai.co/api/v1/upload/base64', model:'upload', doc:'https://docs.kie.ai/file-upload-api/upload-file-base-64' },
+  { id:'upload-stream', name:'Upload File — Stream', cat:'upload', group:'File Upload API', type:'upload', endpoint:'https://kieai.redpandaai.co/api/v1/upload/stream', model:'upload', doc:'https://docs.kie.ai/file-upload-api/upload-file-stream' },
+  { id:'upload-url', name:'Upload File — URL', cat:'upload', group:'File Upload API', type:'upload', endpoint:'https://kieai.redpandaai.co/api/v1/upload/url', model:'upload', doc:'https://docs.kie.ai/file-upload-api/upload-file-url' },
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentFilter = 'all';
+let currentModel = null;
+let uploadedFileData = null;
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = sessionStorage.getItem('kie_api_key');
+  if (saved) document.getElementById('apiKey').value = saved;
+  updateCounts();
+  renderModels();
+});
+
+document.getElementById('search').addEventListener('input', renderModels);
+
+function saveKey() {
+  const k = document.getElementById('apiKey').value.trim();
+  sessionStorage.setItem('kie_api_key', k);
+  const btn = document.querySelector('.api-key-area .btn');
+  const orig = btn.textContent;
+  btn.textContent = 'Saved ✓';
+  setTimeout(() => btn.textContent = orig, 1500);
+}
+
+function updateCounts() {
+  const cats = ['all','image','video','audio','chat','suno','veo','upload'];
+  cats.forEach(cat => {
+    const cnt = cat === 'all' ? MODELS.length : MODELS.filter(m => m.cat === cat).length;
+    document.getElementById('cnt-'+cat).textContent = cnt;
+  });
+  document.getElementById('totalModels').textContent = MODELS.length;
+}
+
+function filterCat(btn, cat) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = cat;
+  renderModels();
+}
+
+function renderModels() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const main = document.getElementById('main');
+
+  let list = MODELS.filter(m => {
+    const matchCat = currentFilter === 'all' || m.cat === currentFilter;
+    const matchQ = !q || m.name.toLowerCase().includes(q) || m.group.toLowerCase().includes(q) || m.model.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  if (!list.length) {
+    main.innerHTML = '<div class="no-results">No models found for "' + document.getElementById('search').value + '"</div>';
+    return;
+  }
+
+  // Group
+  const groups = {};
+  list.forEach(m => {
+    if (!groups[m.group]) groups[m.group] = [];
+    groups[m.group].push(m);
+  });
+
+  const tagClass = { image:'img', video:'vid', audio:'aud', chat:'chat', suno:'music', veo:'vid', upload:'' };
+  const typeLabels = { t2i:'Text→Img', i2i:'Img→Img', t2v:'Text→Vid', i2v:'Img→Vid', v2v:'Vid→Vid', chat:'Chat', tts:'TTS', audio:'Audio', music:'Music', upload:'Upload' };
+
+  let html = '';
+  Object.keys(groups).forEach(group => {
+    html += `<div class="group-label">${group}</div>`;
+    html += '<div class="models-grid">';
+    groups[group].forEach(m => {
+      const tc = tagClass[m.cat] || '';
+      const tl = typeLabels[m.type] || m.type;
+      const sel = currentModel && currentModel.id === m.id ? ' selected' : '';
+      html += `
+        <div class="model-card${sel}" data-cat="${m.cat}" onclick="selectModel('${m.id}')">
+          <div class="model-name">${m.name}</div>
+          <div class="model-meta">
+            <span class="tag ${tc}">${m.cat}</span>
+            <span class="tag">${tl}</span>
+            <span class="tag" style="margin-left:auto;font-size:8px;color:#333">${m.model}</span>
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+
+  main.innerHTML = html;
+}
+
+function selectModel(id) {
+  currentModel = MODELS.find(m => m.id === id);
+  renderModels(); // re-render to update selection highlight
+  renderPanel();
+}
+
+function clearPanel() {
+  currentModel = null;
+  renderModels();
+  document.getElementById('panelContent').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">◈</div>
+      <div class="empty-title">Select a model to test</div>
+      <div class="empty-sub">Click any model card on the left</div>
+    </div>`;
+}
+
+function renderPanel() {
+  const m = currentModel;
+  if (!m) return;
+
+  const isChat = m.type === 'chat';
+  const isUpload = m.cat === 'upload';
+  const needsImage = ['i2i','i2v','v2v','audio'].includes(m.type);
+  const needsVideo = ['v2v'].includes(m.type);
+  const isTTS = m.type === 'tts';
+  const isMusic = m.type === 'music';
+
+  let fields = '';
+
+  if (isChat) {
+    fields = `
+      <div class="field"><div class="field-label">Message</div>
+        <textarea id="f_prompt" rows="4" placeholder="Enter your message..."></textarea>
+      </div>
+      <div class="inline-row">
+        <div class="field"><div class="field-label">Max Tokens</div>
+          <input type="number" id="f_max_tokens" value="1000">
+        </div>
+        <div class="field"><div class="field-label">Temperature</div>
+          <input type="number" id="f_temperature" value="0.7" step="0.1" min="0" max="2">
+        </div>
+      </div>`;
+  } else if (isUpload) {
+    fields = `
+      <div class="field"><div class="field-label">File Name (optional)</div>
+        <input type="text" id="f_filename" placeholder="my-image.jpg">
+      </div>`;
+    if (m.id === 'upload-url') {
+      fields += `<div class="field"><div class="field-label">File URL</div>
+        <input type="url" id="f_fileurl" placeholder="https://example.com/image.jpg">
+      </div>`;
+    } else {
+      fields += `
+      <div class="field"><div class="field-label">File</div>
+        <div class="file-upload-area" onclick="document.getElementById('f_file').click()">
+          <input type="file" id="f_file" onchange="handleFile(event)">
+          <div class="file-upload-text" id="fileLabel"><b>Click to browse</b> or drop file</div>
+        </div>
+      </div>`;
+    }
+  } else if (isMusic) {
+    const sunoFields = {
+      'suno-generate': `<div class="field"><div class="field-label">Prompt / Tags</div><input type="text" id="f_tags" placeholder="pop, upbeat, guitar"></div>
+        <div class="field"><div class="field-label">Title</div><input type="text" id="f_title" placeholder="My Song"></div>
+        <div class="field"><div class="field-label">Lyrics</div><textarea id="f_lyrics" rows="3" placeholder="[Verse 1]\n..."></textarea></div>`,
+      'suno-lyrics': `<div class="field"><div class="field-label">Prompt</div><input type="text" id="f_prompt" placeholder="A song about summer"></div>`,
+      'suno-sounds': `<div class="field"><div class="field-label">Prompt</div><input type="text" id="f_prompt" placeholder="Rain on a tin roof"></div>`,
+    };
+    fields = sunoFields[m.id] || `<div class="field"><div class="field-label">Task ID</div><input type="text" id="f_task_id" placeholder="Enter task ID..."></div>`;
+  } else {
+    // Media generation
+    if (!needsImage && !needsVideo) {
+      fields += `<div class="field"><div class="field-label">Prompt</div>
+        <textarea id="f_prompt" rows="3" placeholder="Describe what you want to generate..."></textarea>
+      </div>`;
+    }
+    if (needsImage || needsVideo) {
+      fields += `<div class="field"><div class="field-label">${needsVideo ? 'Video' : 'Image'} URL or Upload</div>
+        <div class="inline-row" style="gap:6px;margin-bottom:6px">
+          <input type="url" id="f_img_url" placeholder="https://..." style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:7px 10px;outline:none;" oninput="clearUpload()">
+        </div>
+        <div class="file-upload-area" onclick="document.getElementById('f_img_file').click()">
+          <input type="file" id="f_img_file" accept="${needsVideo ? 'video/*' : 'image/*'}" onchange="handleMediaFile(event)">
+          <div class="file-upload-text" id="mediaFileLabel"><b>Or upload file</b> (will auto-upload)</div>
+        </div>
+      </div>`;
+      if (!needsVideo) {
+        fields += `<div class="field"><div class="field-label">Prompt (optional)</div>
+          <textarea id="f_prompt" rows="2" placeholder="Describe modifications..."></textarea>
+        </div>`;
+      }
+    }
+    if (isTTS) {
+      fields = `<div class="field"><div class="field-label">Text</div>
+        <textarea id="f_prompt" rows="3" placeholder="Text to speak..."></textarea>
+      </div>
+      <div class="field"><div class="field-label">Voice ID</div>
+        <input type="text" id="f_voice_id" placeholder="e.g. Rachel">
+      </div>`;
+    }
+    fields += `
+      <div class="field"><div class="field-label">Callback URL (optional)</div>
+        <input type="url" id="f_callback" placeholder="https://your-server.com/webhook">
+      </div>`;
+  }
+
+  document.getElementById('panelContent').innerHTML = `
+    <div class="panel-model-name">${m.name}</div>
+    <div class="panel-body">
+      ${fields}
+      <div>
+        <div class="field-label" style="margin-bottom:5px">Result</div>
+        <div class="result-area" id="resultArea">Waiting for request...</div>
+        <img id="resultImg" class="result-img" alt="result">
+        <video id="resultVideo" class="result-video" controls></video>
+        <audio id="resultAudio" class="result-audio" controls></audio>
+      </div>
+      <div class="status-bar">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Ready</span>
+        <span style="margin-left:auto">
+          <a href="${m.doc}" target="_blank" style="color:var(--accent2);font-size:10px;text-decoration:none">docs ↗</a>
+        </span>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn primary" onclick="runRequest()">▶ Run</button>
+      ${!isUpload && !isChat ? `<button class="btn" onclick="pollTask()" id="pollBtn" style="display:none">⟳ Poll Result</button>` : ''}
+    </div>`;
+}
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('fileLabel').innerHTML = `<b>${file.name}</b> (${(file.size/1024).toFixed(1)} KB)`;
+  const reader = new FileReader();
+  reader.onload = ev => { uploadedFileData = ev.target.result; };
+  reader.readAsDataURL(file);
+}
+
+function handleMediaFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('mediaFileLabel').innerHTML = `<b>${file.name}</b> — auto-uploading...`;
+  const formData = new FormData();
+  formData.append('file', file);
+  const key = getKey();
+  if (!key) { setStatus('err','No API key'); return; }
+  fetch('https://kieai.redpandaai.co/api/v1/upload/stream', {
+    method:'POST',
+    headers:{ 'Authorization': 'Bearer ' + key },
+    body: formData
+  }).then(r=>r.json()).then(d => {
+    if (d.data && d.data.fileUrl) {
+      document.getElementById('f_img_url').value = d.data.fileUrl;
+      document.getElementById('mediaFileLabel').innerHTML = `<b>Uploaded:</b> ${d.data.fileName}`;
+    } else {
+      document.getElementById('mediaFileLabel').innerHTML = `<span style="color:var(--accent3)">Upload failed</span>`;
+    }
+  }).catch(()=>{
+    document.getElementById('mediaFileLabel').innerHTML = `<span style="color:var(--accent3)">Upload error</span>`;
+  });
+}
+
+function clearUpload() {
+  const f = document.getElementById('f_img_file');
+  if (f) f.value = '';
+  const l = document.getElementById('mediaFileLabel');
+  if (l) l.innerHTML = '<b>Or upload file</b>';
+}
+
+function getKey() {
+  return document.getElementById('apiKey').value.trim() || sessionStorage.getItem('kie_api_key') || '';
+}
+
+function setStatus(state, msg) {
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  if (!dot || !txt) return;
+  dot.className = 'status-dot ' + state;
+  txt.textContent = msg;
+}
+
+function setResult(text) {
+  const el = document.getElementById('resultArea');
+  if (el) el.textContent = text;
+}
+
+let lastTaskId = null;
+
+async function runRequest() {
+  const key = getKey();
+  if (!key) { alert('Please enter your API key first.'); return; }
+  const m = currentModel;
+  if (!m) return;
+
+  setStatus('loading', 'Sending...');
+  const img = document.getElementById('resultImg');
+  const vid = document.getElementById('resultVideo');
+  const aud = document.getElementById('resultAudio');
+  if (img) img.style.display = 'none';
+  if (vid) vid.style.display = 'none';
+  if (aud) aud.style.display = 'none';
+
+  try {
+    let body, url, headers;
+    const base = { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' };
+
+    if (m.type === 'chat') {
+      url = m.endpoint;
+      headers = base;
+      body = JSON.stringify({
+        model: m.model,
+        messages: [{ role:'user', content: document.getElementById('f_prompt')?.value || '' }],
+        max_tokens: parseInt(document.getElementById('f_max_tokens')?.value || 1000),
+        temperature: parseFloat(document.getElementById('f_temperature')?.value || 0.7),
+      });
+    } else if (m.cat === 'upload') {
+      if (m.id === 'upload-url') {
+        url = m.endpoint;
+        headers = base;
+        body = JSON.stringify({ fileUrl: document.getElementById('f_fileurl')?.value, fileName: document.getElementById('f_filename')?.value || undefined });
+      } else if (m.id === 'upload-base64') {
+        url = m.endpoint;
+        headers = base;
+        if (!uploadedFileData) { setStatus('err','Select a file first'); return; }
+        body = JSON.stringify({ fileData: uploadedFileData, fileName: document.getElementById('f_filename')?.value || undefined });
+      } else {
+        // stream upload
+        url = m.endpoint;
+        const fileEl = document.getElementById('f_file');
+        if (!fileEl || !fileEl.files[0]) { setStatus('err','Select a file first'); return; }
+        const fd = new FormData();
+        fd.append('file', fileEl.files[0]);
+        const fname = document.getElementById('f_filename')?.value;
+        if (fname) fd.append('fileName', fname);
+        const res = await fetch(url, { method:'POST', headers:{ 'Authorization':'Bearer '+key }, body:fd });
+        const data = await res.json();
+        setResult(JSON.stringify(data, null, 2));
+        setStatus(data.success ? 'ok' : 'err', data.success ? 'Uploaded' : 'Error');
+        return;
+      }
+    } else if (m.cat === 'suno') {
+      url = m.endpoint;
+      headers = base;
+      const payload = {};
+      if (m.id === 'suno-generate') {
+        payload.tags = document.getElementById('f_tags')?.value;
+        payload.title = document.getElementById('f_title')?.value;
+        payload.prompt = document.getElementById('f_lyrics')?.value;
+      } else {
+        payload.taskId = document.getElementById('f_task_id')?.value;
+        const pr = document.getElementById('f_prompt');
+        if (pr) payload.prompt = pr.value;
+      }
+      body = JSON.stringify(payload);
+    } else {
+      url = m.endpoint;
+      headers = base;
+      const payload = { model: m.model };
+      const pr = document.getElementById('f_prompt');
+      if (pr) payload.prompt = pr.value;
+      const imgUrl = document.getElementById('f_img_url');
+      if (imgUrl && imgUrl.value) payload.imageUrl = imgUrl.value;
+      const cb = document.getElementById('f_callback');
+      if (cb && cb.value) payload.callbackUrl = cb.value;
+      const voiceId = document.getElementById('f_voice_id');
+      if (voiceId && voiceId.value) payload.voiceId = voiceId.value;
+      body = JSON.stringify(payload);
+    }
+
+    setResult('Sending request...');
+    const res = await fetch(url, { method:'POST', headers, body });
+    const data = await res.json();
+    setResult(JSON.stringify(data, null, 2));
+
+    // Handle task_id for polling
+    if (data.data && data.data.taskId) {
+      lastTaskId = data.data.taskId;
+      const pollBtn = document.getElementById('pollBtn');
+      if (pollBtn) { pollBtn.style.display = ''; }
+      setStatus('loading', 'Task created — ' + lastTaskId);
+    } else if (data.choices && data.choices[0]) {
+      // Chat response
+      const content = data.choices[0].message?.content || '';
+      setResult(content);
+      setStatus('ok', 'Done · ' + (data.usage?.total_tokens || '?') + ' tokens');
+    } else if (data.code === 200 || data.success) {
+      setStatus('ok', 'Success');
+      // Check for direct media
+      const fileUrl = data.data?.fileUrl;
+      if (fileUrl) {
+        if (img && /\.(jpg|jpeg|png|webp|gif)/i.test(fileUrl)) { img.src = fileUrl; img.style.display = 'block'; }
+        else if (vid && /\.(mp4|webm)/i.test(fileUrl)) { vid.src = fileUrl; vid.style.display = 'block'; }
+        else if (aud && /\.(mp3|wav|ogg)/i.test(fileUrl)) { aud.src = fileUrl; aud.style.display = 'block'; }
+      }
+    } else {
+      setStatus('err', data.msg || 'Error');
+    }
+  } catch (e) {
+    setResult('Error: ' + e.message);
+    setStatus('err', 'Request failed');
+  }
+}
+
+async function pollTask() {
+  if (!lastTaskId) return;
+  const key = getKey();
+  setStatus('loading', 'Polling...');
+  try {
+    const res = await fetch('https://api.kie.ai/api/v1/market/task/' + lastTaskId, {
+      headers: { 'Authorization': 'Bearer ' + key }
+    });
+    const data = await res.json();
+    setResult(JSON.stringify(data, null, 2));
+    const status = data.data?.status;
+    if (status === 'completed' || status === 'succeed') {
+      setStatus('ok', 'Completed!');
+      // Try to show media
+      const urls = data.data?.resultUrls || data.data?.resultUrl;
+      const url = Array.isArray(urls) ? urls[0] : urls;
+      if (url) {
+        const img = document.getElementById('resultImg');
+        const vid = document.getElementById('resultVideo');
+        const aud = document.getElementById('resultAudio');
+        if (img && /\.(jpg|jpeg|png|webp|gif)/i.test(url)) { img.src = url; img.style.display = 'block'; }
+        else if (vid && /\.(mp4|webm)/i.test(url)) { vid.src = url; vid.style.display = 'block'; }
+        else if (aud && /\.(mp3|wav|ogg)/i.test(url)) { aud.src = url; aud.style.display = 'block'; }
+      }
+    } else if (status === 'failed') {
+      setStatus('err', 'Task failed');
+    } else {
+      setStatus('loading', 'Status: ' + (status || 'processing'));
+    }
+  } catch(e) {
+    setStatus('err', 'Poll failed');
+  }
+}
+</script>
+</body>
+</html>
