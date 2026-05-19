@@ -1596,21 +1596,16 @@ body{
 
 <script>
 /* ════════════════════════════════════════════════════════════
-   KIE AI — Full Integration + 3 Upload Methods
+   KIE AI — Full Integration
 ════════════════════════════════════════════════════════════ */
 
 let API_KEY = localStorage.getItem('kie_api_key') || '';
 
-const KIE_BASE = 'https://api.kie.ai/api/v1/jobs';
-const KIE_BASE_4O = 'https://api.kie.ai/api/v1/gpt4o-image';
-const KIE_BASE_FK = 'https://api.kie.ai/api/v1/flux/kontext';
-const KIE_CREDIT = 'https://api.kie.ai/api/v1/chat/credit';
-
-const UPLOAD_BASE = 'https://kieai.redpandaai.co/api';
-const UPLOAD_BASE64 = `${UPLOAD_BASE}/file-base64-upload`;
-const UPLOAD_STREAM = `${UPLOAD_BASE}/file-stream-upload`;
-const UPLOAD_URL    = `${UPLOAD_BASE}/file-url-upload`;
-
+const KIE_BASE      = 'https://api.kie.ai/api/v1/jobs';
+const KIE_BASE_4O   = 'https://api.kie.ai/api/v1/gpt4o-image';
+const KIE_BASE_FK   = 'https://api.kie.ai/api/v1/flux/kontext';
+const KIE_CREDIT    = 'https://api.kie.ai/api/v1/chat/credit';
+const UPLOAD_URL    = 'https://kieai.redpandaai.co/api/file-base64-upload';
 const POLL_INTERVAL = 4000;
 
 const uploadedUrls = { i2i: null, i2v: null, ed: null, gpt4o: null, fk: null, up: null };
@@ -1631,27 +1626,25 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ── API Key & Credits ───────────────────────────────── */
 function initApiKey() {
   const input = document.getElementById('apiKeyInput');
-  const btn = document.getElementById('saveKeyBtn');
+  const btn   = document.getElementById('saveKeyBtn');
   if (API_KEY) input.value = API_KEY;
-
   btn.addEventListener('click', () => {
     const val = input.value.trim();
-    if (!val) { showToast('Digite uma API key válida', 'error'); return; }
+    if (!val) { showToast('Enter a valid API key', 'error'); return; }
     API_KEY = val;
     localStorage.setItem('kie_api_key', val);
-    showToast('API key salva ✓', 'success');
+    showToast('API key saved ✓', 'success');
     loadCredits();
   });
-
   document.getElementById('refreshCreditsBtn').addEventListener('click', loadCredits);
 }
 
 async function loadCredits() {
   if (!API_KEY) return;
   try {
-    const res = await fetch(KIE_CREDIT, { headers: { 'Authorization': `Bearer ${API_KEY}` } });
+    const res  = await fetch(KIE_CREDIT, { headers: { 'Authorization': `Bearer ${API_KEY}` } });
     const data = await res.json();
-    const val = data?.data ?? data?.credits ?? '?';
+    const val  = data?.data ?? data?.credits ?? '?';
     document.getElementById('creditsValue').textContent = val;
   } catch (e) {
     document.getElementById('creditsValue').textContent = 'err';
@@ -1660,9 +1653,9 @@ async function loadCredits() {
 
 /* ── Navigation ──────────────────────────────────────── */
 function initNavigation() {
-  const items = document.querySelectorAll('.nav-item');
+  const items     = document.querySelectorAll('.nav-item');
   const hamburger = document.getElementById('hamburgerBtn');
-  const sidebar = document.getElementById('sidebar');
+  const sidebar   = document.getElementById('sidebar');
 
   items.forEach(item => {
     item.addEventListener('click', () => {
@@ -1677,7 +1670,6 @@ function initNavigation() {
   });
 
   hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
-
   document.addEventListener('click', e => {
     if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
       sidebar.classList.remove('open');
@@ -1688,12 +1680,11 @@ function initNavigation() {
 /* ── Uploads ─────────────────────────────────────────── */
 function initUploads() {
   ['i2i', 'i2v', 'ed', 'gpt4o', 'fk', 'up'].forEach(key => {
-    const zone = document.getElementById(`${key}-upload`);
+    const zone        = document.getElementById(`${key}-upload`);
     if (!zone) return;
-
-    const fileInput = zone.querySelector('.file-input');
+    const fileInput   = zone.querySelector('.file-input');
     const previewWrap = document.getElementById(`${key}-preview-wrap`);
-    const previewImg = document.getElementById(`${key}-preview`);
+    const previewImg  = document.getElementById(`${key}-preview`);
 
     zone.addEventListener('click', e => { if (e.target !== fileInput) fileInput.click(); });
     zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
@@ -1704,76 +1695,68 @@ function initUploads() {
       const file = e.dataTransfer.files[0];
       if (file) handleImageFile(file, key, zone, previewWrap, previewImg);
     });
-
     fileInput.addEventListener('change', () => {
       const file = fileInput.files[0];
       if (file) handleImageFile(file, key, zone, previewWrap, previewImg);
     });
-
     const clearBtn = document.querySelector(`.btn-clear-img[data-target="${key}"]`);
-    if (clearBtn) clearBtn.addEventListener('click', () => clearUpload(key, zone, previewWrap));
+    if (clearBtn) clearBtn.addEventListener('click', () => {
+      uploadedUrls[key] = null;
+      previewWrap.classList.add('hidden');
+      zone.classList.remove('hidden');
+      fileInput.value = '';
+    });
+  });
+
+  document.querySelectorAll('.btn-copy-prompt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = document.getElementById(btn.dataset.src);
+      if (!src) return;
+      navigator.clipboard.writeText(src.value).then(() => showToast('Prompt copied!', 'info'));
+    });
   });
 }
 
-function clearUpload(key, zone, previewWrap) {
-  uploadedUrls[key] = null;
-  previewWrap.classList.add('hidden');
-  zone.classList.remove('hidden');
-}
-
 async function handleImageFile(file, key, zone, previewWrap, previewImg) {
-  if (!file.type.match(/image\/(jpeg|png|webp|gif)/)) {
-    showToast('Use apenas JPEG, PNG, WEBP ou GIF', 'error');
-    return;
+  if (!file.type.match(/image\/(jpeg|png|webp)/)) {
+    showToast('Please use JPEG, PNG or WEBP', 'error'); return;
   }
-  if (file.size > 15 * 1024 * 1024) {
-    showToast('Arquivo muito grande (máx. 15MB)', 'error');
-    return;
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('File too large (max 10MB)', 'error'); return;
   }
-
   previewImg.src = URL.createObjectURL(file);
   zone.classList.add('hidden');
   previewWrap.classList.remove('hidden');
-
-  showToast('Enviando imagem...', 'info');
-
+  showToast('Uploading image…', 'info');
   try {
-    const base64 = await fileToBase64(file);
-    const ext = file.type.split('/')[1] || 'png';
+    const base64  = await fileToBase64(file);
+    const ext     = file.type.split('/')[1];
     const fileName = `upload_${Date.now()}.${ext}`;
-
-    const res = await fetch(UPLOAD_BASE64, {
+    const res = await fetch(UPLOAD_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        base64Data: base64,
-        uploadPath: 'images/base64',
-        fileName
-      })
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+      body: JSON.stringify({ base64Data: base64, uploadPath: 'images/base64', fileName })
     });
-
     const data = await res.json();
     if (data.success && data.data?.downloadUrl) {
       uploadedUrls[key] = data.data.downloadUrl;
-      showToast('Imagem enviada com sucesso ✓', 'success');
+      showToast('Image uploaded ✓', 'success');
     } else {
-      throw new Error(data.msg || 'Falha no upload');
+      throw new Error(data.msg || 'Upload failed');
     }
   } catch (err) {
-    console.error(err);
-    showToast('Erro no upload: ' + err.message, 'error');
-    clearUpload(key, zone, previewWrap);
+    showToast('Upload failed: ' + err.message, 'error');
+    uploadedUrls[key] = null;
+    previewWrap.classList.add('hidden');
+    zone.classList.remove('hidden');
   }
 }
 
 function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
+  return new Promise((res, rej) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
+    reader.onload  = () => res(reader.result);
+    reader.onerror = rej;
     reader.readAsDataURL(file);
   });
 }
@@ -1781,14 +1764,16 @@ function fileToBase64(file) {
 /* ── Model Visibility ────────────────────────────────── */
 function initModelVisibility() {
   document.getElementById('i2v-model')?.addEventListener('change', function() {
-    const opts = document.getElementById('i2v-kling-opts');
-    if (opts) opts.style.display = this.value === 'kling-2.6/image-to-video' ? '' : 'none';
+    document.getElementById('i2v-kling-opts').style.display =
+      this.value === 'kling-2.6/image-to-video' ? '' : 'none';
   });
 
   document.getElementById('ed-model')?.addEventListener('change', function() {
     const opts = document.getElementById('ed-seedream-opts');
-    if (opts) {
-      opts.classList.toggle('show', this.value === 'seedream/4.5-edit');
+    if (this.value === 'seedream/4.5-edit') {
+      opts.classList.add('show');
+    } else {
+      opts.classList.remove('show');
     }
   });
 }
@@ -1806,222 +1791,303 @@ function initGenerators() {
 
 /* Image to Image */
 async function generateI2I() {
-  const model = document.getElementById('i2i-model').value;
-  const prompt = document.getElementById('i2i-prompt').value.trim();
+  const model    = document.getElementById('i2i-model').value;
+  const prompt   = document.getElementById('i2i-prompt').value.trim();
   const imageUrl = uploadedUrls.i2i;
-  if (!imageUrl) return showToast('Faça upload de uma imagem primeiro', 'error');
-
-  const body = model === 'seedream/4.5-edit' 
-    ? { model, input: { prompt, image_urls: [imageUrl], aspect_ratio: '1:1', quality: 'basic' } }
-    : { model, input: { prompt, image_urls: [imageUrl] } };
-
+  if (!imageUrl) { showToast('Please upload an image first', 'error'); return; }
+  let body;
+  if (model === 'seedream/4.5-edit') {
+    body = { model, input: { prompt, image_urls: [imageUrl], aspect_ratio: '1:1', quality: 'basic' } };
+  } else {
+    body = { model, input: { prompt, image_urls: [imageUrl] } };
+  }
   await startTask(body, 'i2i-result', 'image', { prompt, model, type: 'image-to-image' });
 }
 
 /* Image to Video */
 async function generateI2V() {
-  const model = document.getElementById('i2v-model').value;
-  const prompt = document.getElementById('i2v-prompt').value.trim();
+  const model    = document.getElementById('i2v-model').value;
+  const prompt   = document.getElementById('i2v-prompt').value.trim();
   const imageUrl = uploadedUrls.i2v;
-  if (!imageUrl) return showToast('Faça upload de uma imagem primeiro', 'error');
-
+  if (!imageUrl) { showToast('Please upload an image first', 'error'); return; }
   let body;
   if (model === 'kling-2.6/image-to-video') {
     const duration = document.getElementById('i2v-duration').value;
-    const sound = document.getElementById('i2v-sound').value === 'true';
+    const sound    = document.getElementById('i2v-sound').value === 'true';
     body = { model, input: { prompt, image_urls: [imageUrl], sound, duration } };
+  } else if (model === 'sora-2-image-to-video') {
+    body = { model, input: { prompt, image_urls: [imageUrl], aspect_ratio: 'landscape', n_frames: '10', remove_watermark: true, upload_method: 's3' } };
   } else {
-    body = { model, input: { prompt, image_urls: [imageUrl] } };
+    body = { model, input: { prompt, image_urls: [imageUrl], mode: 'normal', duration: '6', resolution: '480p' } };
   }
-
   await startTask(body, 'i2v-result', 'video', { prompt, model, type: 'image-to-video' });
 }
 
 /* Image Editor */
 async function generateEditor() {
-  const model = document.getElementById('ed-model').value;
-  const prompt = document.getElementById('ed-prompt').value.trim();
+  const model    = document.getElementById('ed-model').value;
+  const prompt   = document.getElementById('ed-prompt').value.trim();
   const imageUrl = uploadedUrls.ed;
-  if (!imageUrl) return showToast('Faça upload de uma imagem primeiro', 'error');
-  if (!prompt) return showToast('Digite as instruções de edição', 'error');
-
-  const body = model === 'seedream/4.5-edit' 
-    ? { model, input: { prompt, image_urls: [imageUrl], aspect_ratio: document.getElementById('ed-ratio').value, quality: document.getElementById('ed-quality').value } }
-    : { model, input: { prompt, image_urls: [imageUrl] } };
-
+  if (!imageUrl) { showToast('Please upload an image first', 'error'); return; }
+  if (!prompt)   { showToast('Please enter edit instructions', 'error'); return; }
+  let body;
+  if (model === 'seedream/4.5-edit') {
+    const ratio   = document.getElementById('ed-ratio').value;
+    const quality = document.getElementById('ed-quality').value;
+    body = { model, input: { prompt, image_urls: [imageUrl], aspect_ratio: ratio, quality } };
+  } else {
+    body = { model, input: { prompt, image_urls: [imageUrl] } };
+  }
   await startTask(body, 'ed-result', 'image', { prompt, model, type: 'image-edit' });
 }
 
 /* Text to Image */
 async function generateT2I() {
-  const prompt = document.getElementById('t2i-prompt').value.trim();
-  if (!prompt) return showToast('Digite um prompt', 'error');
-
-  const model = document.getElementById('t2i-model').value;
-  const body = { 
-    model, 
-    input: { 
-      prompt, 
-      image_input: [], 
-      aspect_ratio: document.getElementById('t2i-ratio').value,
-      resolution: document.getElementById('t2i-res').value,
-      output_format: document.getElementById('t2i-format').value 
-    } 
-  };
-
+  const prompt      = document.getElementById('t2i-prompt').value.trim();
+  if (!prompt) { showToast('Please enter a prompt', 'error'); return; }
+  const model        = document.getElementById('t2i-model').value;
+  const resolution   = document.getElementById('t2i-res').value;
+  const aspect_ratio = document.getElementById('t2i-ratio').value;
+  const output_format = document.getElementById('t2i-format').value;
+  const body = { model, input: { prompt, image_input: [], aspect_ratio, resolution, output_format } };
   await startTask(body, 't2i-result', 'image', { prompt, model, type: 'text-to-image' });
 }
 
-/* GPT-4o */
+/* GPT-4o Image — dedicated endpoint */
 async function generateGPT4O() {
-  const prompt = document.getElementById('gpt4o-prompt').value.trim();
-  if (!prompt) return showToast('Digite um prompt', 'error');
+  const prompt   = document.getElementById('gpt4o-prompt').value.trim();
+  if (!prompt) { showToast('Please enter a prompt', 'error'); return; }
+  const size      = document.getElementById('gpt4o-size').value;
+  const nVariants = parseInt(document.getElementById('gpt4o-variants').value);
+  const isEnhance = document.getElementById('gpt4o-enhance').value === 'true';
+  const imageUrl  = uploadedUrls.gpt4o;
 
-  const payload = {
-    prompt,
-    size: document.getElementById('gpt4o-size').value,
-    nVariants: parseInt(document.getElementById('gpt4o-variants').value),
-    isEnhance: document.getElementById('gpt4o-enhance').value === 'true',
-    enableFallback: true
-  };
-
-  if (uploadedUrls.gpt4o) payload.filesUrl = [uploadedUrls.gpt4o];
+  const payload = { prompt, size, nVariants, isEnhance, enableFallback: true };
+  if (imageUrl) payload.filesUrl = [imageUrl];
 
   const resultArea = document.getElementById('gpt4o-result');
   if (!checkApiKey()) return;
+  setLoading(resultArea, 'Submitting to GPT-4o…', 'pending');
 
-  setLoading(resultArea, 'Enviando para GPT-4o...', 'pending');
   try {
-    const res = await fetch(`${KIE_BASE_4O}/generate`, {
+    const res  = await fetch(`${KIE_BASE_4O}/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
-    if (data.code !== 200 || !data.data?.taskId) throw new Error(data.msg || 'Erro na API');
-
-    pollTask4O(data.data.taskId, 'gpt4o-result', { prompt, model: 'gpt4o-image', type: 'text-to-image' });
+    if (data.code !== 200 || !data.data?.taskId) throw new Error(data.msg || `API error ${data.code}`);
+    const taskId = data.data.taskId;
+    setLoading(resultArea, `Processing… [${taskId}]`, 'processing', taskId);
+    pollTask4O(taskId, 'gpt4o-result', { prompt, model: 'gpt4o-image', type: 'text-to-image' });
   } catch (err) {
     setError(resultArea, err.message);
+    showToast('Task failed: ' + err.message, 'error');
   }
 }
 
-/* Flux Kontext */
+function pollTask4O(taskId, resultAreaId, meta) {
+  if (activePollers[taskId]) clearInterval(activePollers[taskId]);
+  const resultArea = document.getElementById(resultAreaId);
+  activePollers[taskId] = setInterval(async () => {
+    try {
+      const res  = await fetch(`${KIE_BASE_4O}/record-info?taskId=${encodeURIComponent(taskId)}`, {
+        headers: { 'Authorization': `Bearer ${API_KEY}` }
+      });
+      const data = await res.json();
+      if (data.code !== 200) throw new Error(data.msg || 'Query failed');
+      const record = data.data;
+      const flag   = record.successFlag;
+      if (flag === 1) {
+        clearInterval(activePollers[taskId]);
+        delete activePollers[taskId];
+        const urls = (record.response?.result_urls || []);
+        if (urls.length > 0) {
+          renderResult(resultArea, urls, 'image', taskId);
+          saveHistory({ ...meta, taskId, downloadUrl: urls[0], time: Date.now() });
+          showToast('GPT-4o generation complete ✓', 'success');
+        } else { setError(resultArea, 'Completed but no URLs found.'); }
+      } else if (flag === 2) {
+        clearInterval(activePollers[taskId]);
+        delete activePollers[taskId];
+        setError(resultArea, record.errorMessage || 'Generation failed');
+        showToast('Generation failed', 'error');
+      } else {
+        const pct = record.progress ? ` ${(parseFloat(record.progress)*100).toFixed(0)}%` : '';
+        setLoading(resultArea, `Processing…${pct}`, 'processing', taskId);
+      }
+    } catch (err) { console.warn('Poll 4o error:', err.message); }
+  }, POLL_INTERVAL);
+}
+
+/* Flux Kontext — dedicated endpoint */
 async function generateFluxKontext() {
-  const prompt = document.getElementById('fk-prompt').value.trim();
-  if (!prompt) return showToast('Digite um prompt', 'error');
+  const prompt   = document.getElementById('fk-prompt').value.trim();
+  if (!prompt) { showToast('Please enter a prompt', 'error'); return; }
+  const model        = document.getElementById('fk-model').value;
+  const aspectRatio  = document.getElementById('fk-ratio').value;
+  const outputFormat = document.getElementById('fk-format').value;
+  const promptUpsamp = document.getElementById('fk-upsampling').value === 'true';
+  const imageUrl     = uploadedUrls.fk;
 
-  const payload = {
-    prompt,
-    aspectRatio: document.getElementById('fk-ratio').value,
-    model: document.getElementById('fk-model').value,
-    outputFormat: document.getElementById('fk-format').value,
-    enableTranslation: true,
-    promptUpsampling: document.getElementById('fk-upsampling').value === 'true'
-  };
-
-  if (uploadedUrls.fk) payload.inputImage = uploadedUrls.fk;
+  const payload = { prompt, aspectRatio, model, outputFormat, enableTranslation: true };
+  if (promptUpsamp) payload.promptUpsampling = true;
+  if (imageUrl) payload.inputImage = imageUrl;
 
   const resultArea = document.getElementById('fk-result');
   if (!checkApiKey()) return;
+  setLoading(resultArea, 'Submitting to Flux Kontext…', 'pending');
 
-  setLoading(resultArea, 'Enviando para Flux Kontext...', 'pending');
   try {
-    const res = await fetch(`${KIE_BASE_FK}/generate`, {
+    const res  = await fetch(`${KIE_BASE_FK}/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
-    if (data.code !== 200 || !data.data?.taskId) throw new Error(data.msg || 'Erro na API');
-
-    pollTaskFK(data.data.taskId, 'fk-result', { prompt, model: 'flux-kontext', type: 'text-to-image' });
+    if (data.code !== 200 || !data.data?.taskId) throw new Error(data.msg || `API error ${data.code}`);
+    const taskId = data.data.taskId;
+    setLoading(resultArea, `Processing… [${taskId}]`, 'processing', taskId);
+    pollTaskFK(taskId, 'fk-result', { prompt, model, type: 'text-to-image' });
   } catch (err) {
     setError(resultArea, err.message);
+    showToast('Task failed: ' + err.message, 'error');
   }
 }
 
-/* Upscale */
+function pollTaskFK(taskId, resultAreaId, meta) {
+  if (activePollers[taskId]) clearInterval(activePollers[taskId]);
+  const resultArea = document.getElementById(resultAreaId);
+  activePollers[taskId] = setInterval(async () => {
+    try {
+      const res  = await fetch(`${KIE_BASE_FK}/record-info?taskId=${encodeURIComponent(taskId)}`, {
+        headers: { 'Authorization': `Bearer ${API_KEY}` }
+      });
+      const data = await res.json();
+      if (data.code !== 200) throw new Error(data.msg || 'Query failed');
+      const record = data.data;
+      const flag   = record.successFlag;
+      if (flag === 1) {
+        clearInterval(activePollers[taskId]);
+        delete activePollers[taskId];
+        const url = record.response?.resultImageUrl;
+        if (url) {
+          renderResult(resultArea, [url], 'image', taskId);
+          saveHistory({ ...meta, taskId, downloadUrl: url, time: Date.now() });
+          showToast('Flux Kontext complete ✓', 'success');
+        } else { setError(resultArea, 'Completed but no URL found.'); }
+      } else if (flag === 2 || flag === 3) {
+        clearInterval(activePollers[taskId]);
+        delete activePollers[taskId];
+        setError(resultArea, record.errorMessage || 'Generation failed');
+        showToast('Generation failed', 'error');
+      } else {
+        setLoading(resultArea, 'Processing…', 'processing', taskId);
+      }
+    } catch (err) { console.warn('Poll FK error:', err.message); }
+  }, POLL_INTERVAL);
+}
+
+/* Upscale / Remove Background */
 async function generateUpscale() {
+  const model    = document.getElementById('up-model').value;
   const imageUrl = uploadedUrls.up;
-  if (!imageUrl) return showToast('Faça upload de uma imagem primeiro', 'error');
-
-  const body = { 
-    model: document.getElementById('up-model').value, 
-    input: { image_urls: [imageUrl] } 
-  };
-
-  await startTask(body, 'up-result', 'image', { prompt: 'Upscale', type: 'upscale' });
+  if (!imageUrl) { showToast('Please upload an image first', 'error'); return; }
+  const body = { model, input: { image_urls: [imageUrl] } };
+  await startTask(body, 'up-result', 'image', { prompt: model, model, type: 'upscale' });
 }
 
-/* ── Task Management ─────────────────────────────────── */
+/* ── Generic Task Runner ─────────────────────────────── */
 function checkApiKey() {
-  if (!API_KEY) {
-    showToast('Configure sua API Key primeiro', 'error');
-    return false;
-  }
+  if (!API_KEY) { showToast('Please set your API key first', 'error'); return false; }
   return true;
 }
 
 async function startTask(body, resultAreaId, mediaType, meta) {
   const resultArea = document.getElementById(resultAreaId);
   if (!checkApiKey()) return;
-
-  setLoading(resultArea, 'Enviando tarefa...', 'pending');
+  setLoading(resultArea, 'Submitting task…', 'pending');
   try {
-    const res = await fetch(`${KIE_BASE}/createTask`, {
+    const res  = await fetch(`${KIE_BASE}/createTask`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
       body: JSON.stringify(body)
     });
     const data = await res.json();
-    if (data.code !== 200 || !data.data?.taskId) throw new Error(data.msg || 'Erro ao criar tarefa');
-
-    pollTask(data.data.taskId, resultAreaId, mediaType, meta);
+    if (data.code !== 200 || !data.data?.taskId) throw new Error(data.msg || `API error ${data.code}`);
+    const taskId = data.data.taskId;
+    setLoading(resultArea, `Processing… [${taskId}]`, 'processing', taskId);
+    pollTask(taskId, resultAreaId, mediaType, meta);
   } catch (err) {
     setError(resultArea, err.message);
+    showToast('Task failed: ' + err.message, 'error');
   }
 }
 
 function pollTask(taskId, resultAreaId, mediaType, meta) {
   if (activePollers[taskId]) clearInterval(activePollers[taskId]);
-
+  const resultArea = document.getElementById(resultAreaId);
   activePollers[taskId] = setInterval(async () => {
     try {
-      const res = await fetch(`${KIE_BASE}/recordInfo?taskId=${encodeURIComponent(taskId)}`, {
+      const res  = await fetch(`${KIE_BASE}/recordInfo?taskId=${encodeURIComponent(taskId)}`, {
         headers: { 'Authorization': `Bearer ${API_KEY}` }
       });
       const data = await res.json();
+      if (data.code !== 200) throw new Error(data.msg || 'Query failed');
       const record = data.data;
       const status = (record.status || record.state || '').toLowerCase();
-
       if (status === 'success' || status === 'completed' || status === 'finish') {
         clearInterval(activePollers[taskId]);
         delete activePollers[taskId];
         const urls = extractUrls(record, mediaType);
         if (urls.length > 0) {
-          renderResult(document.getElementById(resultAreaId), urls, mediaType, taskId);
+          renderResult(resultArea, urls, mediaType, taskId);
           saveHistory({ ...meta, taskId, downloadUrl: urls[0], time: Date.now() });
-          showToast('Geração concluída ✓', 'success');
-        }
+          showToast('Generation complete! ✓', 'success');
+        } else { setError(resultArea, 'Completed but no media URL found.'); }
       } else if (status === 'failed' || status === 'error') {
         clearInterval(activePollers[taskId]);
         delete activePollers[taskId];
-        setError(document.getElementById(resultAreaId), record.errorMsg || 'Falha na geração');
+        setError(resultArea, record.errorMsg || record.failReason || 'Generation failed');
+        showToast('Generation failed', 'error');
+      } else {
+        const pct = record.progress ? ` ${record.progress}%` : '';
+        setLoading(resultArea, `Processing…${pct}`, 'processing', taskId);
       }
-    } catch (err) {}
+    } catch (err) { console.warn('Poll error:', err.message); }
   }, POLL_INTERVAL);
 }
 
-function pollTask4O(taskId, resultAreaId, meta) { /* ... mesmo código do original */ }
-function pollTaskFK(taskId, resultAreaId, meta) { /* ... mesmo código do original */ }
-
 function extractUrls(record, mediaType) {
   const urls = [];
-  // (mesma função do seu script original - mantida resumida)
-  const str = JSON.stringify(record || {});
-  const match = str.match(/https?:\/\/[^"'\s]+/g);
-  if (match) urls.push(...match);
+  const data = record?.data || record || {};
+  let parsed = null;
+  try {
+    if (data.resultJson) {
+      parsed = typeof data.resultJson === 'string' ? JSON.parse(data.resultJson) : data.resultJson;
+    }
+  } catch (e) {}
+  const push = (v) => {
+    if (!v) return;
+    if (typeof v === 'string') urls.push(v);
+    else if (v?.url) urls.push(v.url);
+    else if (v?.image_url) urls.push(v.image_url);
+    else if (v?.imageUrl) urls.push(v.imageUrl);
+  };
+  if (parsed) {
+    if (Array.isArray(parsed.resultUrls)) parsed.resultUrls.forEach(push);
+    if (Array.isArray(parsed.images)) parsed.images.forEach(push);
+    if (parsed.url) push(parsed.url);
+    if (parsed.image_url) push(parsed.image_url);
+  }
+  if (Array.isArray(data.resultUrls)) data.resultUrls.forEach(push);
+  if (Array.isArray(data.images)) data.images.forEach(push);
+  [data.downloadUrl, data.imageUrl, data.videoUrl, data.resultUrl].forEach(push);
+  if (urls.length === 0) {
+    const str   = JSON.stringify(record || {});
+    const match = str.match(/https?:\/\/[^"'\s]+/g);
+    if (match) urls.push(...match);
+  }
   return [...new Set(urls)];
 }
 
@@ -2031,25 +2097,46 @@ function setLoading(area, label, statusClass, taskId = '') {
     <div class="status-block">
       <div class="status-spinner"></div>
       <div class="status-label ${statusClass}">${statusClass.toUpperCase()}</div>
-      <div>${label}</div>
+      <div style="font-size:0.75rem;color:var(--text-dim)">${label}</div>
+      ${taskId ? `<div class="task-id-display">Task: ${taskId}</div>` : ''}
     </div>`;
 }
 
 function setError(area, msg) {
   area.innerHTML = `
     <div class="status-block">
-      <div style="font-size:2rem">✕</div>
+      <div style="font-size:2rem;margin-bottom:0.25rem">✕</div>
       <div class="status-label failed">FAILED</div>
-      <div>${msg}</div>
+      <div style="color:var(--text-muted);font-size:0.78rem;margin-top:0.25rem;max-width:280px;text-align:center">${msg}</div>
     </div>`;
 }
 
 function renderResult(area, urls, mediaType, taskId) {
   if (mediaType === 'video') {
-    area.innerHTML = `<video controls src="${urls[0]}"></video>`;
+    const url = urls[0];
+    area.innerHTML = `
+      <div class="result-vid-wrap">
+        <video class="result-vid" controls autoplay muted playsinline>
+          <source src="${url}">Your browser doesn't support HTML5 video.
+        </video>
+        <div class="result-actions">
+          <a class="btn-result-action" href="${url}" download target="_blank">⬇ Download</a>
+          <button class="btn-result-action" onclick="openModal('${url}','video','${taskId}')">⛶ Fullscreen</button>
+        </div>
+      </div>`;
+  } else if (urls.length === 1) {
+    const url = urls[0];
+    area.innerHTML = `
+      <div class="result-img-wrap">
+        <img class="result-img" src="${url}" alt="Generated image" onclick="openModal('${url}','image','${taskId}')"/>
+        <div class="result-actions">
+          <a class="btn-result-action" href="${url}" download target="_blank">⬇ Download</a>
+          <button class="btn-result-action" onclick="openModal('${url}','image','${taskId}')">⛶ Fullscreen</button>
+        </div>
+      </div>`;
   } else {
-    const html = urls.map(url => `<img src="${url}" onclick="openModal('${url}','image','${taskId}')" style="max-width:100%;cursor:pointer">`).join('');
-    area.innerHTML = html;
+    const items = urls.map(u => `<img class="result-grid-img" src="${u}" alt="Generated" onclick="openModal('${u}','image','${taskId}')"/>`).join('');
+    area.innerHTML = `<div class="result-grid">${items}</div>`;
   }
 }
 
@@ -2059,42 +2146,96 @@ function initModal() {
   document.querySelector('.modal-overlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();
   });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 }
 
 window.openModal = function(url, type, taskId) {
-  currentModalTask = taskId;
-  // ... (implemente conforme seu HTML)
-  console.log('Abrindo modal:', url, type);
+  const overlay     = document.getElementById('previewModal');
+  const mediaDiv    = document.getElementById('modalMedia');
+  const downloadBtn = document.getElementById('modalDownload');
+  const metaDiv     = document.getElementById('modalMeta');
+  currentModalTask  = taskId;
+  if (type === 'video') {
+    mediaDiv.innerHTML = `<video controls autoplay muted playsinline style="width:100%"><source src="${url}"></video>`;
+  } else {
+    mediaDiv.innerHTML = `<img src="${url}" style="width:100%"/>`;
+  }
+  downloadBtn.href = url;
+  metaDiv.textContent = `Task ID: ${taskId} | URL: ${url}`;
+  overlay.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
 };
 
 function closeModal() {
   document.getElementById('previewModal').classList.add('hidden');
+  document.body.style.overflow = '';
+  document.getElementById('modalMedia').innerHTML = '';
 }
+
+document.getElementById('modalRetry')?.addEventListener('click', () => {
+  closeModal();
+  showToast('Re-trigger your generation from the panel', 'info');
+});
 
 /* ── History ─────────────────────────────────────────── */
 function saveHistory(entry) {
-  const history = JSON.parse(localStorage.getItem('kie_history') || '[]');
+  const history = getHistory();
   history.unshift(entry);
   if (history.length > 50) history.pop();
   localStorage.setItem('kie_history', JSON.stringify(history));
 }
 
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('kie_history') || '[]'); } catch { return []; }
+}
+
 function renderHistory() {
-  // implemente conforme seu HTML
-  console.log('Renderizando histórico...');
+  const grid    = document.getElementById('historyGrid');
+  const history = getHistory();
+  const countEl = document.getElementById('historyCount');
+  if (countEl) countEl.textContent = history.length ? `${history.length} item${history.length !== 1 ? 's' : ''}` : '';
+  if (!history.length) {
+    grid.innerHTML = '<div class="history-empty">No history yet. Start generating!</div>';
+    return;
+  }
+  grid.innerHTML = history.map(entry => {
+    const isVideo = entry.type === 'image-to-video';
+    const timeStr = entry.time
+      ? new Date(entry.time).toLocaleDateString('en', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      : '';
+    const media = isVideo
+      ? `<div class="history-card-media video-thumb">🎬</div>`
+      : `<img class="history-card-media" src="${entry.downloadUrl}" alt="history" loading="lazy" onerror="this.parentNode.innerHTML='<div class=\\'history-card-media video-thumb\\'>🖼</div>'"/>`;
+    return `
+      <div class="history-card" onclick="openModal('${entry.downloadUrl}','${isVideo ? 'video' : 'image'}','${entry.taskId}')">
+        <div class="history-card-type">${entry.type || 'generation'}</div>
+        ${media}
+        <div class="history-card-info">
+          <div class="history-card-model">${entry.model || 'unknown'}</div>
+          <div class="history-card-prompt">${entry.prompt || '—'}</div>
+          <div class="history-card-time">${timeStr}</div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 function initHistory() {
-  // seu código de clear history
+  document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+    if (!confirm('Clear all history?')) return;
+    localStorage.removeItem('kie_history');
+    renderHistory();
+    showToast('History cleared', 'info');
+  });
 }
 
 /* ── Toast ───────────────────────────────────────────── */
+let toastTimer = null;
 function showToast(msg, type = 'info') {
   const toast = document.getElementById('toast');
-  if (!toast) return;
   toast.textContent = msg;
-  toast.className = `toast show ${type}`;
-  setTimeout(() => toast.classList.remove('show'), 3200);
+  toast.className   = `toast show ${type}`;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 3200);
 }
 </script>
 </body>
