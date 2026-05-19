@@ -3,2239 +3,1729 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KIE AI — Media Generation</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<title>KIE.AI Studio</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --bg:#0a0a0a;
-  --bg1:#111111;
-  --bg2:#161616;
-  --bg3:#1e1e1e;
-  --bg4:#242424;
-  --border:#252525;
-  --border-hi:#333333;
-  --text:#f0ede6;
-  --text-dim:#888;
-  --text-muted:#4a4a4a;
-  --accent:#e8ff47;
-  --accent2:#ff6b35;
-  --accent3:#7ee8ff;
-  --success:#47ff8a;
-  --error:#ff4747;
-  --radius:3px;
-  --radius-lg:6px;
-  --mono:'DM Mono',monospace;
-  --serif:'Instrument Serif',serif;
-  --display:'Bebas Neue',sans-serif;
-  --sidebar-w:270px;
-  --transition:0.15s ease;
-}
-
-html{height:100%;background:var(--bg)}
-body{
-  min-height:100%;
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--mono);
+  --bg:#080808;
+  --s1:#0f0f0f;
+  --s2:#141414;
+  --s3:#1a1a1a;
+  --s4:#222;
+  --line:#1f1f1f;
+  --line2:#2a2a2a;
+  --txt:#e8e6e0;
+  --dim:#6b6b6b;
+  --muted:#333;
+  --hi:#c8ff40;
+  --hi2:#40c8ff;
+  --red:#ff4040;
+  --green:#40ff90;
+  --sb:240px;
+  --r:4px;
+  --t:0.12s ease;
+  font-family:'SF Mono','Fira Mono','Consolas',monospace;
   font-size:13px;
-  line-height:1.6;
-  display:grid;
-  grid-template-columns:var(--sidebar-w) 1fr;
-  grid-template-rows:100vh;
-  overflow:hidden;
 }
 
-/* ────────────────────────────────────────────────
-   SIDEBAR
-──────────────────────────────────────────────── */
-#sidebar{
-  background:var(--bg1);
-  border-right:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  overflow-y:auto;
-  overflow-x:hidden;
-  position:relative;
-  z-index:10;
-  scrollbar-width:thin;
-  scrollbar-color:var(--border-hi) transparent;
+html,body{height:100%;background:var(--bg);color:var(--txt)}
+body{display:flex;overflow:hidden}
+
+/* ─── SIDEBAR ─── */
+#sb{
+  width:var(--sb);flex-shrink:0;
+  background:var(--s1);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:none;
+}
+#sb::-webkit-scrollbar{display:none}
+
+.sb-logo{
+  padding:1.4rem 1.2rem 1.2rem;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:baseline;gap:0.4rem;
+}
+.sb-logo-mark{
+  font-size:1.6rem;font-weight:700;letter-spacing:-0.02em;
+  color:var(--txt);
+}
+.sb-logo-mark b{color:var(--hi)}
+.sb-logo-sub{
+  font-size:0.58rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--dim);
 }
 
-.sidebar-logo{
-  padding:1.75rem 1.5rem 1.5rem;
-  border-bottom:1px solid var(--border);
-  position:relative;
-  overflow:hidden;
+.sb-group{
+  padding:1rem 1.2rem 0.4rem;
+  font-size:0.55rem;letter-spacing:0.28em;
+  text-transform:uppercase;color:var(--muted);
+  border-top:1px solid var(--line);margin-top:0.5rem;
 }
-.sidebar-logo::after{
-  content:'';
-  position:absolute;
-  top:-40px;right:-40px;
-  width:120px;height:120px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(232,255,71,0.07) 0%,transparent 70%);
-  pointer-events:none;
-}
-.logo-word{
-  font-family:var(--display);
-  font-size:2.6rem;
-  letter-spacing:0.05em;
-  color:var(--text);
-  line-height:1;
-}
-.logo-word span{color:var(--accent)}
-.logo-sub{
-  font-size:0.6rem;
-  color:var(--text-muted);
-  letter-spacing:0.22em;
-  text-transform:uppercase;
-  margin-top:0.3rem;
-}
+.sb-group:first-of-type{border-top:none;margin-top:0}
 
-.sidebar-section-label{
-  font-size:0.55rem;
-  letter-spacing:0.28em;
-  text-transform:uppercase;
-  color:var(--text-muted);
-  padding:1.4rem 1.5rem 0.5rem;
-  border-top:1px solid var(--border);
-  margin-top:0.5rem;
-}
-.sidebar-section-label:first-of-type{margin-top:0;border-top:none}
-
-.sidebar-nav{list-style:none}
-.nav-item{
-  display:flex;
-  align-items:center;
-  gap:0.7rem;
-  padding:0.65rem 1.5rem;
-  cursor:pointer;
-  color:var(--text-dim);
-  font-size:0.75rem;
-  letter-spacing:0.07em;
-  text-transform:uppercase;
+.sb-nav{list-style:none}
+.sn{
+  display:flex;align-items:center;gap:0.6rem;
+  padding:0.55rem 1.2rem;
+  font-size:0.72rem;letter-spacing:0.06em;
+  color:var(--dim);cursor:pointer;
   border-left:2px solid transparent;
-  transition:all var(--transition);
+  transition:all var(--t);
   user-select:none;
-  position:relative;
 }
-.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.03)}
-.nav-item.active{
-  color:var(--accent);
-  border-left-color:var(--accent);
-  background:rgba(232,255,71,0.04);
-}
-.nav-icon{font-size:0.95rem;opacity:0.65;width:16px;text-align:center;flex-shrink:0}
-.nav-item.active .nav-icon{opacity:1}
-.nav-badge{
-  margin-left:auto;
-  font-size:0.5rem;
-  letter-spacing:0.1em;
-  background:rgba(126,232,255,0.12);
-  color:var(--accent3);
-  border:1px solid rgba(126,232,255,0.2);
-  padding:0.1rem 0.35rem;
-  border-radius:2px;
+.sn:hover{color:var(--txt);background:rgba(255,255,255,0.02)}
+.sn.on{color:var(--hi);border-left-color:var(--hi);background:rgba(200,255,64,0.04)}
+.sn-ic{font-size:0.85rem;width:14px;text-align:center;flex-shrink:0;opacity:0.6}
+.sn.on .sn-ic{opacity:1}
+.sn-badge{
+  margin-left:auto;font-size:0.5rem;letter-spacing:0.06em;
+  background:rgba(64,200,255,0.1);color:var(--hi2);
+  border:1px solid rgba(64,200,255,0.2);padding:0.08rem 0.3rem;border-radius:2px;
 }
 
-.sidebar-footer{
+.sb-footer{
   margin-top:auto;
-  padding:1.25rem 1.5rem 1.5rem;
-  border-top:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  gap:0.85rem;
+  padding:1rem 1.2rem 1.2rem;
+  border-top:1px solid var(--line);
+  display:flex;flex-direction:column;gap:0.7rem;
 }
+.credits-row{
+  display:flex;align-items:center;
+  background:var(--s3);border:1px solid var(--line);
+  border-radius:var(--r);padding:0.45rem 0.7rem;gap:0.5rem;
+}
+.cr-label{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted)}
+.cr-val{margin-left:auto;font-size:0.75rem;color:var(--hi);font-weight:500}
+.cr-btn{
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:0.8rem;padding:0;line-height:1;
+  transition:color var(--t),transform var(--t);
+}
+.cr-btn:hover{color:var(--hi);transform:rotate(90deg)}
 
-.credits-display{
-  padding:0.55rem 0.8rem;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:0.5rem;
+.key-area label{
+  display:block;font-size:0.55rem;letter-spacing:0.2em;
+  color:var(--muted);text-transform:uppercase;margin-bottom:0.4rem;
 }
-.credits-label{
-  font-size:0.55rem;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--text-muted);
+.key-row{display:flex;gap:0.35rem}
+.key-input{
+  flex:1;min-width:0;
+  background:var(--s3);border:1px solid var(--line);
+  color:var(--txt);font-family:inherit;font-size:0.68rem;
+  padding:0.42rem 0.55rem;border-radius:var(--r);outline:none;
+  transition:border var(--t);
 }
-.credits-value{
-  font-size:0.78rem;
-  color:var(--accent);
-  font-weight:500;
-  margin-left:auto;
+.key-input:focus{border-color:var(--line2)}
+.key-input::placeholder{color:var(--muted)}
+.key-save{
+  background:var(--hi);color:#000;border:none;
+  font-family:inherit;font-size:0.58rem;letter-spacing:0.1em;
+  text-transform:uppercase;font-weight:600;
+  padding:0 0.7rem;border-radius:var(--r);cursor:pointer;
+  transition:opacity var(--t);flex-shrink:0;
 }
-.btn-refresh-credits{
-  background:none;
-  border:none;
-  color:var(--text-muted);
-  cursor:pointer;
-  font-size:0.8rem;
-  padding:0;
-  line-height:1;
-  transition:color var(--transition),transform var(--transition);
-}
-.btn-refresh-credits:hover{color:var(--accent);transform:rotate(90deg)}
+.key-save:hover{opacity:0.8}
 
-.api-key-area label{
-  display:block;
-  font-size:0.55rem;
-  letter-spacing:0.22em;
-  color:var(--text-muted);
-  text-transform:uppercase;
-  margin-bottom:0.45rem;
+/* ─── HAMBURGER ─── */
+.hbg{
+  display:none;position:fixed;top:0.8rem;left:0.8rem;z-index:100;
+  background:var(--s1);border:1px solid var(--line2);
+  padding:0.45rem 0.5rem;cursor:pointer;
+  flex-direction:column;gap:3.5px;border-radius:var(--r);
 }
-.api-key-input-wrap{display:flex;gap:0.4rem}
-.api-key-input-wrap input{
-  flex:1;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  color:var(--text);
-  font-family:var(--mono);
-  font-size:0.7rem;
-  padding:0.45rem 0.6rem;
-  border-radius:var(--radius);
-  outline:none;
-  transition:border var(--transition);
-  min-width:0;
-}
-.api-key-input-wrap input:focus{border-color:var(--border-hi)}
-.api-key-input-wrap input::placeholder{color:var(--text-muted)}
-.btn-save-key{
-  background:var(--accent);
-  color:#000;
-  border:none;
-  font-family:var(--mono);
-  font-size:0.6rem;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  font-weight:500;
-  padding:0 0.8rem;
-  border-radius:var(--radius);
-  cursor:pointer;
-  transition:opacity var(--transition),transform var(--transition);
-  flex-shrink:0;
-}
-.btn-save-key:hover{opacity:0.85;transform:translateY(-1px)}
+.hbg span{display:block;width:17px;height:1.5px;background:var(--txt);transition:all 0.2s}
 
-/* ────────────────────────────────────────────────
-   HAMBURGER
-──────────────────────────────────────────────── */
-.hamburger{
-  display:none;
-  position:fixed;
-  top:0.85rem;
-  left:0.85rem;
-  z-index:100;
-  background:var(--bg1);
-  border:1px solid var(--border-hi);
-  padding:0.5rem 0.55rem;
-  cursor:pointer;
-  flex-direction:column;
-  gap:4px;
-  border-radius:var(--radius);
-}
-.hamburger span{
-  display:block;
-  width:18px;
-  height:1.5px;
-  background:var(--text);
-  transition:all 0.2s;
-}
-
-/* ────────────────────────────────────────────────
-   MAIN CONTENT
-──────────────────────────────────────────────── */
-.main-content{
-  overflow-y:auto;
+/* ─── MAIN ─── */
+#main{
+  flex:1;overflow-y:auto;
   background:var(--bg);
-  display:flex;
-  flex-direction:column;
+  display:flex;flex-direction:column;
   scrollbar-width:thin;
-  scrollbar-color:var(--border-hi) transparent;
+  scrollbar-color:var(--line2) transparent;
 }
 
-.tab-section{display:none;flex-direction:column;flex:1;animation:fadein 0.2s ease}
-.tab-section.active{display:flex}
+.tab{display:none;flex-direction:column;flex:1;animation:fi 0.18s ease}
+.tab.on{display:flex}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-@keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+/* ─── PAGE HEADER ─── */
+.ph{
+  padding:1.75rem 2rem 1.4rem;
+  border-bottom:1px solid var(--line);flex-shrink:0;
+}
+.ph h1{font-size:1.6rem;font-weight:700;letter-spacing:-0.01em;line-height:1}
+.ph h1 em{color:var(--hi);font-style:normal}
+.ph p{color:var(--dim);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;margin-top:0.35rem}
 
-/* ────────────────────────────────────────────────
-   SECTION HEADER
-──────────────────────────────────────────────── */
-.section-header{
-  padding:2rem 2.5rem 1.5rem;
-  border-bottom:1px solid var(--border);
-  position:relative;
-  overflow:hidden;
-  flex-shrink:0;
+/* ─── WORKSPACE ─── */
+.ws{
+  display:grid;grid-template-columns:320px 1fr;
+  flex:1;min-height:0;
 }
-.section-header::before{
-  content:'';
-  position:absolute;
-  top:-80px;right:-80px;
-  width:220px;height:220px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(232,255,71,0.05) 0%,transparent 65%);
-  pointer-events:none;
-}
-.section-header h1{
-  font-family:var(--display);
-  font-size:3rem;
-  letter-spacing:0.04em;
-  line-height:1;
-  color:var(--text);
-}
-.section-header h1 .accent{
-  color:var(--accent);
-  font-family:var(--serif);
-  font-style:italic;
-  font-size:2.7rem;
-}
-.section-header p{
-  color:var(--text-muted);
-  font-size:0.7rem;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  margin-top:0.45rem;
-}
+.ws.wide{grid-template-columns:340px 1fr}
 
-/* ────────────────────────────────────────────────
-   WORKSPACE
-──────────────────────────────────────────────── */
-.workspace{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  flex:1;
-  min-height:0;
+.pn{
+  padding:1.5rem;
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;gap:0.8rem;
+  overflow-y:auto;scrollbar-width:thin;
+  scrollbar-color:var(--line2) transparent;
 }
-.workspace.single-panel{
-  display:flex;
-  flex-direction:row;
-  padding:0;
-}
-.workspace.single-panel .wide-panel{
-  width:380px;
-  flex-shrink:0;
-  border-right:1px solid var(--border);
-}
-.workspace.single-panel .t2i-result-panel{
-  flex:1;
-  padding:2rem;
-  display:flex;
-  flex-direction:column;
-  gap:1rem;
-}
-.workspace.single-panel .t2i-result-panel h3{
-  font-family:var(--display);
-  font-size:1.1rem;
-  letter-spacing:0.1em;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  padding-bottom:0.75rem;
-  border-bottom:1px solid var(--border);
-}
+.pn::-webkit-scrollbar{width:2px}
+.pn::-webkit-scrollbar-thumb{background:var(--line2)}
 
-.panel{
-  padding:1.75rem;
-  border-right:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  gap:0.9rem;
-  overflow-y:auto;
-  scrollbar-width:thin;
-  scrollbar-color:var(--border-hi) transparent;
-}
-.result-panel{
-  border-right:none;
-  padding:1.75rem;
-}
+.rpn{padding:1.5rem;overflow-y:auto}
 
-.panel h3{
-  font-family:var(--display);
-  font-size:1.1rem;
-  letter-spacing:0.1em;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  padding-bottom:0.75rem;
-  border-bottom:1px solid var(--border);
+.pn-title{
+  font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--muted);padding-bottom:0.75rem;border-bottom:1px solid var(--line);
   flex-shrink:0;
 }
 
-/* ────────────────────────────────────────────────
-   UPLOAD ZONE
-──────────────────────────────────────────────── */
-.upload-zone{
-  border:1px dashed var(--border-hi);
-  border-radius:var(--radius-lg);
-  cursor:pointer;
-  transition:border-color 0.2s,background 0.2s;
-  background:var(--bg2);
-  position:relative;
-  min-height:130px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+/* ─── UPLOAD ZONE ─── */
+.uz{
+  border:1px dashed var(--line2);border-radius:var(--r);
+  cursor:pointer;transition:border-color 0.2s,background 0.2s;
+  background:var(--s2);position:relative;
+  min-height:110px;display:flex;align-items:center;justify-content:center;
   flex-shrink:0;
 }
-.upload-zone:hover,.upload-zone.drag-over{
-  border-color:var(--accent);
-  background:rgba(232,255,71,0.025);
-}
-.upload-inner{
-  text-align:center;
-  pointer-events:none;
-  padding:1.25rem;
-}
-.upload-icon{
-  font-size:1.6rem;
-  margin-bottom:0.4rem;
-  opacity:0.35;
-}
-.upload-inner p{
-  font-size:0.76rem;
-  color:var(--text-dim);
-}
-.upload-inner .link{
-  color:var(--accent);
-  text-decoration:underline;
-  text-underline-offset:2px;
-}
-.upload-inner small{
-  display:block;
-  color:var(--text-muted);
-  font-size:0.6rem;
-  margin-top:0.2rem;
-}
+.uz:hover,.uz.drag{border-color:var(--hi);background:rgba(200,255,64,0.02)}
+.uz-inner{text-align:center;pointer-events:none;padding:1rem}
+.uz-ic{font-size:1.3rem;margin-bottom:0.3rem;opacity:0.3}
+.uz-inner p{font-size:0.7rem;color:var(--dim)}
+.uz-inner p b{color:var(--hi)}
+.uz-inner small{display:block;color:var(--muted);font-size:0.58rem;margin-top:0.2rem}
 .file-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 
-.preview-wrap{position:relative;border-radius:var(--radius-lg);overflow:hidden;flex-shrink:0}
-.preview-wrap img{
-  width:100%;
-  max-height:190px;
-  object-fit:cover;
-  display:block;
-  filter:brightness(0.88);
+.pv-wrap{position:relative;border-radius:var(--r);overflow:hidden;flex-shrink:0}
+.pv-wrap img{width:100%;max-height:160px;object-fit:cover;display:block;filter:brightness(0.85)}
+.rm-img{
+  position:absolute;top:0.35rem;right:0.35rem;
+  background:rgba(0,0,0,0.8);border:1px solid var(--line2);
+  color:var(--txt);font-family:inherit;font-size:0.58rem;
+  padding:0.18rem 0.45rem;border-radius:var(--r);cursor:pointer;
+  transition:all var(--t);
 }
-.btn-clear-img{
-  position:absolute;top:0.4rem;right:0.4rem;
-  background:rgba(0,0,0,0.75);
-  border:1px solid var(--border-hi);
-  color:var(--text);
-  font-family:var(--mono);
-  font-size:0.62rem;
-  padding:0.22rem 0.5rem;
-  border-radius:var(--radius);
-  cursor:pointer;
-  transition:all var(--transition);
+.rm-img:hover{background:var(--red);border-color:var(--red)}
+
+/* ─── FIELDS ─── */
+.fg{display:flex;flex-direction:column;gap:0.35rem;flex-shrink:0}
+.fl{
+  font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);display:block;
 }
-.btn-clear-img:hover{background:var(--error);border-color:var(--error)}
-
-/* ────────────────────────────────────────────────
-   FORM FIELDS
-──────────────────────────────────────────────── */
-.field-group{display:flex;flex-direction:column;gap:0.4rem;flex-shrink:0}
-
-.field-label{
-  font-size:0.58rem;
-  letter-spacing:0.22em;
-  text-transform:uppercase;
-  color:var(--text-muted);
-  display:block;
-  flex-shrink:0;
+.sel{
+  width:100%;background:var(--s2);border:1px solid var(--line);
+  color:var(--txt);font-family:inherit;font-size:0.73rem;
+  padding:0.45rem 1.8rem 0.45rem 0.65rem;border-radius:var(--r);
+  outline:none;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23444'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 0.65rem center;
+  transition:border var(--t);
 }
+.sel:focus{border-color:var(--line2)}
+.sel optgroup{color:var(--muted);font-size:0.68rem}
+.sel option{background:var(--s2);color:var(--txt)}
 
-.select-field{
-  width:100%;
-  background:var(--bg2);
-  border:1px solid var(--border);
-  color:var(--text);
-  font-family:var(--mono);
-  font-size:0.76rem;
-  padding:0.5rem 2rem 0.5rem 0.7rem;
-  border-radius:var(--radius);
-  outline:none;
-  cursor:pointer;
-  appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23444'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 0.7rem center;
-  transition:border var(--transition),background var(--transition);
+.ta{
+  width:100%;background:var(--s2);border:1px solid var(--line);
+  color:var(--txt);font-family:inherit;font-size:0.73rem;
+  padding:0.55rem 0.7rem;border-radius:var(--r);resize:vertical;
+  outline:none;line-height:1.6;transition:border var(--t);
 }
-.select-field:focus{border-color:var(--border-hi);background-color:var(--bg3)}
-.select-field optgroup{color:var(--text-muted);font-size:0.7rem}
-.select-field option{background:var(--bg2);color:var(--text)}
+.ta:focus{border-color:var(--line2)}
+.ta::placeholder{color:var(--muted)}
 
-.textarea-field{
-  width:100%;
-  background:var(--bg2);
-  border:1px solid var(--border);
-  color:var(--text);
-  font-family:var(--mono);
-  font-size:0.76rem;
-  padding:0.6rem 0.75rem;
-  border-radius:var(--radius);
-  resize:vertical;
-  outline:none;
-  line-height:1.6;
-  transition:border var(--transition);
+.pw{position:relative;flex-shrink:0}
+.cp{
+  position:absolute;top:0.35rem;right:0.35rem;
+  background:var(--s3);border:1px solid var(--line);color:var(--muted);
+  font-size:0.8rem;width:22px;height:22px;border-radius:var(--r);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all var(--t);
 }
-.textarea-field:focus{border-color:var(--border-hi)}
-.textarea-field::placeholder{color:var(--text-muted)}
-.textarea-field.tall{min-height:110px}
+.cp:hover{color:var(--hi);border-color:var(--hi)}
 
-.prompt-wrap{position:relative;flex-shrink:0}
-.btn-copy-prompt{
-  position:absolute;
-  top:0.4rem;right:0.4rem;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  color:var(--text-muted);
-  font-size:0.85rem;
-  width:24px;height:24px;
-  border-radius:var(--radius);
-  cursor:pointer;
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;flex-shrink:0}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.65rem;flex-shrink:0}
+.og{display:flex;flex-direction:column;gap:0.35rem}
+
+.sep{height:1px;background:var(--line);flex-shrink:0;margin:0.15rem 0}
+
+/* ─── GENERATE BTN ─── */
+.gen-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--hi);color:#000;border:none;
+  font-family:inherit;font-size:0.78rem;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.65rem 1rem;border-radius:var(--r);
+  cursor:pointer;width:100%;margin-top:auto;flex-shrink:0;
+  transition:all var(--t);overflow:hidden;position:relative;
+}
+.gen-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+  transform:translateX(-100%);transition:transform 0.4s;
+}
+.gen-btn:hover::after{transform:translateX(100%)}
+.gen-btn:hover{background:#b8e830;transform:translateY(-1px)}
+.gen-btn:active{transform:none}
+
+/* ─── RESULT AREA ─── */
+.ra{
+  background:var(--s2);border:1px solid var(--line);
+  border-radius:var(--r);min-height:200px;
   display:flex;align-items:center;justify-content:center;
-  transition:all var(--transition);
+  flex:1;overflow:hidden;
 }
-.btn-copy-prompt:hover{color:var(--accent);border-color:var(--accent)}
+.rp{text-align:center;color:var(--muted);padding:2rem}
+.rp-ic{font-size:1.8rem;margin-bottom:0.4rem;opacity:0.2;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:0.2}50%{opacity:0.45}}
+.rp p{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase}
 
-.options-row{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:0.75rem;
-  flex-shrink:0;
+.ri-wrap,.rv-wrap{width:100%;display:flex;flex-direction:column}
+.ri{width:100%;display:block;cursor:zoom-in}
+.rv{width:100%;display:block}
+.r-acts{display:flex;border-top:1px solid var(--line)}
+.r-act{
+  flex:1;background:none;border:none;border-right:1px solid var(--line);
+  color:var(--dim);font-family:inherit;font-size:0.6rem;letter-spacing:0.1em;
+  text-transform:uppercase;padding:0.55rem;cursor:pointer;
+  text-align:center;text-decoration:none;display:block;transition:all var(--t);
 }
-.options-row-2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0.75rem;
-  flex-shrink:0;
-}
-.option-group{display:flex;flex-direction:column;gap:0.4rem}
+.r-act:last-child{border-right:none}
+.r-act:hover{background:var(--s3);color:var(--hi)}
 
-/* ────────────────────────────────────────────────
-   GENERATE BUTTON
-──────────────────────────────────────────────── */
-.btn-generate{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:var(--accent);
-  color:#000;
-  border:none;
-  font-family:var(--display);
-  font-size:1.05rem;
-  letter-spacing:0.14em;
-  padding:0.7rem 1.2rem;
-  border-radius:var(--radius);
-  cursor:pointer;
-  width:100%;
-  margin-top:auto;
-  flex-shrink:0;
-  transition:all var(--transition);
-  position:relative;
-  overflow:hidden;
-}
-.btn-generate::before{
-  content:'';
-  position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);
-  transform:translateX(-100%);
-  transition:transform 0.4s;
-}
-.btn-generate:hover::before{transform:translateX(100%)}
-.btn-generate:hover{background:#d4e83c;transform:translateY(-1px)}
-.btn-generate:active{transform:translateY(0)}
-.btn-icon{font-size:1.1rem;font-family:sans-serif;flex-shrink:0}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:0;width:100%}
+.rgrid img{width:100%;display:block;cursor:zoom-in;border:1px solid var(--line);transition:filter var(--t)}
+.rgrid img:hover{filter:brightness(1.1)}
 
-/* ────────────────────────────────────────────────
-   RESULT AREA
-──────────────────────────────────────────────── */
-.result-area{
-  background:var(--bg2);
-  border-radius:var(--radius-lg);
-  min-height:240px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex:1;
-  overflow:hidden;
-  border:1px solid var(--border);
-}
-
-.result-placeholder{
-  text-align:center;
-  color:var(--text-muted);
-  padding:2rem;
-}
-.placeholder-icon{
-  font-size:2rem;
-  margin-bottom:0.5rem;
-  opacity:0.25;
-  animation:pulse 3s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{opacity:0.25}50%{opacity:0.5}}
-.result-placeholder p{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase}
-
-.result-img-wrap,.result-vid-wrap{width:100%;display:flex;flex-direction:column}
-.result-img{width:100%;display:block;cursor:zoom-in}
-.result-vid{width:100%;display:block}
-
-.result-actions{
-  display:flex;
-  gap:0;
-  border-top:1px solid var(--border);
-}
-.btn-result-action{
-  flex:1;
-  background:none;
-  border:none;
-  border-right:1px solid var(--border);
-  color:var(--text-dim);
-  font-family:var(--mono);
-  font-size:0.66rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:0.6rem;
-  cursor:pointer;
-  text-align:center;
-  text-decoration:none;
-  display:block;
-  transition:all var(--transition);
-}
-.btn-result-action:last-child{border-right:none}
-.btn-result-action:hover{background:var(--bg4);color:var(--accent)}
-
-.result-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:0;
-  width:100%;
-}
-.result-grid-img{
-  width:100%;
-  display:block;
-  cursor:zoom-in;
-  border:1px solid var(--border);
-  transition:filter var(--transition);
-}
-.result-grid-img:hover{filter:brightness(1.08)}
-
-/* ────────────────────────────────────────────────
-   STATUS / LOADING
-──────────────────────────────────────────────── */
-.status-block{
-  text-align:center;
-  padding:2rem;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:0.7rem;
-}
-.status-spinner{
-  width:26px;height:26px;
-  border:2px solid var(--border-hi);
-  border-top-color:var(--accent);
-  border-radius:50%;
-  animation:spin 0.75s linear infinite;
-}
+/* ─── STATUS ─── */
+.sb-block{text-align:center;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:0.6rem}
+.spin{width:22px;height:22px;border:2px solid var(--line2);border-top-color:var(--hi);border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.status-label{
-  font-family:var(--display);
-  font-size:0.85rem;
-  letter-spacing:0.15em;
-}
-.status-label.pending{color:var(--accent3)}
-.status-label.processing{color:var(--accent)}
-.status-label.failed{color:var(--error)}
-.task-id-display{
-  font-size:0.58rem;
-  color:var(--text-muted);
-  letter-spacing:0.04em;
-  word-break:break-all;
-  max-width:260px;
-}
+.s-lbl{font-size:0.7rem;letter-spacing:0.15em;font-weight:600}
+.s-lbl.pend{color:var(--hi2)}
+.s-lbl.proc{color:var(--hi)}
+.s-lbl.fail{color:var(--red)}
+.s-tid{font-size:0.55rem;color:var(--muted);word-break:break-all;max-width:260px}
 
-/* ────────────────────────────────────────────────
-   CONDITIONAL MODEL OPTIONS
-──────────────────────────────────────────────── */
-.model-opts{display:none}
-.model-opts.show{display:flex;flex-direction:column;gap:0.9rem}
+/* ─── HISTORY ─── */
+.h-bar{
+  padding:1rem 2rem;display:flex;align-items:center;gap:1rem;
+  border-bottom:1px solid var(--line);flex-shrink:0;
+}
+.h-count{font-size:0.6rem;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-left:auto}
+.sec-btn{
+  background:transparent;border:1px solid var(--line2);color:var(--dim);
+  font-family:inherit;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.4rem 0.85rem;border-radius:var(--r);cursor:pointer;transition:all var(--t);
+}
+.sec-btn:hover{border-color:var(--red);color:var(--red)}
 
-/* ────────────────────────────────────────────────
-   HISTORY
-──────────────────────────────────────────────── */
-.history-toolbar{
-  padding:1.25rem 2.5rem;
-  display:flex;
-  align-items:center;
-  gap:1rem;
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
+.h-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:1px;background:var(--line);flex:1;align-content:start;overflow-y:auto;
 }
-.history-count{
-  font-size:0.62rem;
-  letter-spacing:0.1em;
-  color:var(--text-muted);
-  text-transform:uppercase;
-  margin-left:auto;
-}
-.btn-secondary{
-  background:transparent;
-  border:1px solid var(--border-hi);
-  color:var(--text-dim);
-  font-family:var(--mono);
-  font-size:0.67rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:0.42rem 0.9rem;
-  border-radius:var(--radius);
-  cursor:pointer;
-  transition:all var(--transition);
-}
-.btn-secondary:hover{border-color:var(--error);color:var(--error)}
+.hc{background:var(--s1);cursor:pointer;display:flex;flex-direction:column;overflow:hidden;transition:background var(--t)}
+.hc:hover{background:var(--s2)}
+.hc-type{font-size:0.5rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);padding:0.45rem 0.65rem 0}
+.hc-img{width:100%;height:110px;object-fit:cover;display:block}
+.hc-vid{height:110px;display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--s3);width:100%}
+.hc-info{padding:0.5rem 0.65rem 0.65rem}
+.hc-model{font-size:0.56rem;color:var(--hi);letter-spacing:0.08em;text-transform:uppercase}
+.hc-prompt{font-size:0.65rem;color:var(--dim);margin-top:0.18rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hc-time{font-size:0.53rem;color:var(--muted);margin-top:0.15rem}
+.h-empty{padding:4rem;text-align:center;color:var(--muted);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;grid-column:1/-1}
 
-.history-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:1px;
-  background:var(--border);
-  flex:1;
-  align-content:start;
-  overflow-y:auto;
+/* ─── MODAL ─── */
+.mo{
+  position:fixed;inset:0;background:rgba(0,0,0,0.93);
+  z-index:1000;display:flex;align-items:center;justify-content:center;
+  padding:1.5rem;backdrop-filter:blur(8px);
 }
-.history-card{
-  background:var(--bg1);
-  cursor:pointer;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  transition:background var(--transition);
+.mo.hidden{display:none}
+.mc{
+  background:var(--s1);border:1px solid var(--line2);
+  border-radius:var(--r);max-width:800px;width:100%;
+  max-height:90vh;overflow-y:auto;position:relative;scrollbar-width:thin;
 }
-.history-card:hover{background:var(--bg2)}
-.history-card-type{
-  font-size:0.52rem;
-  letter-spacing:0.2em;
-  text-transform:uppercase;
-  color:var(--text-muted);
-  padding:0.5rem 0.7rem 0;
+.mc-close{
+  position:absolute;top:0.65rem;right:0.65rem;
+  background:var(--s3);border:1px solid var(--line);
+  color:var(--txt);width:26px;height:26px;border-radius:50%;
+  cursor:pointer;font-size:0.68rem;z-index:2;
+  transition:all var(--t);display:flex;align-items:center;justify-content:center;
 }
-.history-card-media{
-  width:100%;
-  height:120px;
-  object-fit:cover;
-  display:block;
+.mc-close:hover{background:var(--red);border-color:var(--red)}
+.mm img,.mm video{width:100%;display:block}
+.ma{display:flex;border-top:1px solid var(--line)}
+.dl{
+  flex:1;text-align:center;padding:0.65rem;
+  font-family:inherit;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--hi);text-decoration:none;border-right:1px solid var(--line);transition:background var(--t);
 }
-.video-thumb{
-  height:120px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:2.2rem;
-  background:var(--bg3);
-  border:none;
-  width:100%;
-}
-.history-card-info{padding:0.55rem 0.7rem 0.7rem}
-.history-card-model{
-  font-size:0.58rem;
-  color:var(--accent);
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-}
-.history-card-prompt{
-  font-size:0.68rem;
-  color:var(--text-dim);
-  margin-top:0.2rem;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.history-card-time{
-  font-size:0.56rem;
-  color:var(--text-muted);
-  margin-top:0.2rem;
-}
-.history-empty{
-  padding:4rem;
-  text-align:center;
-  color:var(--text-muted);
-  font-size:0.72rem;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  grid-column:1/-1;
-}
+.dl:hover{background:var(--s2)}
+.ma .sec-btn{flex:1;border:none;border-radius:0}
+.mmeta{padding:0.65rem 1rem;font-size:0.58rem;color:var(--muted);word-break:break-all;border-top:1px solid var(--line)}
 
-/* ────────────────────────────────────────────────
-   MODAL
-──────────────────────────────────────────────── */
-.modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.92);
-  z-index:1000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:1.5rem;
-  backdrop-filter:blur(10px);
-}
-.modal-overlay.hidden{display:none}
-.modal-content{
-  background:var(--bg1);
-  border:1px solid var(--border-hi);
-  border-radius:var(--radius-lg);
-  max-width:820px;
-  width:100%;
-  max-height:90vh;
-  overflow-y:auto;
-  position:relative;
-  scrollbar-width:thin;
-}
-.modal-close{
-  position:absolute;
-  top:0.75rem;right:0.75rem;
-  background:var(--bg3);
-  border:1px solid var(--border);
-  color:var(--text);
-  width:28px;height:28px;
-  border-radius:50%;
-  cursor:pointer;
-  font-size:0.72rem;
-  z-index:2;
-  transition:all var(--transition);
-  display:flex;align-items:center;justify-content:center;
-}
-.modal-close:hover{background:var(--error);border-color:var(--error)}
-.modal-media img,.modal-media video{width:100%;display:block}
-.modal-actions{display:flex;border-top:1px solid var(--border)}
-.btn-download{
-  flex:1;
-  text-align:center;
-  padding:0.7rem;
-  font-family:var(--mono);
-  font-size:0.67rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--accent);
-  text-decoration:none;
-  border-right:1px solid var(--border);
-  transition:background var(--transition);
-}
-.btn-download:hover{background:var(--bg2)}
-.modal-actions .btn-secondary{
-  flex:1;border:none;border-radius:0;
-}
-.modal-meta{
-  padding:0.7rem 1rem;
-  font-size:0.62rem;
-  color:var(--text-muted);
-  word-break:break-all;
-  border-top:1px solid var(--border);
-}
-
-/* ────────────────────────────────────────────────
-   TOAST
-──────────────────────────────────────────────── */
+/* ─── TOAST ─── */
 .toast{
-  position:fixed;
-  bottom:1.5rem;right:1.5rem;
-  background:var(--bg2);
-  border:1px solid var(--border-hi);
-  color:var(--text);
-  font-family:var(--mono);
-  font-size:0.73rem;
-  letter-spacing:0.04em;
-  padding:0.6rem 1rem;
-  border-radius:var(--radius-lg);
-  z-index:2000;
-  opacity:0;
-  transform:translateY(10px);
-  transition:opacity 0.2s,transform 0.2s;
-  pointer-events:none;
-  max-width:300px;
+  position:fixed;bottom:1.2rem;right:1.2rem;
+  background:var(--s2);border:1px solid var(--line2);
+  color:var(--txt);font-family:inherit;font-size:0.7rem;letter-spacing:0.03em;
+  padding:0.55rem 0.9rem;border-radius:var(--r);
+  z-index:2000;opacity:0;transform:translateY(8px);
+  transition:opacity 0.18s,transform 0.18s;pointer-events:none;max-width:280px;
 }
 .toast.show{opacity:1;transform:none}
-.toast.success{border-color:var(--success);color:var(--success)}
-.toast.error{border-color:var(--error);color:var(--error)}
-.toast.info{border-color:var(--accent3);color:var(--accent3)}
+.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.err{border-color:var(--red);color:var(--red)}
+.toast.info{border-color:var(--hi2);color:var(--hi2)}
 
-/* ────────────────────────────────────────────────
-   SCROLLBAR
-──────────────────────────────────────────────── */
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:2px}
-::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
-
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:2px;height:2px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--dim)}
 .hidden{display:none!important}
 
-/* ────────────────────────────────────────────────
-   DIVIDER
-──────────────────────────────────────────────── */
-.field-divider{
-  height:1px;
-  background:var(--border);
-  flex-shrink:0;
-  margin:0.25rem 0;
-}
-
-/* ────────────────────────────────────────────────
-   RESPONSIVE
-──────────────────────────────────────────────── */
-@media(max-width:900px){
-  body{
-    grid-template-columns:1fr;
-    grid-template-rows:auto 1fr;
-    overflow:auto;
-    height:auto;
-    min-height:100vh;
+/* ─── RESPONSIVE ─── */
+@media(max-width:860px){
+  body{display:block;overflow:auto;height:auto;min-height:100vh}
+  #sb{
+    position:fixed;left:calc(-1 * var(--sb));top:0;bottom:0;
+    width:var(--sb);transition:left 0.22s;z-index:50;
   }
-  #sidebar{
-    position:fixed;
-    left:calc(-1 * var(--sidebar-w));
-    top:0;bottom:0;
-    width:var(--sidebar-w);
-    transition:left 0.25s;
-    z-index:50;
-  }
-  #sidebar.open{left:0;box-shadow:4px 0 24px rgba(0,0,0,0.5)}
-  .hamburger{display:flex}
-  .main-content{grid-column:1;padding-top:3rem;overflow-y:auto;height:calc(100vh - 0px)}
-  .workspace{grid-template-columns:1fr}
-  .panel{border-right:none;border-bottom:1px solid var(--border)}
-  .workspace.single-panel{flex-direction:column}
-  .workspace.single-panel .wide-panel{width:100%;border-right:none;border-bottom:1px solid var(--border)}
-  .section-header h1{font-size:2.2rem}
-  .section-header h1 .accent{font-size:2rem}
-  .options-row{grid-template-columns:1fr}
-  .options-row-2{grid-template-columns:1fr}
-  .section-header{padding:1.5rem 1.25rem 1rem}
-  .panel{padding:1.25rem}
+  #sb.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,0.6)}
+  .hbg{display:flex}
+  #main{padding-top:3rem}
+  .ws{grid-template-columns:1fr}
+  .pn{border-right:none;border-bottom:1px solid var(--line)}
+  .ws.wide{grid-template-columns:1fr}
+  .row2,.row3{grid-template-columns:1fr}
+  .ph{padding:1.25rem 1.2rem 1rem}
 }
 </style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════
-     SIDEBAR
-════════════════════════════════════════ -->
-<nav id="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-word">KIE<span>AI</span></div>
-    <div class="logo-sub">AI Media Generation Platform</div>
+<!-- SIDEBAR -->
+<nav id="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-mark">KIE<b>AI</b></div>
+    <div class="sb-logo-sub">Studio</div>
   </div>
 
-  <div class="sidebar-section-label">Generate</div>
-  <ul class="sidebar-nav">
-    <li class="nav-item active" data-tab="img2img">
-      <span class="nav-icon">🖼</span>
-      <span>Image to Image</span>
-    </li>
-    <li class="nav-item" data-tab="img2vid">
-      <span class="nav-icon">🎬</span>
-      <span>Image to Video</span>
-    </li>
-    <li class="nav-item" data-tab="editor">
-      <span class="nav-icon">✏️</span>
-      <span>Image Editor</span>
-    </li>
-    <li class="nav-item" data-tab="txt2img">
-      <span class="nav-icon">🎨</span>
-      <span>Text to Image</span>
-    </li>
-    <li class="nav-item" data-tab="gpt4o">
-      <span class="nav-icon">🤖</span>
-      <span>GPT-4o Image</span>
-    </li>
-    <li class="nav-item" data-tab="fluxkontext">
-      <span class="nav-icon">⚡</span>
-      <span>Flux Kontext</span>
-    </li>
-    <li class="nav-item" data-tab="upscale">
-      <span class="nav-icon">🔍</span>
-      <span>Upscale &amp; Tools</span>
-    </li>
+  <div class="sb-group">Image</div>
+  <ul class="sb-nav">
+    <li class="sn on" data-tab="t2i"><span class="sn-ic">🎨</span>Text → Image</li>
+    <li class="sn" data-tab="i2i"><span class="sn-ic">🖼</span>Image → Image</li>
+    <li class="sn" data-tab="edit"><span class="sn-ic">✏️</span>Image Edit</li>
+    <li class="sn" data-tab="gpt4o"><span class="sn-ic">🤖</span>GPT-4o Image<span class="sn-badge">New</span></li>
+    <li class="sn" data-tab="fk"><span class="sn-ic">⚡</span>Flux Kontext</li>
+    <li class="sn" data-tab="tools"><span class="sn-ic">🔍</span>Upscale / Tools</li>
   </ul>
 
-  <div class="sidebar-section-label">Manage</div>
-  <ul class="sidebar-nav">
-    <li class="nav-item" data-tab="history">
-      <span class="nav-icon">🕑</span>
-      <span>History</span>
-    </li>
+  <div class="sb-group">Video</div>
+  <ul class="sb-nav">
+    <li class="sn" data-tab="t2v"><span class="sn-ic">🎬</span>Text → Video</li>
+    <li class="sn" data-tab="i2v"><span class="sn-ic">▶️</span>Image → Video</li>
+    <li class="sn" data-tab="veo"><span class="sn-ic">🌐</span>Veo 3.1<span class="sn-badge">New</span></li>
   </ul>
 
-  <div class="sidebar-footer">
-    <div class="credits-display">
-      <span class="credits-label">Credits</span>
-      <span class="credits-value" id="creditsValue">—</span>
-      <button class="btn-refresh-credits" id="refreshCreditsBtn" title="Refresh credits">↻</button>
+  <div class="sb-group">Manage</div>
+  <ul class="sb-nav">
+    <li class="sn" data-tab="history"><span class="sn-ic">🕑</span>History</li>
+  </ul>
+
+  <div class="sb-footer">
+    <div class="credits-row">
+      <span class="cr-label">Credits</span>
+      <span class="cr-val" id="crVal">—</span>
+      <button class="cr-btn" id="crRefresh" title="Refresh">↻</button>
     </div>
-    <div class="api-key-area">
+    <div class="key-area">
       <label>API Key</label>
-      <div class="api-key-input-wrap">
-        <input type="password" id="apiKeyInput" placeholder="Enter your API key…"/>
-        <button id="saveKeyBtn" class="btn-save-key">Save</button>
+      <div class="key-row">
+        <input type="password" id="keyIn" class="key-input" placeholder="kie_…"/>
+        <button id="keySave" class="key-save">Save</button>
       </div>
     </div>
   </div>
 </nav>
 
-<button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
-  <span></span><span></span><span></span>
-</button>
+<button class="hbg" id="hbg"><span></span><span></span><span></span></button>
 
-<!-- ════════════════════════════════════════
-     MAIN CONTENT
-════════════════════════════════════════ -->
-<main class="main-content">
+<!-- MAIN -->
+<main id="main">
 
-  <!-- ── Image to Image ────────────────── -->
-  <section class="tab-section active" id="tab-img2img">
-    <div class="section-header">
-      <h1>Image <span class="accent">→</span> Image</h1>
-      <p>Transform images using advanced AI models</p>
-    </div>
-    <div class="workspace">
-      <div class="panel">
-        <h3>Input</h3>
-        <div class="upload-zone" id="i2i-upload" data-for="i2i">
-          <div class="upload-inner">
-            <div class="upload-icon">⬆</div>
-            <p>Drop image here or <span class="link">browse</span></p>
-            <small>JPEG · PNG · WEBP · max 10MB</small>
-          </div>
-          <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+<!-- ══ TEXT TO IMAGE ══ -->
+<section class="tab on" id="tab-t2i">
+  <div class="ph">
+    <h1>Text <em>→</em> Image</h1>
+    <p>Generate images from text prompts using state-of-the-art models</p>
+  </div>
+  <div class="ws wide">
+    <div class="pn">
+      <div class="pn-title">Prompt &amp; Settings</div>
+      <div class="fg">
+        <label class="fl">Prompt</label>
+        <div class="pw">
+          <textarea class="ta" id="t2i-p" rows="5" placeholder="Describe the image you want to create…"></textarea>
+          <button class="cp" data-src="t2i-p">⎘</button>
         </div>
-        <div class="preview-wrap hidden" id="i2i-preview-wrap">
-          <img id="i2i-preview" src="" alt="preview"/>
-          <button class="btn-clear-img" data-target="i2i">✕ Remove</button>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Model</label>
-          <select class="select-field" id="i2i-model">
-            <optgroup label="── Grok Imagine ──">
-              <option value="grok-imagine/image-to-image">Grok Imagine I2I</option>
-            </optgroup>
-            <optgroup label="── Seedream ──">
-              <option value="seedream/4.5-edit">Seedream 4.5 Edit</option>
-              <option value="seedream/5-lite-image-to-image">Seedream 5 Lite I2I</option>
-              <option value="bytedance/seedream">Bytedance Seedream I2I</option>
-            </optgroup>
-            <optgroup label="── Flux 2 ──">
-              <option value="flux-2/flex-image-to-image">Flux 2 Flex I2I</option>
-            </optgroup>
-            <optgroup label="── Qwen ──">
-              <option value="qwen/image-to-image">Qwen I2I</option>
-              <option value="qwen2/image-edit">Qwen2 Image Edit</option>
-            </optgroup>
-            <optgroup label="── GPT Image ──">
-              <option value="gpt-image/1.5-image-to-image">GPT Image 1.5 I2I</option>
-              <option value="gpt-image-2-image-to-image">GPT Image 2 I2I</option>
-            </optgroup>
-            <optgroup label="── Ideogram ──">
-              <option value="ideogram/v3-remix">Ideogram V3 Remix</option>
-              <option value="ideogram/character-remix">Ideogram Character Remix</option>
-              <option value="ideogram/character-edit">Ideogram Character Edit</option>
-              <option value="ideogram/character">Ideogram Character</option>
-            </optgroup>
-            <optgroup label="── Google ──">
-              <option value="google/nano-banana-edit">Google Nano Banana Edit</option>
-              <option value="google/nano-banana">Google Nano Banana I2I</option>
-            </optgroup>
+      </div>
+      <div class="fg">
+        <label class="fl">Model</label>
+        <select class="sel" id="t2i-m">
+          <optgroup label="── Seedream ──">
+            <option value="bytedance/seedream">Seedream 3.0</option>
+            <option value="bytedance/seedream-v4-text-to-image">Seedream 4.0</option>
+            <option value="seedream/4.5-text-to-image">Seedream 4.5</option>
+            <option value="seedream/5-lite-text-to-image">Seedream 5.0 Lite</option>
+          </optgroup>
+          <optgroup label="── Google ──">
+            <option value="google/imagen4">Google Imagen 4</option>
+            <option value="google/imagen4-fast">Google Imagen 4 Fast</option>
+            <option value="google/imagen4-ultra">Google Imagen 4 Ultra</option>
+            <option value="google/nano-banana">Google Nano Banana</option>
+            <option value="nano-banana-2">Google Nano Banana 2</option>
+          </optgroup>
+          <optgroup label="── Flux 2 ──">
+            <option value="flux-2/pro-text-to-image">Flux 2 Pro T2I</option>
+            <option value="flux-2/flex-text-to-image">Flux 2 Flex T2I</option>
+          </optgroup>
+          <optgroup label="── Grok Imagine ──">
+            <option value="grok-imagine/text-to-image">Grok Imagine T2I</option>
+          </optgroup>
+          <optgroup label="── GPT Image ──">
+            <option value="gpt-image/1.5-text-to-image">GPT Image 1.5 T2I</option>
+            <option value="gpt-image-2-text-to-image">GPT Image 2 T2I</option>
+          </optgroup>
+          <optgroup label="── Ideogram ──">
+            <option value="ideogram/v3-text-to-image">Ideogram V3 T2I</option>
+            <option value="ideogram/character">Ideogram Character</option>
+          </optgroup>
+          <optgroup label="── Qwen ──">
+            <option value="qwen/text-to-image">Qwen T2I</option>
+            <option value="qwen2/text-to-image">Qwen2 T2I</option>
+          </optgroup>
+          <optgroup label="── Wan ──">
+            <option value="wan/2-7-image">Wan 2.7 Image</option>
+            <option value="wan/2-7-image-pro">Wan 2.7 Image Pro</option>
+          </optgroup>
+          <optgroup label="── Z-Image ──">
+            <option value="z-image">Z-Image</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="row3">
+        <div class="og">
+          <label class="fl">Resolution</label>
+          <select class="sel" id="t2i-res">
+            <option value="1K">1K</option>
+            <option value="2K">2K</option>
+            <option value="4K">4K</option>
           </select>
         </div>
-
-        <div class="field-group">
-          <label class="field-label">Prompt</label>
-          <div class="prompt-wrap">
-            <textarea class="textarea-field" id="i2i-prompt" rows="4" placeholder="Describe the transformation…"></textarea>
-            <button class="btn-copy-prompt" data-src="i2i-prompt" title="Copy prompt">⎘</button>
-          </div>
+        <div class="og">
+          <label class="fl">Aspect Ratio</label>
+          <select class="sel" id="t2i-ar">
+            <option value="1:1">1:1 Square</option>
+            <option value="16:9">16:9 Wide</option>
+            <option value="9:16">9:16 Portrait</option>
+            <option value="4:3">4:3</option>
+            <option value="3:4">3:4</option>
+            <option value="3:2">3:2</option>
+            <option value="2:3">2:3</option>
+            <option value="21:9">21:9 Cine</option>
+            <option value="auto">Auto</option>
+          </select>
         </div>
-
-        <button class="btn-generate" id="i2i-generate">
-          <span class="btn-label">Generate</span>
-          <span class="btn-icon">→</span>
-        </button>
+        <div class="og">
+          <label class="fl">Format</label>
+          <select class="sel" id="t2i-fmt">
+            <option value="jpg">JPG</option>
+            <option value="png">PNG</option>
+          </select>
+        </div>
       </div>
-      <div class="panel result-panel">
-        <h3>Result</h3>
-        <div class="result-area" id="i2i-result">
-          <div class="result-placeholder">
-            <div class="placeholder-icon">✦</div>
-            <p>Result will appear here</p>
-          </div>
-        </div>
+      <button class="gen-btn" id="t2i-go"><span>Generate Image</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="t2i-r" style="flex:1">
+        <div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── Image to Video ────────────────── -->
-  <section class="tab-section" id="tab-img2vid">
-    <div class="section-header">
-      <h1>Image <span class="accent">→</span> Video</h1>
-      <p>Bring images to life with AI-powered animation</p>
+<!-- ══ IMAGE TO IMAGE ══ -->
+<section class="tab" id="tab-i2i">
+  <div class="ph">
+    <h1>Image <em>→</em> Image</h1>
+    <p>Transform images using AI</p>
+  </div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-i2i">
+        <div class="uz-inner">
+          <div class="uz-ic">⬆</div>
+          <p>Drop image or <b>browse</b></p>
+          <small>JPEG · PNG · WEBP · max 10MB</small>
+        </div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-i2i">
+        <img id="pvi-i2i" src="" alt=""/>
+        <button class="rm-img" data-k="i2i">✕ Remove</button>
+      </div>
+      <div class="fg">
+        <label class="fl">Model</label>
+        <select class="sel" id="i2i-m">
+          <optgroup label="── Grok Imagine ──">
+            <option value="grok-imagine/image-to-image">Grok Imagine I2I</option>
+          </optgroup>
+          <optgroup label="── Seedream ──">
+            <option value="seedream/5-lite-image-to-image">Seedream 5.0 Lite I2I</option>
+          </optgroup>
+          <optgroup label="── Flux 2 ──">
+            <option value="flux-2/flex-image-to-image">Flux 2 Flex I2I</option>
+            <option value="flux-2/pro-image-to-image">Flux 2 Pro I2I</option>
+          </optgroup>
+          <optgroup label="── Qwen ──">
+            <option value="qwen/image-to-image">Qwen I2I</option>
+          </optgroup>
+          <optgroup label="── GPT Image ──">
+            <option value="gpt-image/1.5-image-to-image">GPT Image 1.5 I2I</option>
+            <option value="gpt-image-2-image-to-image">GPT Image 2 I2I</option>
+          </optgroup>
+          <optgroup label="── Ideogram ──">
+            <option value="ideogram/v3-remix">Ideogram V3 Remix</option>
+            <option value="ideogram/character-remix">Ideogram Character Remix</option>
+            <option value="ideogram/character">Ideogram Character</option>
+          </optgroup>
+          <optgroup label="── Google ──">
+            <option value="google/nano-banana">Google Nano Banana I2I</option>
+            <option value="google/nano-banana-pro">Google Nano Banana Pro</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Prompt</label>
+        <div class="pw">
+          <textarea class="ta" id="i2i-p" rows="4" placeholder="Describe the transformation…"></textarea>
+          <button class="cp" data-src="i2i-p">⎘</button>
+        </div>
+      </div>
+      <button class="gen-btn" id="i2i-go"><span>Generate</span><span>→</span></button>
     </div>
-    <div class="workspace">
-      <div class="panel">
-        <h3>Input</h3>
-        <div class="upload-zone" id="i2v-upload" data-for="i2v">
-          <div class="upload-inner">
-            <div class="upload-icon">⬆</div>
-            <p>Drop image here or <span class="link">browse</span></p>
-            <small>JPEG · PNG · WEBP · max 10MB</small>
-          </div>
-          <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
-        </div>
-        <div class="preview-wrap hidden" id="i2v-preview-wrap">
-          <img id="i2v-preview" src="" alt="preview"/>
-          <button class="btn-clear-img" data-target="i2v">✕ Remove</button>
-        </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="i2i-r" style="flex:1">
+        <div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <div class="field-group">
-          <label class="field-label">Model</label>
-          <select class="select-field" id="i2v-model">
-            <option value="kling-2.6/image-to-video">Kling 2.6</option>
-            <option value="sora-2-image-to-video">Sora 2</option>
+<!-- ══ IMAGE EDIT ══ -->
+<section class="tab" id="tab-edit">
+  <div class="ph">
+    <h1>Image <em>Edit</em></h1>
+    <p>Edit and transform images with AI instructions</p>
+  </div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-ed">
+        <div class="uz-inner">
+          <div class="uz-ic">⬆</div>
+          <p>Drop image or <b>browse</b></p>
+          <small>JPEG · PNG · WEBP · max 10MB</small>
+        </div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-ed">
+        <img id="pvi-ed" src="" alt=""/>
+        <button class="rm-img" data-k="ed">✕ Remove</button>
+      </div>
+      <div class="fg">
+        <label class="fl">Edit Model</label>
+        <select class="sel" id="ed-m">
+          <optgroup label="── Seedream ──">
+            <option value="seedream/4.5-edit">Seedream 4.5 Edit</option>
+            <option value="seedream/4.0-edit">Seedream 4.0 Edit</option>
+          </optgroup>
+          <optgroup label="── Qwen ──">
+            <option value="qwen/image-edit">Qwen Image Edit</option>
+            <option value="qwen2/image-edit">Qwen2 Image Edit</option>
+          </optgroup>
+          <optgroup label="── Ideogram ──">
+            <option value="ideogram/v3-edit">Ideogram V3 Edit</option>
+            <option value="ideogram/character-edit">Ideogram Character Edit</option>
+          </optgroup>
+          <optgroup label="── Google ──">
+            <option value="google/nano-banana-edit">Google Nano Banana Edit</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="row2" id="ed-seedream-opts">
+        <div class="og">
+          <label class="fl">Aspect Ratio</label>
+          <select class="sel" id="ed-ar">
+            <option value="1:1">1:1 Square</option>
+            <option value="16:9">16:9 Wide</option>
+            <option value="9:16">9:16 Portrait</option>
+            <option value="4:3">4:3</option>
+            <option value="3:4">3:4</option>
+          </select>
+        </div>
+        <div class="og">
+          <label class="fl">Quality</label>
+          <select class="sel" id="ed-q">
+            <option value="basic">Basic (2K)</option>
+            <option value="high">High (4K)</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Edit Instructions</label>
+        <div class="pw">
+          <textarea class="ta" id="ed-p" rows="4" placeholder="What do you want to change?"></textarea>
+          <button class="cp" data-src="ed-p">⎘</button>
+        </div>
+      </div>
+      <button class="gen-btn" id="ed-go"><span>Apply Edit</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="ed-r" style="flex:1">
+        <div class="rp"><div class="rp-ic">✦</div><p>Edited image will appear here</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GPT-4o ══ -->
+<section class="tab" id="tab-gpt4o">
+  <div class="ph">
+    <h1>GPT<em>-4o</em> Image</h1>
+    <p>Generate &amp; edit images via OpenAI GPT-4o through KIE.AI</p>
+  </div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-gpt4o">
+        <div class="uz-inner">
+          <div class="uz-ic">⬆</div>
+          <p>Optional reference image or <b>browse</b></p>
+          <small>Leave empty for pure text-to-image</small>
+        </div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-gpt4o">
+        <img id="pvi-gpt4o" src="" alt=""/>
+        <button class="rm-img" data-k="gpt4o">✕ Remove</button>
+      </div>
+      <div class="row2">
+        <div class="og">
+          <label class="fl">Aspect Ratio</label>
+          <select class="sel" id="gpt4o-ar">
+            <option value="1:1">1:1 Square</option>
+            <option value="16:9">16:9 Wide</option>
+            <option value="9:16">9:16 Portrait</option>
+            <option value="3:2">3:2</option>
+            <option value="2:3">2:3</option>
+          </select>
+        </div>
+        <div class="og">
+          <label class="fl">Variants</label>
+          <select class="sel" id="gpt4o-n">
+            <option value="1">1 image</option>
+            <option value="2">2 images</option>
+            <option value="4">4 images</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Enhance Prompt</label>
+        <select class="sel" id="gpt4o-enh">
+          <option value="true">Yes — AI enhances prompt</option>
+          <option value="false">No — use as-is</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Prompt</label>
+        <div class="pw">
+          <textarea class="ta" id="gpt4o-p" rows="4" placeholder="Describe image or edit instructions…"></textarea>
+          <button class="cp" data-src="gpt4o-p">⎘</button>
+        </div>
+      </div>
+      <button class="gen-btn" id="gpt4o-go"><span>Generate</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="gpt4o-r" style="flex:1">
+        <div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FLUX KONTEXT ══ -->
+<section class="tab" id="tab-fk">
+  <div class="ph">
+    <h1>Flux <em>Kontext</em></h1>
+    <p>High-quality text-to-image &amp; image editing with Flux Kontext</p>
+  </div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-fk">
+        <div class="uz-inner">
+          <div class="uz-ic">⬆</div>
+          <p>Optional reference image or <b>browse</b></p>
+          <small>Leave empty for text-to-image</small>
+        </div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-fk">
+        <img id="pvi-fk" src="" alt=""/>
+        <button class="rm-img" data-k="fk">✕ Remove</button>
+      </div>
+      <div class="row2">
+        <div class="og">
+          <label class="fl">Model</label>
+          <select class="sel" id="fk-m">
+            <option value="flux-kontext-pro">Flux Kontext Pro</option>
+            <option value="flux-kontext-max">Flux Kontext Max</option>
+          </select>
+        </div>
+        <div class="og">
+          <label class="fl">Aspect Ratio</label>
+          <select class="sel" id="fk-ar">
+            <option value="1:1">1:1 Square</option>
+            <option value="16:9">16:9 Wide</option>
+            <option value="9:16">9:16 Portrait</option>
+            <option value="4:3">4:3</option>
+            <option value="3:4">3:4</option>
+            <option value="21:9">21:9 Cine</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og">
+          <label class="fl">Format</label>
+          <select class="sel" id="fk-fmt">
+            <option value="jpeg">JPEG</option>
+            <option value="png">PNG</option>
+          </select>
+        </div>
+        <div class="og">
+          <label class="fl">Prompt Upsampling</label>
+          <select class="sel" id="fk-up">
+            <option value="false">Off</option>
+            <option value="true">On (AI enhances)</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Prompt</label>
+        <div class="pw">
+          <textarea class="ta" id="fk-p" rows="4" placeholder="Describe your image or edit instructions…"></textarea>
+          <button class="cp" data-src="fk-p">⎘</button>
+        </div>
+      </div>
+      <button class="gen-btn" id="fk-go"><span>Generate</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="fk-r" style="flex:1">
+        <div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ UPSCALE / TOOLS ══ -->
+<section class="tab" id="tab-tools">
+  <div class="ph">
+    <h1>Upscale <em>&amp; Tools</em></h1>
+    <p>Upscale, remove background, and enhance images</p>
+  </div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-up">
+        <div class="uz-inner">
+          <div class="uz-ic">⬆</div>
+          <p>Drop image or <b>browse</b></p>
+          <small>JPEG · PNG · WEBP · max 10MB</small>
+        </div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-up">
+        <img id="pvi-up" src="" alt=""/>
+        <button class="rm-img" data-k="up">✕ Remove</button>
+      </div>
+      <div class="fg">
+        <label class="fl">Tool / Model</label>
+        <select class="sel" id="up-m">
+          <optgroup label="── Recraft ──">
+            <option value="recraft/crisp-upscale">Recraft Crisp Upscale</option>
+            <option value="recraft/remove-background">Recraft Remove Background</option>
+          </optgroup>
+          <optgroup label="── Topaz ──">
+            <option value="topaz/image-upscale">Topaz Image Upscale</option>
+          </optgroup>
+          <optgroup label="── Google ──">
+            <option value="google/nano-banana-pro">Google Nano Banana Pro I2I</option>
+          </optgroup>
+        </select>
+      </div>
+      <button class="gen-btn" id="up-go"><span>Process Image</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="up-r" style="flex:1">
+        <div class="rp"><div class="rp-ic">✦</div><p>Processed image will appear here</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TEXT TO VIDEO ══ -->
+<section class="tab" id="tab-t2v">
+  <div class="ph">
+    <h1>Text <em>→</em> Video</h1>
+    <p>Generate videos from text prompts</p>
+  </div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Settings</div>
+      <div class="fg">
+        <label class="fl">Model</label>
+        <select class="sel" id="t2v-m">
+          <optgroup label="── Kling ──">
+            <option value="kling-3.0/text-to-video">Kling 3.0 T2V</option>
+            <option value="kling-2.6/text-to-video">Kling 2.6 T2V</option>
+            <option value="kling/v2-1-master-text-to-video">Kling V2.1 Master T2V</option>
+            <option value="kling/v2-1-pro/text-to-video">Kling V2.1 Pro T2V</option>
+            <option value="kling/v2-1-standard/text-to-video">Kling V2.1 Standard T2V</option>
+            <option value="kling/v25-turbo-text-to-video-pro">Kling V2.5 Turbo Pro T2V</option>
+          </optgroup>
+          <optgroup label="── Bytedance / Seedance ──">
+            <option value="bytedance/seedance-2">Seedance 2.0</option>
+            <option value="bytedance/seedance-2-fast">Seedance 2.0 Fast</option>
+            <option value="bytedance/seedance-1-5-pro">Seedance 1.5 Pro</option>
+            <option value="bytedance/v1-pro-text-to-video">Bytedance V1 Pro T2V</option>
+            <option value="bytedance/v1-lite-text-to-video">Bytedance V1 Lite T2V</option>
+          </optgroup>
+          <optgroup label="── Hailuo ──">
+            <option value="hailuo/02-text-to-video-pro">Hailuo Pro T2V</option>
+            <option value="hailuo/02-text-to-video-standard">Hailuo Standard T2V</option>
+          </optgroup>
+          <optgroup label="── Sora 2 ──">
+            <option value="sora-2-text-to-video">Sora 2 T2V</option>
+            <option value="sora-2-pro-text-to-video">Sora 2 Pro T2V</option>
+          </optgroup>
+          <optgroup label="── Wan ──">
+            <option value="wan/2-7-text-to-video">Wan 2.7 T2V</option>
+            <option value="wan/2-6-text-to-video">Wan 2.6 T2V</option>
+            <option value="wan/2-5-text-to-video">Wan 2.5 T2V</option>
+            <option value="wan/2-2-a14b-text-to-video-turbo">Wan 2.2 A14B Turbo T2V</option>
+          </optgroup>
+          <optgroup label="── Grok Imagine ──">
+            <option value="grok-imagine/text-to-video">Grok Imagine T2V</option>
+          </optgroup>
+          <optgroup label="── HappyHorse ──">
+            <option value="happyhorse/text-to-video">HappyHorse T2V</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Prompt</label>
+        <div class="pw">
+          <textarea class="ta" id="t2v-p" rows="5" placeholder="Describe the video scene…"></textarea>
+          <button class="cp" data-src="t2v-p">⎘</button>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og">
+          <label class="fl">Duration</label>
+          <select class="sel" id="t2v-dur">
+            <option value="5">5s</option>
+            <option value="6">6s</option>
+            <option value="10">10s</option>
+          </select>
+        </div>
+        <div class="og">
+          <label class="fl">Resolution</label>
+          <select class="sel" id="t2v-res">
+            <option value="480p">480p</option>
+            <option value="720p">720p</option>
+            <option value="1080p">1080p</option>
+          </select>
+        </div>
+      </div>
+      <button class="gen-btn" id="t2v-go"><span>Generate Video</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="t2v-r" style="flex:1">
+        <div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ IMAGE TO VIDEO ══ -->
+<section class="tab" id="tab-i2v">
+  <div class="ph">
+    <h1>Image <em>→</em> Video</h1>
+    <p>Bring your images to life with AI animation</p>
+  </div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-i2v">
+        <div class="uz-inner">
+          <div class="uz-ic">⬆</div>
+          <p>Drop image or <b>browse</b></p>
+          <small>JPEG · PNG · WEBP · max 10MB</small>
+        </div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-i2v">
+        <img id="pvi-i2v" src="" alt=""/>
+        <button class="rm-img" data-k="i2v">✕ Remove</button>
+      </div>
+      <div class="fg">
+        <label class="fl">Model</label>
+        <select class="sel" id="i2v-m">
+          <optgroup label="── Kling ──">
+            <option value="kling-3.0/image-to-video">Kling 3.0 I2V</option>
+            <option value="kling-2.6/image-to-video">Kling 2.6 I2V</option>
+            <option value="kling/v2-1-master-image-to-video">Kling V2.1 Master I2V</option>
+            <option value="kling/v2-1-pro/image-to-video">Kling V2.1 Pro I2V</option>
+            <option value="kling/v2-1-standard/image-to-video">Kling V2.1 Standard I2V</option>
+            <option value="kling/v25-turbo-image-to-video-pro">Kling V2.5 Turbo Pro I2V</option>
+          </optgroup>
+          <optgroup label="── Bytedance / Seedance ──">
+            <option value="bytedance/seedance-2">Seedance 2.0 I2V</option>
+            <option value="bytedance/seedance-2-fast">Seedance 2.0 Fast I2V</option>
+            <option value="bytedance/seedance-1-5-pro">Seedance 1.5 Pro I2V</option>
+            <option value="bytedance/v1-pro-image-to-video">Bytedance V1 Pro I2V</option>
+            <option value="bytedance/v1-pro-fast-image-to-video">Bytedance V1 Pro Fast I2V</option>
+            <option value="bytedance/v1-lite-image-to-video">Bytedance V1 Lite I2V</option>
+          </optgroup>
+          <optgroup label="── Hailuo ──">
+            <option value="hailuo/2-3-image-to-video-pro">Hailuo 2.3 Pro I2V</option>
+            <option value="hailuo/2-3-image-to-video-standard">Hailuo 2.3 Standard I2V</option>
+            <option value="hailuo/02-image-to-video-pro">Hailuo Pro I2V</option>
+            <option value="hailuo/02-image-to-video-standard">Hailuo Standard I2V</option>
+          </optgroup>
+          <optgroup label="── Sora 2 ──">
+            <option value="sora-2-image-to-video">Sora 2 I2V</option>
+            <option value="sora-2-pro-image-to-video">Sora 2 Pro I2V</option>
+          </optgroup>
+          <optgroup label="── Wan ──">
+            <option value="wan/2-7-image-to-video">Wan 2.7 I2V</option>
+            <option value="wan/2-6-image-to-video">Wan 2.6 I2V</option>
+            <option value="wan/2-6-flash-image-to-video">Wan 2.6 Flash I2V</option>
+            <option value="wan/2-5-image-to-video">Wan 2.5 I2V</option>
+            <option value="wan/2-2-a14b-image-to-video-turbo">Wan 2.2 A14B Turbo I2V</option>
+          </optgroup>
+          <optgroup label="── Grok Imagine ──">
             <option value="grok-imagine/image-to-video">Grok Imagine I2V</option>
+          </optgroup>
+          <optgroup label="── HappyHorse ──">
+            <option value="happyhorse/image-to-video">HappyHorse I2V</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Prompt</label>
+        <div class="pw">
+          <textarea class="ta" id="i2v-p" rows="4" placeholder="Describe the motion or scene…"></textarea>
+          <button class="cp" data-src="i2v-p">⎘</button>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og">
+          <label class="fl">Duration</label>
+          <select class="sel" id="i2v-dur">
+            <option value="5">5s</option>
+            <option value="6">6s</option>
+            <option value="10">10s</option>
           </select>
         </div>
-
-        <div id="i2v-kling-opts">
-          <div class="options-row-2">
-            <div class="option-group">
-              <label class="field-label">Duration</label>
-              <select class="select-field" id="i2v-duration">
-                <option value="5">5 seconds</option>
-                <option value="10">10 seconds</option>
-              </select>
-            </div>
-            <div class="option-group">
-              <label class="field-label">Sound</label>
-              <select class="select-field" id="i2v-sound">
-                <option value="false">No sound</option>
-                <option value="true">With sound</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Motion Prompt</label>
-          <div class="prompt-wrap">
-            <textarea class="textarea-field" id="i2v-prompt" rows="4" placeholder="Describe the motion…"></textarea>
-            <button class="btn-copy-prompt" data-src="i2v-prompt" title="Copy prompt">⎘</button>
-          </div>
-        </div>
-
-        <button class="btn-generate" id="i2v-generate">
-          <span class="btn-label">Generate Video</span>
-          <span class="btn-icon">→</span>
-        </button>
-      </div>
-      <div class="panel result-panel">
-        <h3>Result</h3>
-        <div class="result-area" id="i2v-result">
-          <div class="result-placeholder">
-            <div class="placeholder-icon">✦</div>
-            <p>Video will appear here</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Image Editor ──────────────────── -->
-  <section class="tab-section" id="tab-editor">
-    <div class="section-header">
-      <h1>Image <span class="accent">Editor</span></h1>
-      <p>AI-powered image editing with natural language</p>
-    </div>
-    <div class="workspace">
-      <div class="panel">
-        <h3>Input</h3>
-        <div class="upload-zone" id="ed-upload" data-for="ed">
-          <div class="upload-inner">
-            <div class="upload-icon">⬆</div>
-            <p>Drop image here or <span class="link">browse</span></p>
-            <small>JPEG · PNG · WEBP · max 10MB</small>
-          </div>
-          <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
-        </div>
-        <div class="preview-wrap hidden" id="ed-preview-wrap">
-          <img id="ed-preview" src="" alt="preview"/>
-          <button class="btn-clear-img" data-target="ed">✕ Remove</button>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Model</label>
-          <select class="select-field" id="ed-model">
-            <optgroup label="── Seedream ──">
-              <option value="seedream/4.5-edit">Seedream 4.5 Edit</option>
-              <option value="bytedance/seedream-v4-edit">Seedream 4.0 Edit</option>
-              <option value="seedream/5-lite-image-to-image">Seedream 5 Lite Edit</option>
-            </optgroup>
-            <optgroup label="── Qwen ──">
-              <option value="qwen/image-edit">Qwen Image Edit</option>
-              <option value="qwen2/image-edit">Qwen2 Image Edit</option>
-            </optgroup>
-            <optgroup label="── Google ──">
-              <option value="google/nano-banana-edit">Google Nano Banana Edit</option>
-            </optgroup>
-            <optgroup label="── Ideogram ──">
-              <option value="ideogram/v3-edit">Ideogram V3 Edit</option>
-              <option value="ideogram/character-edit">Ideogram Character Edit</option>
-            </optgroup>
+        <div class="og">
+          <label class="fl">Sound</label>
+          <select class="sel" id="i2v-snd">
+            <option value="false">Off</option>
+            <option value="true">On</option>
           </select>
         </div>
-
-        <div id="ed-seedream-opts" class="model-opts">
-          <div class="options-row-2">
-            <div class="option-group">
-              <label class="field-label">Aspect Ratio</label>
-              <select class="select-field" id="ed-ratio">
-                <option value="1:1">1:1 Square</option>
-                <option value="16:9">16:9 Landscape</option>
-                <option value="9:16">9:16 Portrait</option>
-                <option value="4:3">4:3</option>
-                <option value="3:4">3:4</option>
-              </select>
-            </div>
-            <div class="option-group">
-              <label class="field-label">Quality</label>
-              <select class="select-field" id="ed-quality">
-                <option value="basic">Basic (2K)</option>
-                <option value="high">High (4K)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Edit Instructions</label>
-          <div class="prompt-wrap">
-            <textarea class="textarea-field" id="ed-prompt" rows="4" placeholder="What do you want to change?"></textarea>
-            <button class="btn-copy-prompt" data-src="ed-prompt" title="Copy prompt">⎘</button>
-          </div>
-        </div>
-
-        <button class="btn-generate" id="ed-generate">
-          <span class="btn-label">Apply Edit</span>
-          <span class="btn-icon">→</span>
-        </button>
       </div>
-      <div class="panel result-panel">
-        <h3>Result</h3>
-        <div class="result-area" id="ed-result">
-          <div class="result-placeholder">
-            <div class="placeholder-icon">✦</div>
-            <p>Edited image will appear here</p>
-          </div>
-        </div>
+      <button class="gen-btn" id="i2v-go"><span>Animate</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="i2v-r" style="flex:1">
+        <div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── Text to Image ─────────────────── -->
-  <section class="tab-section" id="tab-txt2img">
-    <div class="section-header">
-      <h1>Text <span class="accent">→</span> Image</h1>
-      <p>Generate images from text with multiple AI models</p>
-    </div>
-    <div class="workspace single-panel">
-      <div class="panel wide-panel">
-        <h3>Prompt</h3>
-        <div class="field-group">
-          <div class="prompt-wrap">
-            <textarea class="textarea-field tall" id="t2i-prompt" rows="5" placeholder="Describe the image you want to create…"></textarea>
-            <button class="btn-copy-prompt" data-src="t2i-prompt" title="Copy prompt">⎘</button>
-          </div>
+<!-- ══ VEO 3.1 ══ -->
+<section class="tab" id="tab-veo">
+  <div class="ph">
+    <h1>Veo <em>3.1</em></h1>
+    <p>Google's state-of-the-art video generation model</p>
+  </div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Settings</div>
+      <div class="uz" id="uz-veo">
+        <div class="uz-inner">
+          <div class="uz-ic">⬆</div>
+          <p>Optional reference image or <b>browse</b></p>
+          <small>Leave empty for text-to-video</small>
         </div>
-
-        <div class="field-group">
-          <label class="field-label">Model</label>
-          <select class="select-field" id="t2i-model">
-            <optgroup label="── Nano Banana ──">
-              <option value="nano-banana-2">Nano Banana 2</option>
-              <option value="nano-banana-pro">Nano Banana Pro</option>
-            </optgroup>
-            <optgroup label="── Google Imagen ──">
-              <option value="google/imagen4">Google Imagen 4</option>
-              <option value="google/imagen4-fast">Google Imagen 4 Fast</option>
-              <option value="google/imagen4-ultra">Google Imagen 4 Ultra</option>
-              <option value="google/nano-banana">Google Nano Banana</option>
-            </optgroup>
-            <optgroup label="── Seedream ──">
-              <option value="bytedance/seedream-v4-text-to-image">Seedream 4.0 T2I</option>
-              <option value="seedream/4.5-text-to-image">Seedream 4.5 T2I</option>
-              <option value="seedream/5-lite-text-to-image">Seedream 5 Lite T2I</option>
-              <option value="bytedance/seedream">Bytedance Seedream T2I</option>
-            </optgroup>
-            <optgroup label="── Grok Imagine ──">
-              <option value="grok-imagine/text-to-image">Grok Imagine T2I</option>
-            </optgroup>
-            <optgroup label="── Qwen ──">
-              <option value="qwen/text-to-image">Qwen T2I</option>
-              <option value="qwen2/image-edit">Qwen2 T2I</option>
-            </optgroup>
-            <optgroup label="── Ideogram ──">
-              <option value="ideogram/v3-text-to-image">Ideogram V3 T2I</option>
-              <option value="ideogram/character">Ideogram Character T2I</option>
-            </optgroup>
-            <optgroup label="── GPT Image ──">
-              <option value="gpt-image/1.5-text-to-image">GPT Image 1.5 T2I</option>
-              <option value="gpt-image-2-text-to-image">GPT Image 2 T2I</option>
-            </optgroup>
-            <optgroup label="── Z Image ──">
-              <option value="z-image">Z Image</option>
-            </optgroup>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-veo">
+        <img id="pvi-veo" src="" alt=""/>
+        <button class="rm-img" data-k="veo">✕ Remove</button>
+      </div>
+      <div class="fg">
+        <label class="fl">Prompt</label>
+        <div class="pw">
+          <textarea class="ta" id="veo-p" rows="5" placeholder="Describe the video you want to generate…"></textarea>
+          <button class="cp" data-src="veo-p">⎘</button>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og">
+          <label class="fl">Aspect Ratio</label>
+          <select class="sel" id="veo-ar">
+            <option value="16:9">16:9 Wide</option>
+            <option value="9:16">9:16 Portrait</option>
+            <option value="1:1">1:1 Square</option>
           </select>
         </div>
-
-        <div class="options-row">
-          <div class="option-group">
-            <label class="field-label">Resolution</label>
-            <select class="select-field" id="t2i-res">
-              <option value="1K">1K</option>
-              <option value="2K">2K</option>
-              <option value="4K">4K</option>
-            </select>
-          </div>
-          <div class="option-group">
-            <label class="field-label">Aspect Ratio</label>
-            <select class="select-field" id="t2i-ratio">
-              <option value="1:1">1:1 Square</option>
-              <option value="16:9">16:9 Landscape</option>
-              <option value="9:16">9:16 Portrait</option>
-              <option value="3:2">3:2</option>
-              <option value="2:3">2:3</option>
-              <option value="4:3">4:3</option>
-              <option value="3:4">3:4</option>
-              <option value="21:9">21:9 Cinematic</option>
-              <option value="auto">Auto</option>
-            </select>
-          </div>
-          <div class="option-group">
-            <label class="field-label">Format</label>
-            <select class="select-field" id="t2i-format">
-              <option value="jpg">JPG</option>
-              <option value="png">PNG</option>
-            </select>
-          </div>
-        </div>
-
-        <button class="btn-generate" id="t2i-generate">
-          <span class="btn-label">Generate Image</span>
-          <span class="btn-icon">→</span>
-        </button>
-      </div>
-      <div class="t2i-result-panel">
-        <h3>Result</h3>
-        <div class="result-area" id="t2i-result" style="flex:1">
-          <div class="result-placeholder">
-            <div class="placeholder-icon">✦</div>
-            <p>Images will appear here</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── GPT-4o Image ──────────────────── -->
-  <section class="tab-section" id="tab-gpt4o">
-    <div class="section-header">
-      <h1>GPT<span class="accent">-4o</span> Image</h1>
-      <p>Generate &amp; edit images using OpenAI GPT-4o via KIE.AI</p>
-    </div>
-    <div class="workspace">
-      <div class="panel">
-        <h3>Input</h3>
-        <div class="upload-zone" id="gpt4o-upload" data-for="gpt4o">
-          <div class="upload-inner">
-            <div class="upload-icon">⬆</div>
-            <p>Optional: Drop reference image or <span class="link">browse</span></p>
-            <small>JPEG · PNG · WEBP · leave empty for T2I</small>
-          </div>
-          <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
-        </div>
-        <div class="preview-wrap hidden" id="gpt4o-preview-wrap">
-          <img id="gpt4o-preview" src="" alt="preview"/>
-          <button class="btn-clear-img" data-target="gpt4o">✕ Remove</button>
-        </div>
-
-        <div class="options-row-2">
-          <div class="option-group">
-            <label class="field-label">Size / Aspect Ratio</label>
-            <select class="select-field" id="gpt4o-size">
-              <option value="1:1">1:1 Square</option>
-              <option value="16:9">16:9 Landscape</option>
-              <option value="9:16">9:16 Portrait</option>
-              <option value="3:2">3:2</option>
-              <option value="2:3">2:3</option>
-            </select>
-          </div>
-          <div class="option-group">
-            <label class="field-label">Variants</label>
-            <select class="select-field" id="gpt4o-variants">
-              <option value="1">1 image</option>
-              <option value="2">2 images</option>
-              <option value="4">4 images</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Enhance Prompt</label>
-          <select class="select-field" id="gpt4o-enhance">
-            <option value="true">Yes — AI enhances prompt</option>
-            <option value="false">No — use as-is</option>
+        <div class="og">
+          <label class="fl">Duration</label>
+          <select class="sel" id="veo-dur">
+            <option value="5">5s</option>
+            <option value="8">8s</option>
           </select>
         </div>
-
-        <div class="field-group">
-          <label class="field-label">Prompt</label>
-          <div class="prompt-wrap">
-            <textarea class="textarea-field" id="gpt4o-prompt" rows="4" placeholder="Describe the image or edit instructions…"></textarea>
-            <button class="btn-copy-prompt" data-src="gpt4o-prompt" title="Copy prompt">⎘</button>
-          </div>
-        </div>
-
-        <button class="btn-generate" id="gpt4o-generate">
-          <span class="btn-label">Generate</span>
-          <span class="btn-icon">→</span>
-        </button>
       </div>
-      <div class="panel result-panel">
-        <h3>Result</h3>
-        <div class="result-area" id="gpt4o-result">
-          <div class="result-placeholder">
-            <div class="placeholder-icon">✦</div>
-            <p>Result will appear here</p>
-          </div>
-        </div>
+      <button class="gen-btn" id="veo-go"><span>Generate Veo Video</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="veo-r" style="flex:1">
+        <div class="rp"><div class="rp-ic">🎬</div><p>Veo video will appear here</p></div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── Flux Kontext ──────────────────── -->
-  <section class="tab-section" id="tab-fluxkontext">
-    <div class="section-header">
-      <h1>Flux <span class="accent">Kontext</span></h1>
-      <p>High-quality text-to-image &amp; image editing with Flux Kontext</p>
-    </div>
-    <div class="workspace">
-      <div class="panel">
-        <h3>Input</h3>
-        <div class="upload-zone" id="fk-upload" data-for="fk">
-          <div class="upload-inner">
-            <div class="upload-icon">⬆</div>
-            <p>Optional: Drop reference image or <span class="link">browse</span></p>
-            <small>Leave empty for text-to-image generation</small>
-          </div>
-          <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
-        </div>
-        <div class="preview-wrap hidden" id="fk-preview-wrap">
-          <img id="fk-preview" src="" alt="preview"/>
-          <button class="btn-clear-img" data-target="fk">✕ Remove</button>
-        </div>
-
-        <div class="options-row-2">
-          <div class="option-group">
-            <label class="field-label">Model</label>
-            <select class="select-field" id="fk-model">
-              <option value="flux-kontext-pro">Flux Kontext Pro</option>
-              <option value="flux-kontext-max">Flux Kontext Max</option>
-            </select>
-          </div>
-          <div class="option-group">
-            <label class="field-label">Aspect Ratio</label>
-            <select class="select-field" id="fk-ratio">
-              <option value="1:1">1:1 Square</option>
-              <option value="16:9">16:9 Landscape</option>
-              <option value="9:16">9:16 Portrait</option>
-              <option value="4:3">4:3</option>
-              <option value="3:4">3:4</option>
-              <option value="21:9">21:9 Cinematic</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="options-row-2">
-          <div class="option-group">
-            <label class="field-label">Output Format</label>
-            <select class="select-field" id="fk-format">
-              <option value="jpeg">JPEG</option>
-              <option value="png">PNG</option>
-            </select>
-          </div>
-          <div class="option-group">
-            <label class="field-label">Prompt Upsampling</label>
-            <select class="select-field" id="fk-upsampling">
-              <option value="false">Off</option>
-              <option value="true">On — AI enhances</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Prompt</label>
-          <div class="prompt-wrap">
-            <textarea class="textarea-field" id="fk-prompt" rows="4" placeholder="Describe your image or edit instructions…"></textarea>
-            <button class="btn-copy-prompt" data-src="fk-prompt" title="Copy prompt">⎘</button>
-          </div>
-        </div>
-
-        <button class="btn-generate" id="fk-generate">
-          <span class="btn-label">Generate</span>
-          <span class="btn-icon">→</span>
-        </button>
-      </div>
-      <div class="panel result-panel">
-        <h3>Result</h3>
-        <div class="result-area" id="fk-result">
-          <div class="result-placeholder">
-            <div class="placeholder-icon">✦</div>
-            <p>Result will appear here</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Upscale / Tools ───────────────── -->
-  <section class="tab-section" id="tab-upscale">
-    <div class="section-header">
-      <h1>Upscale <span class="accent">&amp; Tools</span></h1>
-      <p>Remove backgrounds, upscale, and process your images</p>
-    </div>
-    <div class="workspace">
-      <div class="panel">
-        <h3>Input</h3>
-        <div class="upload-zone" id="up-upload" data-for="up">
-          <div class="upload-inner">
-            <div class="upload-icon">⬆</div>
-            <p>Drop image here or <span class="link">browse</span></p>
-            <small>JPEG · PNG · WEBP · max 10MB</small>
-          </div>
-          <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
-        </div>
-        <div class="preview-wrap hidden" id="up-preview-wrap">
-          <img id="up-preview" src="" alt="preview"/>
-          <button class="btn-clear-img" data-target="up">✕ Remove</button>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Tool / Model</label>
-          <select class="select-field" id="up-model">
-            <optgroup label="── Recraft ──">
-              <option value="recraft/crisp-upscale">Recraft Crisp Upscale</option>
-              <option value="recraft/remove-background">Recraft Remove Background</option>
-            </optgroup>
-          </select>
-        </div>
-
-        <button class="btn-generate" id="up-generate">
-          <span class="btn-label">Process Image</span>
-          <span class="btn-icon">→</span>
-        </button>
-      </div>
-      <div class="panel result-panel">
-        <h3>Result</h3>
-        <div class="result-area" id="up-result">
-          <div class="result-placeholder">
-            <div class="placeholder-icon">✦</div>
-            <p>Processed image will appear here</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── History ───────────────────────── -->
-  <section class="tab-section" id="tab-history">
-    <div class="section-header">
-      <h1>Generation <span class="accent">History</span></h1>
-      <p>Your recent creations stored locally</p>
-    </div>
-    <div class="history-toolbar">
-      <button class="btn-secondary" id="clearHistoryBtn">🗑 Clear All</button>
-      <span class="history-count" id="historyCount"></span>
-    </div>
-    <div class="history-grid" id="historyGrid">
-      <div class="history-empty">No history yet. Start generating!</div>
-    </div>
-  </section>
+<!-- ══ HISTORY ══ -->
+<section class="tab" id="tab-history">
+  <div class="ph">
+    <h1>Generation <em>History</em></h1>
+    <p>Your recent creations stored locally</p>
+  </div>
+  <div class="h-bar">
+    <button class="sec-btn" id="clearHist">🗑 Clear All</button>
+    <span class="h-count" id="hCount"></span>
+  </div>
+  <div class="h-grid" id="hGrid">
+    <div class="h-empty">No history yet. Start generating!</div>
+  </div>
+</section>
 
 </main>
 
-<!-- ════════════════════════════════════════
-     MODAL
-════════════════════════════════════════ -->
-<div class="modal-overlay hidden" id="previewModal">
-  <div class="modal-content">
-    <button class="modal-close" id="modalClose">✕</button>
-    <div class="modal-media" id="modalMedia"></div>
-    <div class="modal-actions">
-      <a class="btn-download" id="modalDownload" href="#" download target="_blank">⬇ Download</a>
-      <button class="btn-secondary" id="modalRetry">↻ Retry</button>
+<!-- MODAL -->
+<div class="mo hidden" id="modal">
+  <div class="mc">
+    <button class="mc-close" id="mClose">✕</button>
+    <div class="mm" id="mMedia"></div>
+    <div class="ma">
+      <a class="dl" id="mDl" href="#" download target="_blank">⬇ Download</a>
+      <button class="sec-btn" id="mRetry">↻ Retry</button>
     </div>
-    <div class="modal-meta" id="modalMeta"></div>
+    <div class="mmeta" id="mMeta"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* ════════════════════════════════════════════════════════════
-   KIE AI — Full Integration
-════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   KIE.AI Studio — Full Integration (May 2026)
+═══════════════════════════════════════════════════ */
 
-let API_KEY = localStorage.getItem('kie_api_key') || '';
+let KEY = localStorage.getItem('kie_key') || '';
 
-const KIE_BASE      = 'https://api.kie.ai/api/v1/jobs';
-const KIE_BASE_4O   = 'https://api.kie.ai/api/v1/gpt4o-image';
-const KIE_BASE_FK   = 'https://api.kie.ai/api/v1/flux/kontext';
-const KIE_CREDIT    = 'https://api.kie.ai/api/v1/chat/credit';
-const UPLOAD_URL    = 'https://kieai.redpandaai.co/api/file-base64-upload';
-const POLL_INTERVAL = 4000;
+const API       = 'https://api.kie.ai/api/v1/jobs';
+const API_4O    = 'https://api.kie.ai/api/v1/gpt4o-image';
+const API_FK    = 'https://api.kie.ai/api/v1/flux/kontext';
+const API_VEO   = 'https://api.kie.ai/api/v1/veo3';
+const API_CRED  = 'https://api.kie.ai/api/v1/chat/credit';
+const UPLOAD    = 'https://kieai.redpandaai.co/api/file-base64-upload';
+const POLL_MS   = 4000;
 
-const uploadedUrls = { i2i: null, i2v: null, ed: null, gpt4o: null, fk: null, up: null };
-const activePollers = {};
-let currentModalTask = null;
+const urls     = { i2i:null, i2v:null, ed:null, gpt4o:null, fk:null, up:null, veo:null };
+const pollers  = {};
 
+/* ─ Init ─ */
 document.addEventListener('DOMContentLoaded', () => {
-  initApiKey();
-  initNavigation();
+  initKey();
+  initNav();
   initUploads();
   initGenerators();
   initModal();
   initHistory();
+  initCopyButtons();
   loadCredits();
-  initModelVisibility();
 });
 
-/* ── API Key & Credits ───────────────────────────────── */
-function initApiKey() {
-  const input = document.getElementById('apiKeyInput');
-  const btn   = document.getElementById('saveKeyBtn');
-  if (API_KEY) input.value = API_KEY;
-  btn.addEventListener('click', () => {
-    const val = input.value.trim();
-    if (!val) { showToast('Enter a valid API key', 'error'); return; }
-    API_KEY = val;
-    localStorage.setItem('kie_api_key', val);
-    showToast('API key saved ✓', 'success');
+/* ─ API Key ─ */
+function initKey() {
+  const inp = document.getElementById('keyIn');
+  const btn = document.getElementById('keySave');
+  if (KEY) inp.value = KEY;
+  btn.onclick = () => {
+    const v = inp.value.trim();
+    if (!v) { toast('Enter a valid API key','err'); return; }
+    KEY = v;
+    localStorage.setItem('kie_key', v);
+    toast('API key saved ✓','ok');
     loadCredits();
-  });
-  document.getElementById('refreshCreditsBtn').addEventListener('click', loadCredits);
+  };
+  document.getElementById('crRefresh').onclick = loadCredits;
 }
 
 async function loadCredits() {
-  if (!API_KEY) return;
+  if (!KEY) return;
   try {
-    const res  = await fetch(KIE_CREDIT, { headers: { 'Authorization': `Bearer ${API_KEY}` } });
-    const data = await res.json();
-    const val  = data?.data ?? data?.credits ?? '?';
-    document.getElementById('creditsValue').textContent = val;
-  } catch (e) {
-    document.getElementById('creditsValue').textContent = 'err';
-  }
+    const r = await fetch(API_CRED, { headers:{ Authorization:`Bearer ${KEY}` }});
+    const d = await r.json();
+    const v = d?.data ?? d?.credits ?? '?';
+    document.getElementById('crVal').textContent = v;
+  } catch { document.getElementById('crVal').textContent = 'err'; }
 }
 
-/* ── Navigation ──────────────────────────────────────── */
-function initNavigation() {
-  const items     = document.querySelectorAll('.nav-item');
-  const hamburger = document.getElementById('hamburgerBtn');
-  const sidebar   = document.getElementById('sidebar');
+/* ─ Navigation ─ */
+function initNav() {
+  const items = document.querySelectorAll('.sn');
+  const sidebar = document.getElementById('sb');
+  const hbg = document.getElementById('hbg');
 
-  items.forEach(item => {
-    item.addEventListener('click', () => {
-      items.forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-      const tab = item.dataset.tab;
-      document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
-      document.getElementById(`tab-${tab}`).classList.add('active');
-      if (tab === 'history') renderHistory();
-      sidebar.classList.remove('open');
-    });
+  items.forEach(el => el.onclick = () => {
+    items.forEach(i => i.classList.remove('on'));
+    el.classList.add('on');
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    document.getElementById('tab-' + el.dataset.tab).classList.add('on');
+    if (el.dataset.tab === 'history') renderHistory();
+    sidebar.classList.remove('open');
   });
 
-  hamburger.addEventListener('click', () => sidebar.classList.toggle('open'));
+  hbg.onclick = () => sidebar.classList.toggle('open');
   document.addEventListener('click', e => {
-    if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
-      sidebar.classList.remove('open');
-    }
+    if (!sidebar.contains(e.target) && !hbg.contains(e.target)) sidebar.classList.remove('open');
   });
 }
 
-/* ── Uploads ─────────────────────────────────────────── */
+/* ─ Uploads ─ */
 function initUploads() {
-  ['i2i', 'i2v', 'ed', 'gpt4o', 'fk', 'up'].forEach(key => {
-    const zone        = document.getElementById(`${key}-upload`);
+  ['i2i','i2v','ed','gpt4o','fk','up','veo'].forEach(k => {
+    const zone = document.getElementById('uz-' + k);
     if (!zone) return;
-    const fileInput   = zone.querySelector('.file-input');
-    const previewWrap = document.getElementById(`${key}-preview-wrap`);
-    const previewImg  = document.getElementById(`${key}-preview`);
+    const fi   = zone.querySelector('.file-input');
+    const pw   = document.getElementById('pv-' + k);
+    const img  = document.getElementById('pvi-' + k);
 
-    zone.addEventListener('click', e => { if (e.target !== fileInput) fileInput.click(); });
-    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-    zone.addEventListener('drop', e => {
-      e.preventDefault();
-      zone.classList.remove('drag-over');
-      const file = e.dataTransfer.files[0];
-      if (file) handleImageFile(file, key, zone, previewWrap, previewImg);
-    });
-    fileInput.addEventListener('change', () => {
-      const file = fileInput.files[0];
-      if (file) handleImageFile(file, key, zone, previewWrap, previewImg);
-    });
-    const clearBtn = document.querySelector(`.btn-clear-img[data-target="${key}"]`);
-    if (clearBtn) clearBtn.addEventListener('click', () => {
-      uploadedUrls[key] = null;
-      previewWrap.classList.add('hidden');
-      zone.classList.remove('hidden');
-      fileInput.value = '';
-    });
-  });
+    zone.onclick = e => { if (e.target !== fi) fi.click(); };
+    zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag'); };
+    zone.ondragleave = () => zone.classList.remove('drag');
+    zone.ondrop = e => {
+      e.preventDefault(); zone.classList.remove('drag');
+      const f = e.dataTransfer.files[0];
+      if (f) handleFile(f, k, zone, pw, img);
+    };
+    fi.onchange = () => { if (fi.files[0]) handleFile(fi.files[0], k, zone, pw, img); };
 
-  document.querySelectorAll('.btn-copy-prompt').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const src = document.getElementById(btn.dataset.src);
-      if (!src) return;
-      navigator.clipboard.writeText(src.value).then(() => showToast('Prompt copied!', 'info'));
-    });
+    const rm = document.querySelector(`.rm-img[data-k="${k}"]`);
+    if (rm) rm.onclick = () => { urls[k]=null; pw.classList.add('hidden'); zone.classList.remove('hidden'); fi.value=''; };
   });
 }
 
-async function handleImageFile(file, key, zone, previewWrap, previewImg) {
-  if (!file.type.match(/image\/(jpeg|png|webp)/)) {
-    showToast('Please use JPEG, PNG or WEBP', 'error'); return;
-  }
-  if (file.size > 10 * 1024 * 1024) {
-    showToast('File too large (max 10MB)', 'error'); return;
-  }
-  previewImg.src = URL.createObjectURL(file);
+async function handleFile(f, k, zone, pw, img) {
+  if (!f.type.match(/image\/(jpeg|png|webp)/)) { toast('Use JPEG, PNG or WEBP','err'); return; }
+  if (f.size > 10*1024*1024) { toast('Max 10MB','err'); return; }
+  img.src = URL.createObjectURL(f);
   zone.classList.add('hidden');
-  previewWrap.classList.remove('hidden');
-  showToast('Uploading image…', 'info');
+  pw.classList.remove('hidden');
+  toast('Uploading…','info');
   try {
-    const base64  = await fileToBase64(file);
-    const ext     = file.type.split('/')[1];
-    const fileName = `upload_${Date.now()}.${ext}`;
-    const res = await fetch(UPLOAD_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-      body: JSON.stringify({ base64Data: base64, uploadPath: 'images/base64', fileName })
+    const b64  = await toB64(f);
+    const ext  = f.type.split('/')[1];
+    const name = `up_${Date.now()}.${ext}`;
+    const r = await fetch(UPLOAD, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
+      body: JSON.stringify({ base64Data:b64, uploadPath:'images/base64', fileName:name })
     });
-    const data = await res.json();
-    if (data.success && data.data?.downloadUrl) {
-      uploadedUrls[key] = data.data.downloadUrl;
-      showToast('Image uploaded ✓', 'success');
-    } else {
-      throw new Error(data.msg || 'Upload failed');
-    }
-  } catch (err) {
-    showToast('Upload failed: ' + err.message, 'error');
-    uploadedUrls[key] = null;
-    previewWrap.classList.add('hidden');
-    zone.classList.remove('hidden');
+    const d = await r.json();
+    if (d.success && d.data?.downloadUrl) {
+      urls[k] = d.data.downloadUrl;
+      toast('Uploaded ✓','ok');
+    } else throw new Error(d.msg||'Upload failed');
+  } catch(e) {
+    toast('Upload failed: '+e.message,'err');
+    urls[k]=null; pw.classList.add('hidden'); zone.classList.remove('hidden');
   }
 }
 
-function fileToBase64(file) {
-  return new Promise((res, rej) => {
-    const reader = new FileReader();
-    reader.onload  = () => res(reader.result);
-    reader.onerror = rej;
-    reader.readAsDataURL(file);
+function toB64(f) {
+  return new Promise((res,rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(f);
   });
 }
 
-/* ── Model Visibility ────────────────────────────────── */
-function initModelVisibility() {
-  document.getElementById('i2v-model')?.addEventListener('change', function() {
-    document.getElementById('i2v-kling-opts').style.display =
-      this.value === 'kling-2.6/image-to-video' ? '' : 'none';
-  });
-
-  document.getElementById('ed-model')?.addEventListener('change', function() {
-    const opts = document.getElementById('ed-seedream-opts');
-    if (this.value === 'seedream/4.5-edit') {
-      opts.classList.add('show');
-    } else {
-      opts.classList.remove('show');
-    }
+/* ─ Copy Buttons ─ */
+function initCopyButtons() {
+  document.querySelectorAll('.cp').forEach(btn => {
+    btn.onclick = () => {
+      const el = document.getElementById(btn.dataset.src);
+      if (!el) return;
+      navigator.clipboard.writeText(el.value).then(() => toast('Copied!','info'));
+    };
   });
 }
 
-/* ── Generators ──────────────────────────────────────── */
+/* ─ Generators ─ */
 function initGenerators() {
-  document.getElementById('i2i-generate').addEventListener('click', generateI2I);
-  document.getElementById('i2v-generate').addEventListener('click', generateI2V);
-  document.getElementById('ed-generate').addEventListener('click', generateEditor);
-  document.getElementById('t2i-generate').addEventListener('click', generateT2I);
-  document.getElementById('gpt4o-generate').addEventListener('click', generateGPT4O);
-  document.getElementById('fk-generate').addEventListener('click', generateFluxKontext);
-  document.getElementById('up-generate').addEventListener('click', generateUpscale);
+  document.getElementById('t2i-go').onclick  = genT2I;
+  document.getElementById('i2i-go').onclick  = genI2I;
+  document.getElementById('ed-go').onclick   = genEdit;
+  document.getElementById('gpt4o-go').onclick = genGPT4O;
+  document.getElementById('fk-go').onclick   = genFK;
+  document.getElementById('up-go').onclick   = genUpscale;
+  document.getElementById('t2v-go').onclick  = genT2V;
+  document.getElementById('i2v-go').onclick  = genI2V;
+  document.getElementById('veo-go').onclick  = genVeo;
 }
 
-/* Image to Image */
-async function generateI2I() {
-  const model    = document.getElementById('i2i-model').value;
-  const prompt   = document.getElementById('i2i-prompt').value.trim();
-  const imageUrl = uploadedUrls.i2i;
-  if (!imageUrl) { showToast('Please upload an image first', 'error'); return; }
+/* ── Text to Image ── */
+async function genT2I() {
+  const p = v('t2i-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const body = {
+    model: v('t2i-m'),
+    input: { prompt:p, image_input:[], aspect_ratio:v('t2i-ar'), resolution:v('t2i-res'), output_format:v('t2i-fmt') }
+  };
+  await run(body,'t2i-r','image',{ prompt:p, model:v('t2i-m'), type:'text-to-image' });
+}
+
+/* ── Image to Image ── */
+async function genI2I() {
+  if (!urls.i2i) { toast('Upload an image first','err'); return; }
+  const body = { model:v('i2i-m'), input:{ prompt:v('i2i-p'), image_urls:[urls.i2i] }};
+  await run(body,'i2i-r','image',{ prompt:v('i2i-p'), model:v('i2i-m'), type:'image-to-image' });
+}
+
+/* ── Image Edit ── */
+async function genEdit() {
+  if (!urls.ed) { toast('Upload an image first','err'); return; }
+  const p = v('ed-p'); if (!p) { toast('Enter edit instructions','err'); return; }
+  const m = v('ed-m');
   let body;
-  if (model === 'seedream/4.5-edit') {
-    body = { model, input: { prompt, image_urls: [imageUrl], aspect_ratio: '1:1', quality: 'basic' } };
+  if (m.includes('4.5-edit') || m.includes('4.0-edit')) {
+    body = { model:m, input:{ prompt:p, image_urls:[urls.ed], aspect_ratio:v('ed-ar'), quality:v('ed-q') }};
   } else {
-    body = { model, input: { prompt, image_urls: [imageUrl] } };
+    body = { model:m, input:{ prompt:p, image_urls:[urls.ed] }};
   }
-  await startTask(body, 'i2i-result', 'image', { prompt, model, type: 'image-to-image' });
+  await run(body,'ed-r','image',{ prompt:p, model:m, type:'image-edit' });
 }
 
-/* Image to Video */
-async function generateI2V() {
-  const model    = document.getElementById('i2v-model').value;
-  const prompt   = document.getElementById('i2v-prompt').value.trim();
-  const imageUrl = uploadedUrls.i2v;
-  if (!imageUrl) { showToast('Please upload an image first', 'error'); return; }
+/* ── GPT-4o ── */
+async function genGPT4O() {
+  const p = v('gpt4o-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  if (!checkKey()) return;
+  const area = document.getElementById('gpt4o-r');
+  loading(area,'Submitting to GPT-4o…','pend');
+  try {
+    const payload = {
+      prompt:p, size:v('gpt4o-ar'),
+      nVariants:parseInt(v('gpt4o-n')),
+      isEnhance:v('gpt4o-enh')==='true',
+      enableFallback:true
+    };
+    if (urls.gpt4o) payload.filesUrl = [urls.gpt4o];
+    const r = await fetch(`${API_4O}/generate`,{
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
+      body:JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if (d.code!==200||!d.data?.taskId) throw new Error(d.msg||`Error ${d.code}`);
+    loading(area,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
+    poll4O(d.data.taskId,'gpt4o-r',{ prompt:p, model:'gpt4o-image', type:'text-to-image' });
+  } catch(e) { errState(area,e.message); toast('Failed: '+e.message,'err'); }
+}
+
+function poll4O(tid, rid, meta) {
+  clearInterval(pollers[tid]);
+  const area = document.getElementById(rid);
+  pollers[tid] = setInterval(async () => {
+    try {
+      const r = await fetch(`${API_4O}/record-info?taskId=${encodeURIComponent(tid)}`,{ headers:{'Authorization':`Bearer ${KEY}`}});
+      const d = await r.json();
+      if (d.code!==200) throw new Error(d.msg||'Query failed');
+      const rec = d.data;
+      if (rec.successFlag===1) {
+        clearInterval(pollers[tid]);
+        const us = rec.response?.result_urls||[];
+        if (us.length) { render(area,us,'image',tid); hist({...meta,taskId:tid,downloadUrl:us[0],time:Date.now()}); toast('Done ✓','ok'); }
+        else errState(area,'No URLs found.');
+      } else if (rec.successFlag===2) {
+        clearInterval(pollers[tid]); errState(area,rec.errorMessage||'Failed'); toast('Failed','err');
+      } else {
+        const pct = rec.progress?` ${(parseFloat(rec.progress)*100).toFixed(0)}%`:'';
+        loading(area,`Processing…${pct}`,'proc',tid);
+      }
+    } catch {}
+  }, POLL_MS);
+}
+
+/* ── Flux Kontext ── */
+async function genFK() {
+  const p = v('fk-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  if (!checkKey()) return;
+  const area = document.getElementById('fk-r');
+  loading(area,'Submitting to Flux Kontext…','pend');
+  try {
+    const payload = {
+      prompt:p, aspectRatio:v('fk-ar'), model:v('fk-m'),
+      outputFormat:v('fk-fmt'), enableTranslation:true
+    };
+    if (v('fk-up')==='true') payload.promptUpsampling=true;
+    if (urls.fk) payload.inputImage=urls.fk;
+    const r = await fetch(`${API_FK}/generate`,{
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
+      body:JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if (d.code!==200||!d.data?.taskId) throw new Error(d.msg||`Error ${d.code}`);
+    loading(area,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
+    pollFK(d.data.taskId,'fk-r',{ prompt:p, model:v('fk-m'), type:'text-to-image' });
+  } catch(e) { errState(area,e.message); toast('Failed: '+e.message,'err'); }
+}
+
+function pollFK(tid, rid, meta) {
+  clearInterval(pollers[tid]);
+  const area = document.getElementById(rid);
+  pollers[tid] = setInterval(async () => {
+    try {
+      const r = await fetch(`${API_FK}/record-info?taskId=${encodeURIComponent(tid)}`,{ headers:{'Authorization':`Bearer ${KEY}`}});
+      const d = await r.json();
+      if (d.code!==200) throw new Error(d.msg||'Query failed');
+      const rec = d.data;
+      if (rec.successFlag===1) {
+        clearInterval(pollers[tid]);
+        const url = rec.response?.resultImageUrl;
+        if (url) { render(area,[url],'image',tid); hist({...meta,taskId:tid,downloadUrl:url,time:Date.now()}); toast('Done ✓','ok'); }
+        else errState(area,'No URL found.');
+      } else if (rec.successFlag===2||rec.successFlag===3) {
+        clearInterval(pollers[tid]); errState(area,rec.errorMessage||'Failed'); toast('Failed','err');
+      } else loading(area,'Processing…','proc',tid);
+    } catch {}
+  }, POLL_MS);
+}
+
+/* ── Upscale / Tools ── */
+async function genUpscale() {
+  if (!urls.up) { toast('Upload an image first','err'); return; }
+  const m = v('up-m');
+  await run({ model:m, input:{ image_urls:[urls.up] }},'up-r','image',{ prompt:m, model:m, type:'upscale' });
+}
+
+/* ── Text to Video ── */
+async function genT2V() {
+  const p = v('t2v-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const m = v('t2v-m');
+  const body = { model:m, input:{ prompt:p, mode:'normal', duration:v('t2v-dur'), resolution:v('t2v-res') }};
+  await run(body,'t2v-r','video',{ prompt:p, model:m, type:'text-to-video' });
+}
+
+/* ── Image to Video ── */
+async function genI2V() {
+  if (!urls.i2v) { toast('Upload an image first','err'); return; }
+  const m = v('i2v-m');
+  const p = v('i2v-p');
   let body;
-  if (model === 'kling-2.6/image-to-video') {
-    const duration = document.getElementById('i2v-duration').value;
-    const sound    = document.getElementById('i2v-sound').value === 'true';
-    body = { model, input: { prompt, image_urls: [imageUrl], sound, duration } };
-  } else if (model === 'sora-2-image-to-video') {
-    body = { model, input: { prompt, image_urls: [imageUrl], aspect_ratio: 'landscape', n_frames: '10', remove_watermark: true, upload_method: 's3' } };
+  if (m.includes('kling')) {
+    body = { model:m, input:{ prompt:p, image_urls:[urls.i2v], sound:v('i2v-snd')==='true', duration:v('i2v-dur') }};
+  } else if (m.includes('sora-2')) {
+    body = { model:m, input:{ prompt:p, image_urls:[urls.i2v], aspect_ratio:'landscape', n_frames:'10', remove_watermark:true, upload_method:'s3' }};
   } else {
-    body = { model, input: { prompt, image_urls: [imageUrl], mode: 'normal', duration: '6', resolution: '480p' } };
+    body = { model:m, input:{ prompt:p, image_urls:[urls.i2v], mode:'normal', duration:v('i2v-dur'), resolution:'480p' }};
   }
-  await startTask(body, 'i2v-result', 'video', { prompt, model, type: 'image-to-video' });
+  await run(body,'i2v-r','video',{ prompt:p, model:m, type:'image-to-video' });
 }
 
-/* Image Editor */
-async function generateEditor() {
-  const model    = document.getElementById('ed-model').value;
-  const prompt   = document.getElementById('ed-prompt').value.trim();
-  const imageUrl = uploadedUrls.ed;
-  if (!imageUrl) { showToast('Please upload an image first', 'error'); return; }
-  if (!prompt)   { showToast('Please enter edit instructions', 'error'); return; }
-  let body;
-  if (model === 'seedream/4.5-edit') {
-    const ratio   = document.getElementById('ed-ratio').value;
-    const quality = document.getElementById('ed-quality').value;
-    body = { model, input: { prompt, image_urls: [imageUrl], aspect_ratio: ratio, quality } };
-  } else {
-    body = { model, input: { prompt, image_urls: [imageUrl] } };
-  }
-  await startTask(body, 'ed-result', 'image', { prompt, model, type: 'image-edit' });
-}
-
-/* Text to Image */
-async function generateT2I() {
-  const prompt      = document.getElementById('t2i-prompt').value.trim();
-  if (!prompt) { showToast('Please enter a prompt', 'error'); return; }
-  const model        = document.getElementById('t2i-model').value;
-  const resolution   = document.getElementById('t2i-res').value;
-  const aspect_ratio = document.getElementById('t2i-ratio').value;
-  const output_format = document.getElementById('t2i-format').value;
-  const body = { model, input: { prompt, image_input: [], aspect_ratio, resolution, output_format } };
-  await startTask(body, 't2i-result', 'image', { prompt, model, type: 'text-to-image' });
-}
-
-/* GPT-4o Image — dedicated endpoint */
-async function generateGPT4O() {
-  const prompt   = document.getElementById('gpt4o-prompt').value.trim();
-  if (!prompt) { showToast('Please enter a prompt', 'error'); return; }
-  const size      = document.getElementById('gpt4o-size').value;
-  const nVariants = parseInt(document.getElementById('gpt4o-variants').value);
-  const isEnhance = document.getElementById('gpt4o-enhance').value === 'true';
-  const imageUrl  = uploadedUrls.gpt4o;
-
-  const payload = { prompt, size, nVariants, isEnhance, enableFallback: true };
-  if (imageUrl) payload.filesUrl = [imageUrl];
-
-  const resultArea = document.getElementById('gpt4o-result');
-  if (!checkApiKey()) return;
-  setLoading(resultArea, 'Submitting to GPT-4o…', 'pending');
-
+/* ── Veo 3.1 ── */
+async function genVeo() {
+  const p = v('veo-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  if (!checkKey()) return;
+  const area = document.getElementById('veo-r');
+  loading(area,'Submitting to Veo 3.1…','pend');
   try {
-    const res  = await fetch(`${KIE_BASE_4O}/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-      body: JSON.stringify(payload)
+    const payload = { prompt:p, aspectRatio:v('veo-ar'), duration:parseInt(v('veo-dur')) };
+    if (urls.veo) payload.imageUrl = urls.veo;
+    const r = await fetch(`${API_VEO}/generate`,{
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
+      body:JSON.stringify(payload)
     });
-    const data = await res.json();
-    if (data.code !== 200 || !data.data?.taskId) throw new Error(data.msg || `API error ${data.code}`);
-    const taskId = data.data.taskId;
-    setLoading(resultArea, `Processing… [${taskId}]`, 'processing', taskId);
-    pollTask4O(taskId, 'gpt4o-result', { prompt, model: 'gpt4o-image', type: 'text-to-image' });
-  } catch (err) {
-    setError(resultArea, err.message);
-    showToast('Task failed: ' + err.message, 'error');
-  }
+    const d = await r.json();
+    if (d.code!==200||!d.data?.taskId) throw new Error(d.msg||`Error ${d.code}`);
+    loading(area,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
+    pollVeo(d.data.taskId,'veo-r',{ prompt:p, model:'veo3.1', type:'text-to-video' });
+  } catch(e) { errState(area,e.message); toast('Failed: '+e.message,'err'); }
 }
 
-function pollTask4O(taskId, resultAreaId, meta) {
-  if (activePollers[taskId]) clearInterval(activePollers[taskId]);
-  const resultArea = document.getElementById(resultAreaId);
-  activePollers[taskId] = setInterval(async () => {
+function pollVeo(tid, rid, meta) {
+  clearInterval(pollers[tid]);
+  const area = document.getElementById(rid);
+  pollers[tid] = setInterval(async () => {
     try {
-      const res  = await fetch(`${KIE_BASE_4O}/record-info?taskId=${encodeURIComponent(taskId)}`, {
-        headers: { 'Authorization': `Bearer ${API_KEY}` }
-      });
-      const data = await res.json();
-      if (data.code !== 200) throw new Error(data.msg || 'Query failed');
-      const record = data.data;
-      const flag   = record.successFlag;
-      if (flag === 1) {
-        clearInterval(activePollers[taskId]);
-        delete activePollers[taskId];
-        const urls = (record.response?.result_urls || []);
-        if (urls.length > 0) {
-          renderResult(resultArea, urls, 'image', taskId);
-          saveHistory({ ...meta, taskId, downloadUrl: urls[0], time: Date.now() });
-          showToast('GPT-4o generation complete ✓', 'success');
-        } else { setError(resultArea, 'Completed but no URLs found.'); }
-      } else if (flag === 2) {
-        clearInterval(activePollers[taskId]);
-        delete activePollers[taskId];
-        setError(resultArea, record.errorMessage || 'Generation failed');
-        showToast('Generation failed', 'error');
-      } else {
-        const pct = record.progress ? ` ${(parseFloat(record.progress)*100).toFixed(0)}%` : '';
-        setLoading(resultArea, `Processing…${pct}`, 'processing', taskId);
-      }
-    } catch (err) { console.warn('Poll 4o error:', err.message); }
-  }, POLL_INTERVAL);
+      const r = await fetch(`${API_VEO}/record-info?taskId=${encodeURIComponent(tid)}`,{ headers:{'Authorization':`Bearer ${KEY}`}});
+      const d = await r.json();
+      if (d.code!==200) throw new Error(d.msg);
+      const rec = d.data;
+      const status = (rec.status||'').toLowerCase();
+      if (status==='success'||status==='completed') {
+        clearInterval(pollers[tid]);
+        const eu = extractUrls(rec,'video');
+        if (eu.length) { render(area,eu,'video',tid); hist({...meta,taskId:tid,downloadUrl:eu[0],time:Date.now()}); toast('Done ✓','ok'); }
+        else errState(area,'No URL found.');
+      } else if (status==='failed'||status==='error') {
+        clearInterval(pollers[tid]); errState(area,rec.errorMsg||'Failed'); toast('Failed','err');
+      } else loading(area,'Processing…','proc',tid);
+    } catch {}
+  }, POLL_MS);
 }
 
-/* Flux Kontext — dedicated endpoint */
-async function generateFluxKontext() {
-  const prompt   = document.getElementById('fk-prompt').value.trim();
-  if (!prompt) { showToast('Please enter a prompt', 'error'); return; }
-  const model        = document.getElementById('fk-model').value;
-  const aspectRatio  = document.getElementById('fk-ratio').value;
-  const outputFormat = document.getElementById('fk-format').value;
-  const promptUpsamp = document.getElementById('fk-upsampling').value === 'true';
-  const imageUrl     = uploadedUrls.fk;
+/* ─ Generic Task Runner ─ */
+function checkKey() {
+  if (!KEY) { toast('Set your API key first','err'); return false; } return true;
+}
 
-  const payload = { prompt, aspectRatio, model, outputFormat, enableTranslation: true };
-  if (promptUpsamp) payload.promptUpsampling = true;
-  if (imageUrl) payload.inputImage = imageUrl;
-
-  const resultArea = document.getElementById('fk-result');
-  if (!checkApiKey()) return;
-  setLoading(resultArea, 'Submitting to Flux Kontext…', 'pending');
-
+async function run(body, rid, type, meta) {
+  const area = document.getElementById(rid);
+  if (!checkKey()) return;
+  loading(area,'Submitting task…','pend');
   try {
-    const res  = await fetch(`${KIE_BASE_FK}/generate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-      body: JSON.stringify(payload)
+    const r = await fetch(`${API}/createTask`,{
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
+      body:JSON.stringify(body)
     });
-    const data = await res.json();
-    if (data.code !== 200 || !data.data?.taskId) throw new Error(data.msg || `API error ${data.code}`);
-    const taskId = data.data.taskId;
-    setLoading(resultArea, `Processing… [${taskId}]`, 'processing', taskId);
-    pollTaskFK(taskId, 'fk-result', { prompt, model, type: 'text-to-image' });
-  } catch (err) {
-    setError(resultArea, err.message);
-    showToast('Task failed: ' + err.message, 'error');
-  }
+    const d = await r.json();
+    if (d.code!==200||!d.data?.taskId) throw new Error(d.msg||`Error ${d.code}`);
+    const tid = d.data.taskId;
+    loading(area,`Processing… [${tid}]`,'proc',tid);
+    poll(tid, rid, type, meta);
+  } catch(e) { errState(area,e.message); toast('Failed: '+e.message,'err'); }
 }
 
-function pollTaskFK(taskId, resultAreaId, meta) {
-  if (activePollers[taskId]) clearInterval(activePollers[taskId]);
-  const resultArea = document.getElementById(resultAreaId);
-  activePollers[taskId] = setInterval(async () => {
+function poll(tid, rid, type, meta) {
+  clearInterval(pollers[tid]);
+  const area = document.getElementById(rid);
+  pollers[tid] = setInterval(async () => {
     try {
-      const res  = await fetch(`${KIE_BASE_FK}/record-info?taskId=${encodeURIComponent(taskId)}`, {
-        headers: { 'Authorization': `Bearer ${API_KEY}` }
-      });
-      const data = await res.json();
-      if (data.code !== 200) throw new Error(data.msg || 'Query failed');
-      const record = data.data;
-      const flag   = record.successFlag;
-      if (flag === 1) {
-        clearInterval(activePollers[taskId]);
-        delete activePollers[taskId];
-        const url = record.response?.resultImageUrl;
-        if (url) {
-          renderResult(resultArea, [url], 'image', taskId);
-          saveHistory({ ...meta, taskId, downloadUrl: url, time: Date.now() });
-          showToast('Flux Kontext complete ✓', 'success');
-        } else { setError(resultArea, 'Completed but no URL found.'); }
-      } else if (flag === 2 || flag === 3) {
-        clearInterval(activePollers[taskId]);
-        delete activePollers[taskId];
-        setError(resultArea, record.errorMessage || 'Generation failed');
-        showToast('Generation failed', 'error');
+      const r = await fetch(`${API}/recordInfo?taskId=${encodeURIComponent(tid)}`,{ headers:{'Authorization':`Bearer ${KEY}`}});
+      const d = await r.json();
+      if (d.code!==200) throw new Error(d.msg||'Query failed');
+      const rec  = d.data;
+      const stat = (rec.status||rec.state||'').toLowerCase();
+      if (stat==='success'||stat==='completed'||stat==='finish') {
+        clearInterval(pollers[tid]);
+        const us = extractUrls(rec, type);
+        if (us.length) { render(area,us,type,tid); hist({...meta,taskId:tid,downloadUrl:us[0],time:Date.now()}); toast('Done ✓','ok'); }
+        else errState(area,'Completed but no URL found.');
+      } else if (stat==='failed'||stat==='error') {
+        clearInterval(pollers[tid]); errState(area,rec.errorMsg||rec.failReason||'Failed'); toast('Failed','err');
       } else {
-        setLoading(resultArea, 'Processing…', 'processing', taskId);
+        const pct = rec.progress?` ${rec.progress}%`:'';
+        loading(area,`Processing…${pct}`,'proc',tid);
       }
-    } catch (err) { console.warn('Poll FK error:', err.message); }
-  }, POLL_INTERVAL);
+    } catch {}
+  }, POLL_MS);
 }
 
-/* Upscale / Remove Background */
-async function generateUpscale() {
-  const model    = document.getElementById('up-model').value;
-  const imageUrl = uploadedUrls.up;
-  if (!imageUrl) { showToast('Please upload an image first', 'error'); return; }
-  const body = { model, input: { image_urls: [imageUrl] } };
-  await startTask(body, 'up-result', 'image', { prompt: model, model, type: 'upscale' });
-}
-
-/* ── Generic Task Runner ─────────────────────────────── */
-function checkApiKey() {
-  if (!API_KEY) { showToast('Please set your API key first', 'error'); return false; }
-  return true;
-}
-
-async function startTask(body, resultAreaId, mediaType, meta) {
-  const resultArea = document.getElementById(resultAreaId);
-  if (!checkApiKey()) return;
-  setLoading(resultArea, 'Submitting task…', 'pending');
-  try {
-    const res  = await fetch(`${KIE_BASE}/createTask`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
-      body: JSON.stringify(body)
-    });
-    const data = await res.json();
-    if (data.code !== 200 || !data.data?.taskId) throw new Error(data.msg || `API error ${data.code}`);
-    const taskId = data.data.taskId;
-    setLoading(resultArea, `Processing… [${taskId}]`, 'processing', taskId);
-    pollTask(taskId, resultAreaId, mediaType, meta);
-  } catch (err) {
-    setError(resultArea, err.message);
-    showToast('Task failed: ' + err.message, 'error');
-  }
-}
-
-function pollTask(taskId, resultAreaId, mediaType, meta) {
-  if (activePollers[taskId]) clearInterval(activePollers[taskId]);
-  const resultArea = document.getElementById(resultAreaId);
-  activePollers[taskId] = setInterval(async () => {
-    try {
-      const res  = await fetch(`${KIE_BASE}/recordInfo?taskId=${encodeURIComponent(taskId)}`, {
-        headers: { 'Authorization': `Bearer ${API_KEY}` }
-      });
-      const data = await res.json();
-      if (data.code !== 200) throw new Error(data.msg || 'Query failed');
-      const record = data.data;
-      const status = (record.status || record.state || '').toLowerCase();
-      if (status === 'success' || status === 'completed' || status === 'finish') {
-        clearInterval(activePollers[taskId]);
-        delete activePollers[taskId];
-        const urls = extractUrls(record, mediaType);
-        if (urls.length > 0) {
-          renderResult(resultArea, urls, mediaType, taskId);
-          saveHistory({ ...meta, taskId, downloadUrl: urls[0], time: Date.now() });
-          showToast('Generation complete! ✓', 'success');
-        } else { setError(resultArea, 'Completed but no media URL found.'); }
-      } else if (status === 'failed' || status === 'error') {
-        clearInterval(activePollers[taskId]);
-        delete activePollers[taskId];
-        setError(resultArea, record.errorMsg || record.failReason || 'Generation failed');
-        showToast('Generation failed', 'error');
-      } else {
-        const pct = record.progress ? ` ${record.progress}%` : '';
-        setLoading(resultArea, `Processing…${pct}`, 'processing', taskId);
-      }
-    } catch (err) { console.warn('Poll error:', err.message); }
-  }, POLL_INTERVAL);
-}
-
-function extractUrls(record, mediaType) {
-  const urls = [];
-  const data = record?.data || record || {};
+function extractUrls(rec, type) {
+  const us = [];
+  const data = rec?.data||rec||{};
   let parsed = null;
-  try {
-    if (data.resultJson) {
-      parsed = typeof data.resultJson === 'string' ? JSON.parse(data.resultJson) : data.resultJson;
-    }
-  } catch (e) {}
-  const push = (v) => {
+  try { if (data.resultJson) parsed = typeof data.resultJson==='string'?JSON.parse(data.resultJson):data.resultJson; } catch {}
+  const push = v => {
     if (!v) return;
-    if (typeof v === 'string') urls.push(v);
-    else if (v?.url) urls.push(v.url);
-    else if (v?.image_url) urls.push(v.image_url);
-    else if (v?.imageUrl) urls.push(v.imageUrl);
+    if (typeof v==='string') us.push(v);
+    else if (v?.url) us.push(v.url);
+    else if (v?.image_url) us.push(v.image_url);
+    else if (v?.imageUrl) us.push(v.imageUrl);
   };
   if (parsed) {
     if (Array.isArray(parsed.resultUrls)) parsed.resultUrls.forEach(push);
     if (Array.isArray(parsed.images)) parsed.images.forEach(push);
     if (parsed.url) push(parsed.url);
-    if (parsed.image_url) push(parsed.image_url);
   }
   if (Array.isArray(data.resultUrls)) data.resultUrls.forEach(push);
   if (Array.isArray(data.images)) data.images.forEach(push);
-  [data.downloadUrl, data.imageUrl, data.videoUrl, data.resultUrl].forEach(push);
-  if (urls.length === 0) {
-    const str   = JSON.stringify(record || {});
-    const match = str.match(/https?:\/\/[^"'\s]+/g);
-    if (match) urls.push(...match);
+  [data.downloadUrl,data.imageUrl,data.videoUrl,data.resultUrl].forEach(push);
+  if (!us.length) {
+    const m = JSON.stringify(rec||{}).match(/https?:\/\/[^"'\s]+/g);
+    if (m) us.push(...m);
   }
-  return [...new Set(urls)];
+  return [...new Set(us)];
 }
 
-/* ── UI Helpers ──────────────────────────────────────── */
-function setLoading(area, label, statusClass, taskId = '') {
-  area.innerHTML = `
-    <div class="status-block">
-      <div class="status-spinner"></div>
-      <div class="status-label ${statusClass}">${statusClass.toUpperCase()}</div>
-      <div style="font-size:0.75rem;color:var(--text-dim)">${label}</div>
-      ${taskId ? `<div class="task-id-display">Task: ${taskId}</div>` : ''}
+/* ─ UI Helpers ─ */
+function v(id) { return (document.getElementById(id)||{}).value||''; }
+
+function loading(area, label, cls, tid='') {
+  area.innerHTML = `<div class="sb-block">
+    <div class="spin"></div>
+    <div class="s-lbl ${cls}">${cls.toUpperCase()}</div>
+    <div style="font-size:0.7rem;color:var(--dim)">${label}</div>
+    ${tid?`<div class="s-tid">${tid}</div>`:''}
+  </div>`;
+}
+
+function errState(area, msg) {
+  area.innerHTML = `<div class="sb-block">
+    <div style="font-size:1.6rem;margin-bottom:0.2rem">✕</div>
+    <div class="s-lbl fail">FAILED</div>
+    <div style="color:var(--muted);font-size:0.72rem;margin-top:0.2rem;max-width:260px;text-align:center">${msg}</div>
+  </div>`;
+}
+
+function render(area, us, type, tid) {
+  if (type==='video') {
+    const u = us[0];
+    area.innerHTML = `<div class="rv-wrap">
+      <video class="rv" controls autoplay muted playsinline><source src="${u}"></video>
+      <div class="r-acts">
+        <a class="r-act" href="${u}" download target="_blank">⬇ Download</a>
+        <button class="r-act" onclick="openModal('${u}','video','${tid}')">⛶ Fullscreen</button>
+      </div>
     </div>`;
-}
-
-function setError(area, msg) {
-  area.innerHTML = `
-    <div class="status-block">
-      <div style="font-size:2rem;margin-bottom:0.25rem">✕</div>
-      <div class="status-label failed">FAILED</div>
-      <div style="color:var(--text-muted);font-size:0.78rem;margin-top:0.25rem;max-width:280px;text-align:center">${msg}</div>
+  } else if (us.length===1) {
+    const u = us[0];
+    area.innerHTML = `<div class="ri-wrap">
+      <img class="ri" src="${u}" alt="Result" onclick="openModal('${u}','image','${tid}')"/>
+      <div class="r-acts">
+        <a class="r-act" href="${u}" download target="_blank">⬇ Download</a>
+        <button class="r-act" onclick="openModal('${u}','image','${tid}')">⛶ Fullscreen</button>
+      </div>
     </div>`;
-}
-
-function renderResult(area, urls, mediaType, taskId) {
-  if (mediaType === 'video') {
-    const url = urls[0];
-    area.innerHTML = `
-      <div class="result-vid-wrap">
-        <video class="result-vid" controls autoplay muted playsinline>
-          <source src="${url}">Your browser doesn't support HTML5 video.
-        </video>
-        <div class="result-actions">
-          <a class="btn-result-action" href="${url}" download target="_blank">⬇ Download</a>
-          <button class="btn-result-action" onclick="openModal('${url}','video','${taskId}')">⛶ Fullscreen</button>
-        </div>
-      </div>`;
-  } else if (urls.length === 1) {
-    const url = urls[0];
-    area.innerHTML = `
-      <div class="result-img-wrap">
-        <img class="result-img" src="${url}" alt="Generated image" onclick="openModal('${url}','image','${taskId}')"/>
-        <div class="result-actions">
-          <a class="btn-result-action" href="${url}" download target="_blank">⬇ Download</a>
-          <button class="btn-result-action" onclick="openModal('${url}','image','${taskId}')">⛶ Fullscreen</button>
-        </div>
-      </div>`;
   } else {
-    const items = urls.map(u => `<img class="result-grid-img" src="${u}" alt="Generated" onclick="openModal('${u}','image','${taskId}')"/>`).join('');
-    area.innerHTML = `<div class="result-grid">${items}</div>`;
+    const items = us.map(u=>`<img src="${u}" alt="Result" onclick="openModal('${u}','image','${tid}')">`).join('');
+    area.innerHTML = `<div class="rgrid">${items}</div>`;
   }
 }
 
-/* ── Modal ───────────────────────────────────────────── */
+/* ─ Modal ─ */
 function initModal() {
-  document.getElementById('modalClose').addEventListener('click', closeModal);
-  document.querySelector('.modal-overlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeModal();
-  });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  document.getElementById('mClose').onclick = closeModal;
+  document.querySelector('.mo').onclick = e => { if (e.target===e.currentTarget) closeModal(); };
+  document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
+  document.getElementById('mRetry').onclick = () => { closeModal(); toast('Re-trigger from the panel','info'); };
 }
 
-window.openModal = function(url, type, taskId) {
-  const overlay     = document.getElementById('previewModal');
-  const mediaDiv    = document.getElementById('modalMedia');
-  const downloadBtn = document.getElementById('modalDownload');
-  const metaDiv     = document.getElementById('modalMeta');
-  currentModalTask  = taskId;
-  if (type === 'video') {
-    mediaDiv.innerHTML = `<video controls autoplay muted playsinline style="width:100%"><source src="${url}"></video>`;
-  } else {
-    mediaDiv.innerHTML = `<img src="${url}" style="width:100%"/>`;
-  }
-  downloadBtn.href = url;
-  metaDiv.textContent = `Task ID: ${taskId} | URL: ${url}`;
-  overlay.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
+window.openModal = function(url, type, tid) {
+  const mo = document.getElementById('modal');
+  const mm = document.getElementById('mMedia');
+  document.getElementById('mDl').href = url;
+  document.getElementById('mMeta').textContent = `Task: ${tid} | ${url}`;
+  mm.innerHTML = type==='video'
+    ? `<video controls autoplay muted playsinline style="width:100%"><source src="${url}"></video>`
+    : `<img src="${url}" style="width:100%"/>`;
+  mo.classList.remove('hidden');
+  document.body.style.overflow='hidden';
 };
 
 function closeModal() {
-  document.getElementById('previewModal').classList.add('hidden');
-  document.body.style.overflow = '';
-  document.getElementById('modalMedia').innerHTML = '';
+  document.getElementById('modal').classList.add('hidden');
+  document.body.style.overflow='';
+  document.getElementById('mMedia').innerHTML='';
 }
 
-document.getElementById('modalRetry')?.addEventListener('click', () => {
-  closeModal();
-  showToast('Re-trigger your generation from the panel', 'info');
-});
-
-/* ── History ─────────────────────────────────────────── */
-function saveHistory(entry) {
-  const history = getHistory();
-  history.unshift(entry);
-  if (history.length > 50) history.pop();
-  localStorage.setItem('kie_history', JSON.stringify(history));
+/* ─ History ─ */
+function hist(e) {
+  const h = getHist();
+  h.unshift(e);
+  if (h.length>50) h.pop();
+  localStorage.setItem('kie_hist', JSON.stringify(h));
 }
-
-function getHistory() {
-  try { return JSON.parse(localStorage.getItem('kie_history') || '[]'); } catch { return []; }
+function getHist() {
+  try { return JSON.parse(localStorage.getItem('kie_hist')||'[]'); } catch { return []; }
 }
-
 function renderHistory() {
-  const grid    = document.getElementById('historyGrid');
-  const history = getHistory();
-  const countEl = document.getElementById('historyCount');
-  if (countEl) countEl.textContent = history.length ? `${history.length} item${history.length !== 1 ? 's' : ''}` : '';
-  if (!history.length) {
-    grid.innerHTML = '<div class="history-empty">No history yet. Start generating!</div>';
-    return;
-  }
-  grid.innerHTML = history.map(entry => {
-    const isVideo = entry.type === 'image-to-video';
-    const timeStr = entry.time
-      ? new Date(entry.time).toLocaleDateString('en', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-      : '';
-    const media = isVideo
-      ? `<div class="history-card-media video-thumb">🎬</div>`
-      : `<img class="history-card-media" src="${entry.downloadUrl}" alt="history" loading="lazy" onerror="this.parentNode.innerHTML='<div class=\\'history-card-media video-thumb\\'>🖼</div>'"/>`;
-    return `
-      <div class="history-card" onclick="openModal('${entry.downloadUrl}','${isVideo ? 'video' : 'image'}','${entry.taskId}')">
-        <div class="history-card-type">${entry.type || 'generation'}</div>
-        ${media}
-        <div class="history-card-info">
-          <div class="history-card-model">${entry.model || 'unknown'}</div>
-          <div class="history-card-prompt">${entry.prompt || '—'}</div>
-          <div class="history-card-time">${timeStr}</div>
-        </div>
-      </div>`;
+  const grid = document.getElementById('hGrid');
+  const h    = getHist();
+  const cnt  = document.getElementById('hCount');
+  if (cnt) cnt.textContent = h.length ? `${h.length} item${h.length!==1?'s':''}` : '';
+  if (!h.length) { grid.innerHTML='<div class="h-empty">No history yet. Start generating!</div>'; return; }
+  grid.innerHTML = h.map(e => {
+    const isVid = e.type?.includes('video');
+    const ts = e.time ? new Date(e.time).toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+    const media = isVid ? `<div class="hc-vid">🎬</div>` : `<img class="hc-img" src="${e.downloadUrl}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<div class=\\'hc-vid\\'>🖼</div>'"/>`;
+    return `<div class="hc" onclick="openModal('${e.downloadUrl}','${isVid?'video':'image'}','${e.taskId}')">
+      <div class="hc-type">${e.type||'gen'}</div>
+      ${media}
+      <div class="hc-info">
+        <div class="hc-model">${e.model||'?'}</div>
+        <div class="hc-prompt">${e.prompt||'—'}</div>
+        <div class="hc-time">${ts}</div>
+      </div>
+    </div>`;
   }).join('');
 }
-
 function initHistory() {
-  document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+  document.getElementById('clearHist').onclick = () => {
     if (!confirm('Clear all history?')) return;
-    localStorage.removeItem('kie_history');
+    localStorage.removeItem('kie_hist');
     renderHistory();
-    showToast('History cleared', 'info');
-  });
+    toast('History cleared','info');
+  };
 }
 
-/* ── Toast ───────────────────────────────────────────── */
-let toastTimer = null;
-function showToast(msg, type = 'info') {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.className   = `toast show ${type}`;
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 3200);
+/* ─ Toast ─ */
+let toastT;
+function toast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>el.classList.remove('show'), 3000);
 }
 </script>
 </body>
