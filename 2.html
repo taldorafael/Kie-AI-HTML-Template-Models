@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KIE Studio</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0d;
+  --surface:#141414;
+  --surface2:#1a1a1a;
+  --surface3:#202020;
+  --line:#272727;
+  --line2:#333;
+  --text:#e8e8e8;
+  --muted:#666;
+  --dim:#444;
+  --accent:#c8ff00;
+  --accent-dim:rgba(200,255,0,0.08);
+  --blue:#4af;
+  --red:#f55;
+  --green:#4f8;
+  --r:2px;
+  --mono:ui-monospace,'Cascadia Code','Fira Code',monospace;
+  --sans:system-ui,-apple-system,sans-serif;
+  --sidebar:240px;
+  --poll:4000;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.5}
+body{display:flex;overflow:hidden}
+
+/* ─── Sidebar ─── */
+#sb{
+  width:var(--sidebar);flex-shrink:0;
+  background:var(--surface);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  height:100vh;overflow-y:auto;
+  scrollbar-width:none;
+}
+#sb::-webkit-scrollbar{display:none}
+.sb-logo{
+  padding:1.5rem 1.25rem 1.25rem;
+  border-bottom:1px solid var(--line);
+  font-size:1.1rem;letter-spacing:.08em;font-weight:600;
+}
+.sb-logo span{color:var(--accent)}
+.sb-logo small{display:block;font-size:.6rem;color:var(--muted);letter-spacing:.2em;margin-top:.2rem;text-transform:uppercase}
+.sb-group{
+  font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--dim);padding:.9rem 1.25rem .3rem;
+}
+.sb-group:not(:first-of-type){border-top:1px solid var(--line);margin-top:.25rem}
+nav ul{list-style:none}
+nav li{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.5rem 1.25rem;cursor:pointer;
+  font-size:.72rem;letter-spacing:.05em;
+  color:var(--muted);transition:color .1s,background .1s;
+  border-left:2px solid transparent;
+}
+nav li:hover{color:var(--text);background:rgba(255,255,255,.02)}
+nav li.on{color:var(--accent);border-left-color:var(--accent);background:var(--accent-dim)}
+nav li .ic{width:14px;text-align:center;font-size:.85rem;flex-shrink:0}
+.sb-foot{
+  margin-top:auto;padding:1rem 1.25rem 1.25rem;
+  border-top:1px solid var(--line);display:flex;flex-direction:column;gap:.75rem;
+}
+.credits-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surface2);border:1px solid var(--line);
+  border-radius:var(--r);padding:.4rem .6rem;
+}
+.credits-row span{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.15em}
+.credits-val{color:var(--accent);font-size:.78rem}
+.btn-ic{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;line-height:1;padding:0;transition:color .15s,transform .2s}
+.btn-ic:hover{color:var(--accent);transform:rotate(90deg)}
+.key-label{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.key-row{display:flex;gap:.35rem}
+.key-input{
+  flex:1;min-width:0;
+  background:var(--surface2);border:1px solid var(--line);
+  color:var(--text);font-family:var(--mono);font-size:.7rem;
+  padding:.4rem .55rem;border-radius:var(--r);outline:none;
+}
+.key-input:focus{border-color:var(--line2)}
+.key-input::placeholder{color:var(--dim)}
+.btn-save{
+  background:var(--accent);color:#000;border:none;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;
+  text-transform:uppercase;padding:0 .75rem;border-radius:var(--r);
+  cursor:pointer;flex-shrink:0;font-weight:600;
+  transition:opacity .15s;
+}
+.btn-save:hover{opacity:.85}
+
+/* ─── Hamburger ─── */
+.ham{
+  display:none;position:fixed;top:.75rem;left:.75rem;z-index:99;
+  background:var(--surface);border:1px solid var(--line2);
+  padding:.45rem .5rem;cursor:pointer;border-radius:var(--r);
+  flex-direction:column;gap:3px;
+}
+.ham span{display:block;width:16px;height:1.5px;background:var(--text)}
+
+/* ─── Main ─── */
+#main{
+  flex:1;overflow-y:auto;display:flex;flex-direction:column;
+  scrollbar-width:thin;scrollbar-color:var(--line2) transparent;
+}
+.page{display:none;flex-direction:column;flex:1;animation:fi .15s ease}
+.page.on{display:flex}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ─── Page header ─── */
+.ph{
+  padding:1.75rem 2rem 1.25rem;border-bottom:1px solid var(--line);flex-shrink:0;
+}
+.ph h1{font-size:1.5rem;letter-spacing:.04em;color:var(--text);font-weight:400;font-family:var(--sans)}
+.ph h1 b{color:var(--accent);font-weight:400}
+.ph p{font-size:.65rem;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-top:.3rem}
+
+/* ─── Workspace ─── */
+.ws{display:grid;grid-template-columns:340px 1fr;flex:1;min-height:0;overflow:hidden}
+.ws.full{display:flex;flex-direction:row}
+.ws.full .ctrl{width:340px;flex-shrink:0;border-right:1px solid var(--line)}
+
+/* ─── Panel ─── */
+.ctrl,.res{
+  display:flex;flex-direction:column;gap:.75rem;
+  padding:1.5rem;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:var(--line2) transparent;
+}
+.ctrl{border-right:1px solid var(--line)}
+.res{flex:1}
+
+/* ─── Labels / fields ─── */
+.lbl{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.3rem}
+.fg{display:flex;flex-direction:column;flex-shrink:0}
+.sel,.inp,.ta{
+  width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--text);font-family:var(--mono);font-size:.75rem;
+  padding:.45rem .65rem;border-radius:var(--r);outline:none;
+  transition:border .1s;
+}
+.sel{
+  appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23555'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .65rem center;
+  padding-right:2rem;
+}
+.sel:focus,.inp:focus,.ta:focus{border-color:var(--line2)}
+.sel optgroup{color:var(--muted)}
+.sel option{background:var(--surface2)}
+.ta{resize:vertical;line-height:1.55}
+.ta::placeholder{color:var(--dim)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;flex-shrink:0}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;flex-shrink:0}
+
+/* ─── Upload zone ─── */
+.drop{
+  border:1px dashed var(--line2);border-radius:var(--r);
+  min-height:110px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;background:var(--surface2);position:relative;
+  transition:border-color .15s,background .15s;flex-shrink:0;
+}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-dim)}
+.drop-inner{text-align:center;pointer-events:none;padding:1rem}
+.drop-ic{font-size:1.4rem;opacity:.3;margin-bottom:.3rem}
+.drop-inner p{font-size:.72rem;color:var(--muted)}
+.drop-inner .lnk{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.drop-inner small{display:block;font-size:.58rem;color:var(--dim);margin-top:.15rem}
+.file-in{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.prev{position:relative;flex-shrink:0;border-radius:var(--r);overflow:hidden}
+.prev img{width:100%;max-height:170px;object-fit:cover;display:block}
+.btn-rm{
+  position:absolute;top:.35rem;right:.35rem;
+  background:rgba(0,0,0,.8);border:1px solid var(--line2);
+  color:var(--text);font-family:var(--mono);font-size:.6rem;
+  padding:.18rem .45rem;border-radius:var(--r);cursor:pointer;
+  transition:background .1s;
+}
+.btn-rm:hover{background:var(--red);border-color:var(--red)}
+.hidden{display:none!important}
+
+/* ─── Prompt wrap ─── */
+.pw{position:relative;flex-shrink:0}
+.btn-cp{
+  position:absolute;top:.35rem;right:.35rem;
+  background:var(--surface3);border:1px solid var(--line);
+  color:var(--muted);width:22px;height:22px;border-radius:var(--r);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;transition:color .1s,border-color .1s;
+}
+.btn-cp:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ─── Generate button ─── */
+.btn-gen{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--accent);color:#000;border:none;
+  font-family:var(--mono);font-size:.8rem;letter-spacing:.1em;font-weight:600;
+  padding:.65rem 1rem;border-radius:var(--r);cursor:pointer;
+  width:100%;flex-shrink:0;margin-top:.25rem;
+  transition:opacity .15s,transform .1s;
+  position:relative;overflow:hidden;
+}
+.btn-gen::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+  transform:translateX(-100%);transition:transform .35s;
+}
+.btn-gen:hover::after{transform:translateX(100%)}
+.btn-gen:hover{opacity:.9;transform:translateY(-1px)}
+.btn-gen:active{transform:none}
+
+/* ─── Result area ─── */
+.ra{
+  background:var(--surface2);border:1px solid var(--line);
+  border-radius:var(--r);min-height:220px;
+  display:flex;align-items:center;justify-content:center;
+  flex:1;overflow:hidden;
+}
+.ra-ph{text-align:center;color:var(--dim);padding:2rem}
+.ra-ph .ic{font-size:1.8rem;opacity:.2;animation:pulse 3s ease-in-out infinite;margin-bottom:.4rem}
+@keyframes pulse{0%,100%{opacity:.2}50%{opacity:.4}}
+.ra-ph p{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase}
+
+/* result media */
+.r-img{width:100%;display:block;cursor:zoom-in}
+.r-vid{width:100%;display:block}
+.r-wrap{width:100%;display:flex;flex-direction:column}
+.r-grid{display:grid;grid-template-columns:1fr 1fr;width:100%}
+.r-grid img{width:100%;display:block;cursor:zoom-in;border:1px solid var(--line)}
+.r-acts{display:flex;border-top:1px solid var(--line)}
+.r-act{
+  flex:1;background:none;border:none;border-right:1px solid var(--line);
+  color:var(--muted);font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;
+  text-transform:uppercase;padding:.55rem;cursor:pointer;text-align:center;
+  text-decoration:none;display:block;transition:background .1s,color .1s;
+}
+.r-act:last-child{border-right:none}
+.r-act:hover{background:var(--surface3);color:var(--accent)}
+
+/* ─── Status ─── */
+.st{text-align:center;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:.6rem}
+.st-spin{
+  width:22px;height:22px;border:2px solid var(--line2);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.st-lbl{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase}
+.st-lbl.pend{color:var(--blue)}
+.st-lbl.proc{color:var(--accent)}
+.st-lbl.fail{color:var(--red)}
+.st-sub{font-size:.67rem;color:var(--muted)}
+.st-tid{font-size:.55rem;color:var(--dim);word-break:break-all;max-width:240px;text-align:center}
+
+/* ─── Model-specific opts ─── */
+.m-opts{display:none}
+.m-opts.on{display:contents}
+
+/* ─── History ─── */
+.hist-bar{
+  padding:1rem 2rem;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:.75rem;flex-shrink:0;
+}
+.hist-ct{font-size:.6rem;color:var(--muted);margin-left:auto;letter-spacing:.1em;text-transform:uppercase}
+.btn-sec{
+  background:transparent;border:1px solid var(--line2);color:var(--muted);
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:.38rem .8rem;border-radius:var(--r);cursor:pointer;transition:all .1s;
+}
+.btn-sec:hover{border-color:var(--red);color:var(--red)}
+.hist-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:1px;background:var(--line);flex:1;align-content:start;overflow-y:auto;
+}
+.hc{background:var(--surface);cursor:pointer;display:flex;flex-direction:column;overflow:hidden;transition:background .1s}
+.hc:hover{background:var(--surface2)}
+.hc-type{font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);padding:.45rem .6rem 0}
+.hc-media{width:100%;height:110px;object-fit:cover;display:block}
+.hc-vid{height:110px;display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--surface3);width:100%}
+.hc-info{padding:.45rem .6rem .6rem}
+.hc-model{font-size:.55rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.hc-prompt{font-size:.65rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.15rem}
+.hc-time{font-size:.53rem;color:var(--dim);margin-top:.12rem}
+.hist-empty{padding:3rem;text-align:center;color:var(--dim);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;grid-column:1/-1}
+
+/* ─── Modal ─── */
+.mo{
+  position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:1.5rem;
+  backdrop-filter:blur(8px);
+}
+.mo.hidden{display:none}
+.mo-box{
+  background:var(--surface);border:1px solid var(--line2);border-radius:var(--r);
+  max-width:800px;width:100%;max-height:90vh;overflow-y:auto;position:relative;
+}
+.mo-close{
+  position:absolute;top:.6rem;right:.6rem;background:var(--surface2);
+  border:1px solid var(--line);color:var(--text);width:26px;height:26px;
+  border-radius:50%;cursor:pointer;font-size:.7rem;z-index:2;
+  display:flex;align-items:center;justify-content:center;transition:background .1s;
+}
+.mo-close:hover{background:var(--red);border-color:var(--red)}
+.mo-media img,.mo-media video{width:100%;display:block}
+.mo-acts{display:flex;border-top:1px solid var(--line)}
+.mo-dl{
+  flex:1;text-align:center;padding:.6rem;font-family:var(--mono);
+  font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);text-decoration:none;border-right:1px solid var(--line);
+  transition:background .1s;
+}
+.mo-dl:hover{background:var(--surface2)}
+.mo-acts .btn-sec{flex:1;border:none;border-radius:0}
+.mo-meta{padding:.6rem .9rem;font-size:.58rem;color:var(--dim);word-break:break-all;border-top:1px solid var(--line)}
+
+/* ─── Toast ─── */
+.toast{
+  position:fixed;bottom:1.25rem;right:1.25rem;z-index:2000;
+  background:var(--surface2);border:1px solid var(--line2);color:var(--text);
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;
+  padding:.5rem .9rem;border-radius:var(--r);
+  opacity:0;transform:translateY(8px);
+  transition:opacity .2s,transform .2s;pointer-events:none;max-width:280px;
+}
+.toast.on{opacity:1;transform:none}
+.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.er{border-color:var(--red);color:var(--red)}
+.toast.in{border-color:var(--blue);color:var(--blue)}
+
+/* ─── Responsive ─── */
+@media(max-width:860px){
+  body{overflow:auto}
+  #sb{
+    position:fixed;left:calc(-1 * var(--sidebar));top:0;bottom:0;
+    width:var(--sidebar);transition:left .22s;z-index:50;height:auto;
+  }
+  #sb.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,.5)}
+  .ham{display:flex}
+  #main{padding-top:2.75rem;height:auto;overflow:visible}
+  .ws{grid-template-columns:1fr;overflow:visible}
+  .ws.full{flex-direction:column}
+  .ws.full .ctrl{width:100%;border-right:none;border-bottom:1px solid var(--line)}
+  .ctrl{border-right:none;border-bottom:1px solid var(--line)}
+  .row2,.row3{grid-template-columns:1fr}
+  .ph{padding:1.25rem 1.25rem 1rem}
+  .ctrl,.res{padding:1.25rem}
+}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:1px}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside id="sb">
+  <div class="sb-logo">KIE<span>.</span>AI<small>Studio — All Models</small></div>
+
+  <div class="sb-group">Image</div>
+  <nav><ul>
+    <li class="on" data-tab="t2i"><span class="ic">🎨</span>Text → Image</li>
+    <li data-tab="i2i"><span class="ic">🖼</span>Image → Image</li>
+    <li data-tab="editor"><span class="ic">✏️</span>Image Editor</li>
+    <li data-tab="gpt4o"><span class="ic">🤖</span>GPT-4o Image</li>
+    <li data-tab="fk"><span class="ic">⚡</span>Flux Kontext</li>
+    <li data-tab="tools"><span class="ic">🔧</span>Upscale &amp; Tools</li>
+  </ul></nav>
+
+  <div class="sb-group">Video</div>
+  <nav><ul>
+    <li data-tab="t2v"><span class="ic">🎬</span>Text → Video</li>
+    <li data-tab="i2v"><span class="ic">📽</span>Image → Video</li>
+  </ul></nav>
+
+  <div class="sb-group">Manage</div>
+  <nav><ul>
+    <li data-tab="history"><span class="ic">🕑</span>History</li>
+  </ul></nav>
+
+  <div class="sb-foot">
+    <div class="credits-row">
+      <span>Credits</span>
+      <span class="credits-val" id="credVal">—</span>
+      <button class="btn-ic" id="credRefresh" title="Refresh">↻</button>
+    </div>
+    <div>
+      <div class="key-label">API Key</div>
+      <div class="key-row">
+        <input type="password" class="key-input" id="keyInput" placeholder="Enter key…"/>
+        <button class="btn-save" id="keySave">Save</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<button class="ham" id="hamBtn"><span></span><span></span><span></span></button>
+
+<!-- ═══ MAIN ═══ -->
+<main id="main">
+
+<!-- ─── Text → Image ─── -->
+<section class="page on" id="tab-t2i">
+  <div class="ph"><h1>Text → <b>Image</b></h1><p>Generate images from text · Multiple AI models</p></div>
+  <div class="ws full">
+    <div class="ctrl">
+      <div class="fg">
+        <span class="lbl">Model</span>
+        <select class="sel" id="t2i-model">
+          <optgroup label="── Wan ──">
+            <option value="wan/2-7-image">Wan 2.7 Image</option>
+            <option value="wan/2-7-image-pro">Wan 2.7 Image Pro</option>
+          </optgroup>
+          <optgroup label="── Google Imagen ──">
+            <option value="google/imagen4">Google Imagen 4</option>
+            <option value="google/imagen4-fast">Google Imagen 4 Fast</option>
+            <option value="google/imagen4-ultra">Google Imagen 4 Ultra</option>
+            <option value="nano-banana-2">Google Nano Banana 2</option>
+            <option value="nano-banana-pro">Google Nano Banana Pro</option>
+          </optgroup>
+          <optgroup label="── Seedream ──">
+            <option value="bytedance/seedream-v4-text-to-image">Seedream 4.0 T2I</option>
+            <option value="seedream/4.5-text-to-image">Seedream 4.5 T2I</option>
+            <option value="seedream/5-lite-text-to-image">Seedream 5 Lite T2I</option>
+          </optgroup>
+          <optgroup label="── Grok Imagine ──">
+            <option value="grok-imagine/text-to-image">Grok Imagine T2I</option>
+          </optgroup>
+          <optgroup label="── Qwen ──">
+            <option value="qwen/text-to-image">Qwen T2I</option>
+            <option value="qwen2/text-to-image">Qwen2 T2I</option>
+          </optgroup>
+          <optgroup label="── Flux 2 ──">
+            <option value="flux-2/flex-text-to-image">Flux 2 Flex T2I</option>
+            <option value="flux-2/pro-text-to-image">Flux 2 Pro T2I</option>
+          </optgroup>
+          <optgroup label="── GPT Image ──">
+            <option value="gpt-image/1.5-text-to-image">GPT Image 1.5 T2I</option>
+            <option value="gpt-image-2-text-to-image">GPT Image 2 T2I</option>
+          </optgroup>
+          <optgroup label="── Ideogram ──">
+            <option value="ideogram/v3-text-to-image">Ideogram V3 T2I</option>
+            <option value="ideogram/character">Ideogram Character T2I</option>
+          </optgroup>
+          <optgroup label="── Z Image ──">
+            <option value="z-image">Z Image</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="row3">
+        <div class="fg"><span class="lbl">Resolution</span>
+          <select class="sel" id="t2i-res"><option value="1K">1K</option><option value="2K" selected>2K</option><option value="4K">4K</option></select>
+        </div>
+        <div class="fg"><span class="lbl">Aspect Ratio</span>
+          <select class="sel" id="t2i-ratio">
+            <option value="1:1">1:1</option><option value="16:9">16:9</option><option value="9:16">9:16</option>
+            <option value="3:2">3:2</option><option value="2:3">2:3</option><option value="4:3">4:3</option>
+            <option value="21:9">21:9</option><option value="auto">Auto</option>
+          </select>
+        </div>
+        <div class="fg"><span class="lbl">Format</span>
+          <select class="sel" id="t2i-format"><option value="jpg">JPG</option><option value="png">PNG</option></select>
+        </div>
+      </div>
+      <div class="fg pw">
+        <span class="lbl">Prompt</span>
+        <textarea class="ta" id="t2i-prompt" rows="5" placeholder="Describe the image…"></textarea>
+        <button class="btn-cp" data-src="t2i-prompt">⎘</button>
+      </div>
+      <button class="btn-gen" id="t2i-gen">Generate Image <span>→</span></button>
+    </div>
+    <div class="res">
+      <div class="ra" id="t2i-result"><div class="ra-ph"><div class="ic">✦</div><p>Result will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Image → Image ─── -->
+<section class="page" id="tab-i2i">
+  <div class="ph"><h1>Image → <b>Image</b></h1><p>Transform images · AI-powered stylization</p></div>
+  <div class="ws">
+    <div class="ctrl">
+      <div class="drop" id="i2i-drop" data-key="i2i">
+        <div class="drop-inner"><div class="drop-ic">⬆</div><p>Drop image or <span class="lnk">browse</span></p><small>JPEG · PNG · WEBP · max 10MB</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-in"/>
+      </div>
+      <div class="prev hidden" id="i2i-prev"><img id="i2i-pimg" src="" alt=""/><button class="btn-rm" data-key="i2i">✕ Remove</button></div>
+      <div class="fg">
+        <span class="lbl">Model</span>
+        <select class="sel" id="i2i-model">
+          <optgroup label="── Grok Imagine ──">
+            <option value="grok-imagine/image-to-image">Grok Imagine I2I</option>
+          </optgroup>
+          <optgroup label="── Seedream ──">
+            <option value="seedream/4.5-edit">Seedream 4.5 Edit</option>
+            <option value="seedream/5-lite-image-to-image">Seedream 5 Lite I2I</option>
+            <option value="bytedance/seedream">Bytedance Seedream I2I</option>
+          </optgroup>
+          <optgroup label="── Flux 2 ──">
+            <option value="flux-2/flex-image-to-image">Flux 2 Flex I2I</option>
+            <option value="flux-2/pro-image-to-image">Flux 2 Pro I2I</option>
+          </optgroup>
+          <optgroup label="── Qwen ──">
+            <option value="qwen/image-to-image">Qwen I2I</option>
+          </optgroup>
+          <optgroup label="── GPT Image ──">
+            <option value="gpt-image/1.5-image-to-image">GPT Image 1.5 I2I</option>
+            <option value="gpt-image-2-image-to-image">GPT Image 2 I2I</option>
+          </optgroup>
+          <optgroup label="── Ideogram ──">
+            <option value="ideogram/v3-remix">Ideogram V3 Remix</option>
+            <option value="ideogram/character-remix">Ideogram Character Remix</option>
+            <option value="ideogram/character">Ideogram Character I2I</option>
+          </optgroup>
+          <optgroup label="── Google ──">
+            <option value="google/nano-banana">Google Nano Banana I2I</option>
+            <option value="google/pro-image-to-image">Google Nano Banana Pro I2I</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fg pw">
+        <span class="lbl">Prompt</span>
+        <textarea class="ta" id="i2i-prompt" rows="4" placeholder="Describe the transformation…"></textarea>
+        <button class="btn-cp" data-src="i2i-prompt">⎘</button>
+      </div>
+      <button class="btn-gen" id="i2i-gen">Generate <span>→</span></button>
+    </div>
+    <div class="res">
+      <div class="ra" id="i2i-result"><div class="ra-ph"><div class="ic">✦</div><p>Result will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Image Editor ─── -->
+<section class="page" id="tab-editor">
+  <div class="ph"><h1>Image <b>Editor</b></h1><p>AI-powered editing with natural language</p></div>
+  <div class="ws">
+    <div class="ctrl">
+      <div class="drop" id="ed-drop" data-key="ed">
+        <div class="drop-inner"><div class="drop-ic">⬆</div><p>Drop image or <span class="lnk">browse</span></p><small>JPEG · PNG · WEBP · max 10MB</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-in"/>
+      </div>
+      <div class="prev hidden" id="ed-prev"><img id="ed-pimg" src="" alt=""/><button class="btn-rm" data-key="ed">✕ Remove</button></div>
+      <div class="fg">
+        <span class="lbl">Model</span>
+        <select class="sel" id="ed-model">
+          <optgroup label="── Seedream ──">
+            <option value="seedream/4.5-edit">Seedream 4.5 Edit</option>
+            <option value="bytedance/seedream-v4-edit">Seedream 4.0 Edit</option>
+          </optgroup>
+          <optgroup label="── Qwen ──">
+            <option value="qwen/image-edit">Qwen Image Edit</option>
+            <option value="qwen2/image-edit">Qwen2 Image Edit</option>
+          </optgroup>
+          <optgroup label="── Google ──">
+            <option value="google/nano-banana-edit">Google Nano Banana Edit</option>
+          </optgroup>
+          <optgroup label="── Ideogram ──">
+            <option value="ideogram/v3-edit">Ideogram V3 Edit</option>
+            <option value="ideogram/character-edit">Ideogram Character Edit</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="m-opts" id="ed-sd-opts">
+        <div class="row2">
+          <div class="fg"><span class="lbl">Aspect Ratio</span>
+            <select class="sel" id="ed-ratio"><option value="1:1">1:1</option><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="4:3">4:3</option></select>
+          </div>
+          <div class="fg"><span class="lbl">Quality</span>
+            <select class="sel" id="ed-quality"><option value="basic">Basic (2K)</option><option value="high">High (4K)</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="fg pw">
+        <span class="lbl">Edit Instructions</span>
+        <textarea class="ta" id="ed-prompt" rows="4" placeholder="What do you want to change?"></textarea>
+        <button class="btn-cp" data-src="ed-prompt">⎘</button>
+      </div>
+      <button class="btn-gen" id="ed-gen">Apply Edit <span>→</span></button>
+    </div>
+    <div class="res">
+      <div class="ra" id="ed-result"><div class="ra-ph"><div class="ic">✦</div><p>Edited image appears here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── GPT-4o ─── -->
+<section class="page" id="tab-gpt4o">
+  <div class="ph"><h1>GPT-4o <b>Image</b></h1><p>Generate &amp; edit via OpenAI GPT-4o · KIE.AI API</p></div>
+  <div class="ws">
+    <div class="ctrl">
+      <div class="drop" id="gpt4o-drop" data-key="gpt4o">
+        <div class="drop-inner"><div class="drop-ic">⬆</div><p>Optional reference image or <span class="lnk">browse</span></p><small>Leave empty for text-to-image</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-in"/>
+      </div>
+      <div class="prev hidden" id="gpt4o-prev"><img id="gpt4o-pimg" src="" alt=""/><button class="btn-rm" data-key="gpt4o">✕ Remove</button></div>
+      <div class="row2">
+        <div class="fg"><span class="lbl">Aspect Ratio</span>
+          <select class="sel" id="gpt4o-size"><option value="1:1">1:1</option><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="3:2">3:2</option><option value="2:3">2:3</option></select>
+        </div>
+        <div class="fg"><span class="lbl">Variants</span>
+          <select class="sel" id="gpt4o-var"><option value="1">1 image</option><option value="2">2 images</option><option value="4">4 images</option></select>
+        </div>
+      </div>
+      <div class="fg"><span class="lbl">Enhance Prompt</span>
+        <select class="sel" id="gpt4o-enh"><option value="true">Yes — AI enhances</option><option value="false">No — use as-is</option></select>
+      </div>
+      <div class="fg pw">
+        <span class="lbl">Prompt</span>
+        <textarea class="ta" id="gpt4o-prompt" rows="4" placeholder="Describe the image or edit instructions…"></textarea>
+        <button class="btn-cp" data-src="gpt4o-prompt">⎘</button>
+      </div>
+      <button class="btn-gen" id="gpt4o-gen">Generate <span>→</span></button>
+    </div>
+    <div class="res">
+      <div class="ra" id="gpt4o-result"><div class="ra-ph"><div class="ic">✦</div><p>Result will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Flux Kontext ─── -->
+<section class="page" id="tab-fk">
+  <div class="ph"><h1>Flux <b>Kontext</b></h1><p>Text-to-image &amp; editing · Pro &amp; Max models</p></div>
+  <div class="ws">
+    <div class="ctrl">
+      <div class="drop" id="fk-drop" data-key="fk">
+        <div class="drop-inner"><div class="drop-ic">⬆</div><p>Optional reference image or <span class="lnk">browse</span></p><small>Leave empty for text-to-image</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-in"/>
+      </div>
+      <div class="prev hidden" id="fk-prev"><img id="fk-pimg" src="" alt=""/><button class="btn-rm" data-key="fk">✕ Remove</button></div>
+      <div class="row2">
+        <div class="fg"><span class="lbl">Model</span>
+          <select class="sel" id="fk-model"><option value="flux-kontext-pro">Flux Kontext Pro</option><option value="flux-kontext-max">Flux Kontext Max</option></select>
+        </div>
+        <div class="fg"><span class="lbl">Aspect Ratio</span>
+          <select class="sel" id="fk-ratio"><option value="1:1">1:1</option><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="4:3">4:3</option><option value="3:4">3:4</option><option value="21:9">21:9</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg"><span class="lbl">Format</span>
+          <select class="sel" id="fk-format"><option value="jpeg">JPEG</option><option value="png">PNG</option></select>
+        </div>
+        <div class="fg"><span class="lbl">Prompt Upsampling</span>
+          <select class="sel" id="fk-ups"><option value="false">Off</option><option value="true">On — AI enhances</option></select>
+        </div>
+      </div>
+      <div class="fg pw">
+        <span class="lbl">Prompt</span>
+        <textarea class="ta" id="fk-prompt" rows="4" placeholder="Describe your image or edit instructions…"></textarea>
+        <button class="btn-cp" data-src="fk-prompt">⎘</button>
+      </div>
+      <button class="btn-gen" id="fk-gen">Generate <span>→</span></button>
+    </div>
+    <div class="res">
+      <div class="ra" id="fk-result"><div class="ra-ph"><div class="ic">✦</div><p>Result will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Upscale & Tools ─── -->
+<section class="page" id="tab-tools">
+  <div class="ph"><h1>Upscale <b>&amp; Tools</b></h1><p>Background removal · Upscaling · Enhancement</p></div>
+  <div class="ws">
+    <div class="ctrl">
+      <div class="drop" id="up-drop" data-key="up">
+        <div class="drop-inner"><div class="drop-ic">⬆</div><p>Drop image or <span class="lnk">browse</span></p><small>JPEG · PNG · WEBP · max 10MB</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-in"/>
+      </div>
+      <div class="prev hidden" id="up-prev"><img id="up-pimg" src="" alt=""/><button class="btn-rm" data-key="up">✕ Remove</button></div>
+      <div class="fg"><span class="lbl">Tool / Model</span>
+        <select class="sel" id="up-model">
+          <optgroup label="── Recraft ──">
+            <option value="recraft/crisp-upscale">Recraft Crisp Upscale</option>
+            <option value="recraft/remove-background">Recraft Remove Background</option>
+          </optgroup>
+          <optgroup label="── Topaz ──">
+            <option value="topaz/image-upscale">Topaz Image Upscale</option>
+          </optgroup>
+        </select>
+      </div>
+      <button class="btn-gen" id="up-gen">Process Image <span>→</span></button>
+    </div>
+    <div class="res">
+      <div class="ra" id="up-result"><div class="ra-ph"><div class="ic">✦</div><p>Processed image appears here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Text → Video ─── -->
+<section class="page" id="tab-t2v">
+  <div class="ph"><h1>Text → <b>Video</b></h1><p>Generate videos from text · Kling · Sora · Wan · Hailuo &amp; more</p></div>
+  <div class="ws full">
+    <div class="ctrl">
+      <div class="fg"><span class="lbl">Model</span>
+        <select class="sel" id="t2v-model">
+          <optgroup label="── Kling ──">
+            <option value="kling/kling-3.0">Kling 3.0</option>
+            <option value="kling-2.6/text-to-video">Kling 2.6 T2V</option>
+            <option value="kling/v2-1-master-text-to-video">Kling V2.1 Master T2V</option>
+            <option value="kling/v2-1-pro">Kling V2.1 Pro T2V</option>
+            <option value="kling/v2-1-standard">Kling V2.1 Standard T2V</option>
+            <option value="kling/v25-turbo-text-to-video-pro">Kling V2.5 Turbo Pro T2V</option>
+          </optgroup>
+          <optgroup label="── Wan ──">
+            <option value="wan/2-7-text-to-video">Wan 2.7 T2V</option>
+            <option value="wan/2-6-text-to-video">Wan 2.6 T2V</option>
+            <option value="wan/2-5-text-to-video">Wan 2.5 T2V</option>
+            <option value="wan/2-2-a14b-text-to-video-turbo">Wan 2.2 A14B Turbo T2V</option>
+          </optgroup>
+          <optgroup label="── Sora 2 ──">
+            <option value="sora-2-text-to-video">Sora 2 T2V</option>
+            <option value="sora-2-pro-text-to-video">Sora 2 Pro T2V</option>
+          </optgroup>
+          <optgroup label="── Bytedance ──">
+            <option value="bytedance/seedance-2">Bytedance Seedance 2.0</option>
+            <option value="bytedance/seedance-2-fast">Bytedance Seedance 2.0 Fast</option>
+            <option value="bytedance/seedance-1-5-pro">Bytedance Seedance 1.5 Pro</option>
+            <option value="bytedance/v1-pro-text-to-video">Bytedance V1 Pro T2V</option>
+            <option value="bytedance/v1-lite-text-to-video">Bytedance V1 Lite T2V</option>
+          </optgroup>
+          <optgroup label="── Hailuo ──">
+            <option value="hailuo/02-text-to-video-pro">Hailuo Pro T2V</option>
+            <option value="hailuo/02-text-to-video-standard">Hailuo Standard T2V</option>
+          </optgroup>
+          <optgroup label="── Grok Imagine ──">
+            <option value="grok-imagine/text-to-video">Grok Imagine T2V</option>
+          </optgroup>
+          <optgroup label="── HappyHorse ──">
+            <option value="happyhorse/text-to-video">HappyHorse T2V</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fg pw">
+        <span class="lbl">Prompt</span>
+        <textarea class="ta" id="t2v-prompt" rows="5" placeholder="Describe the video scene…"></textarea>
+        <button class="btn-cp" data-src="t2v-prompt">⎘</button>
+      </div>
+      <button class="btn-gen" id="t2v-gen">Generate Video <span>→</span></button>
+    </div>
+    <div class="res">
+      <div class="ra" id="t2v-result"><div class="ra-ph"><div class="ic">✦</div><p>Video will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Image → Video ─── -->
+<section class="page" id="tab-i2v">
+  <div class="ph"><h1>Image → <b>Video</b></h1><p>Animate images · Kling · Sora · Wan · Hailuo &amp; more</p></div>
+  <div class="ws">
+    <div class="ctrl">
+      <div class="drop" id="i2v-drop" data-key="i2v">
+        <div class="drop-inner"><div class="drop-ic">⬆</div><p>Drop image or <span class="lnk">browse</span></p><small>JPEG · PNG · WEBP · max 10MB</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-in"/>
+      </div>
+      <div class="prev hidden" id="i2v-prev"><img id="i2v-pimg" src="" alt=""/><button class="btn-rm" data-key="i2v">✕ Remove</button></div>
+      <div class="fg"><span class="lbl">Model</span>
+        <select class="sel" id="i2v-model">
+          <optgroup label="── Kling ──">
+            <option value="kling/kling-3.0-i2v">Kling 3.0 I2V</option>
+            <option value="kling-2.6/image-to-video">Kling 2.6 I2V</option>
+            <option value="kling/v2-1-master-image-to-video">Kling V2.1 Master I2V</option>
+            <option value="kling/v25-turbo-image-to-video-pro">Kling V2.5 Turbo Pro I2V</option>
+          </optgroup>
+          <optgroup label="── Wan ──">
+            <option value="wan/2-7-image-to-video">Wan 2.7 I2V</option>
+            <option value="wan/2-6-image-to-video">Wan 2.6 I2V</option>
+            <option value="wan/2-6-flash-image-to-video">Wan 2.6 Flash I2V</option>
+            <option value="wan/2-5-image-to-video">Wan 2.5 I2V</option>
+            <option value="wan/2-2-a14b-image-to-video-turbo">Wan 2.2 A14B Turbo I2V</option>
+          </optgroup>
+          <optgroup label="── Sora 2 ──">
+            <option value="sora-2-image-to-video">Sora 2 I2V</option>
+            <option value="sora-2-pro-image-to-video">Sora 2 Pro I2V</option>
+          </optgroup>
+          <optgroup label="── Bytedance ──">
+            <option value="bytedance/v1-pro-image-to-video">Bytedance V1 Pro I2V</option>
+            <option value="bytedance/v1-pro-fast-image-to-video">Bytedance V1 Pro Fast I2V</option>
+            <option value="bytedance/v1-lite-image-to-video">Bytedance V1 Lite I2V</option>
+          </optgroup>
+          <optgroup label="── Hailuo ──">
+            <option value="hailuo/2-3-image-to-video-pro">Hailuo 2.3 Pro I2V</option>
+            <option value="hailuo/2-3-image-to-video-standard">Hailuo 2.3 Standard I2V</option>
+            <option value="hailuo/02-image-to-video-pro">Hailuo Pro I2V</option>
+            <option value="hailuo/02-image-to-video-standard">Hailuo Standard I2V</option>
+          </optgroup>
+          <optgroup label="── Grok Imagine ──">
+            <option value="grok-imagine/image-to-video">Grok Imagine I2V</option>
+          </optgroup>
+          <optgroup label="── HappyHorse ──">
+            <option value="happyhorse/image-to-video">HappyHorse I2V</option>
+          </optgroup>
+        </select>
+      </div>
+      <!-- Kling-specific opts -->
+      <div id="i2v-kling-opts" style="display:none">
+        <div class="row2">
+          <div class="fg"><span class="lbl">Duration</span>
+            <select class="sel" id="i2v-dur"><option value="5">5 sec</option><option value="10">10 sec</option></select>
+          </div>
+          <div class="fg"><span class="lbl">Sound</span>
+            <select class="sel" id="i2v-sound"><option value="false">No sound</option><option value="true">With sound</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="fg pw">
+        <span class="lbl">Motion Prompt</span>
+        <textarea class="ta" id="i2v-prompt" rows="4" placeholder="Describe the motion…"></textarea>
+        <button class="btn-cp" data-src="i2v-prompt">⎘</button>
+      </div>
+      <button class="btn-gen" id="i2v-gen">Generate Video <span>→</span></button>
+    </div>
+    <div class="res">
+      <div class="ra" id="i2v-result"><div class="ra-ph"><div class="ic">✦</div><p>Video will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── History ─── -->
+<section class="page" id="tab-history">
+  <div class="ph"><h1>Generation <b>History</b></h1><p>Stored locally in your browser</p></div>
+  <div class="hist-bar">
+    <button class="btn-sec" id="histClear">🗑 Clear All</button>
+    <span class="hist-ct" id="histCt"></span>
+  </div>
+  <div class="hist-grid" id="histGrid"><div class="hist-empty">No history yet. Start generating!</div></div>
+</section>
+
+</main>
+
+<!-- ═══ MODAL ═══ -->
+<div class="mo hidden" id="modal">
+  <div class="mo-box">
+    <button class="mo-close" id="moClose">✕</button>
+    <div class="mo-media" id="moMedia"></div>
+    <div class="mo-acts">
+      <a class="mo-dl" id="moDl" href="#" download target="_blank">⬇ Download</a>
+      <button class="btn-sec mo-acts" id="moRetry">↻ Close</button>
+    </div>
+    <div class="mo-meta" id="moMeta"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══ KIE STUDIO ═══ */
+let API_KEY = localStorage.getItem('kie_key') || '';
+
+const BASE      = 'https://api.kie.ai/api/v1/jobs';
+const BASE_4O   = 'https://api.kie.ai/api/v1/gpt4o-image';
+const BASE_FK   = 'https://api.kie.ai/api/v1/flux/kontext';
+const CREDIT    = 'https://api.kie.ai/api/v1/chat/credit';
+const UPLOAD    = 'https://kieai.redpandaai.co/api/file-base64-upload';
+const POLL_MS   = 4000;
+
+const urls = {i2i:null,i2v:null,ed:null,gpt4o:null,fk:null,up:null};
+const polls = {};
+
+/* ─── Init ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  initKey();
+  initNav();
+  initDrops();
+  initCopyBtns();
+  initGenerators();
+  initEditorModel();
+  initI2VModel();
+  initModal();
+  initHistory();
+  loadCredits();
+});
+
+/* ─── Key & Credits ─── */
+function initKey(){
+  const inp = document.getElementById('keyInput');
+  if(API_KEY) inp.value = API_KEY;
+  document.getElementById('keySave').onclick = () => {
+    const v = inp.value.trim();
+    if(!v){toast('Enter a valid API key','er');return;}
+    API_KEY = v; localStorage.setItem('kie_key',v);
+    toast('API key saved ✓','ok'); loadCredits();
+  };
+  document.getElementById('credRefresh').onclick = loadCredits;
+}
+async function loadCredits(){
+  if(!API_KEY) return;
+  try{
+    const r = await fetch(CREDIT,{headers:{Authorization:`Bearer ${API_KEY}`}});
+    const d = await r.json();
+    document.getElementById('credVal').textContent = d?.data ?? d?.credits ?? '?';
+  }catch{document.getElementById('credVal').textContent='err';}
+}
+
+/* ─── Navigation ─── */
+function initNav(){
+  const items = document.querySelectorAll('nav li[data-tab]');
+  const sb    = document.getElementById('sb');
+  const ham   = document.getElementById('hamBtn');
+  items.forEach(li => li.addEventListener('click', () => {
+    items.forEach(x => x.classList.remove('on'));
+    li.classList.add('on');
+    const t = li.dataset.tab;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+    document.getElementById(`tab-${t}`).classList.add('on');
+    if(t==='history') renderHistory();
+    sb.classList.remove('open');
+  }));
+  ham.onclick = () => sb.classList.toggle('open');
+  document.addEventListener('click', e => {
+    if(!sb.contains(e.target) && !ham.contains(e.target)) sb.classList.remove('open');
+  });
+}
+
+/* ─── Drop Zones ─── */
+function initDrops(){
+  ['i2i','i2v','ed','gpt4o','fk','up'].forEach(k => {
+    const zone   = document.getElementById(`${k}-drop`);
+    if(!zone) return;
+    const fi     = zone.querySelector('.file-in');
+    const prev   = document.getElementById(`${k}-prev`);
+    const pimg   = document.getElementById(`${k}-pimg`);
+    zone.addEventListener('click', e => { if(e.target!==fi) fi.click(); });
+    zone.addEventListener('dragover', e => {e.preventDefault();zone.classList.add('over');});
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('over');
+      const f = e.dataTransfer.files[0];
+      if(f) handleFile(f,k,zone,prev,pimg);
+    });
+    fi.addEventListener('change', () => {
+      if(fi.files[0]) handleFile(fi.files[0],k,zone,prev,pimg);
+    });
+    const rm = document.querySelector(`.btn-rm[data-key="${k}"]`);
+    if(rm) rm.onclick = () => {
+      urls[k]=null; prev.classList.add('hidden'); zone.classList.remove('hidden'); fi.value='';
+    };
+  });
+}
+
+async function handleFile(file, k, zone, prev, pimg){
+  if(!file.type.match(/image\/(jpeg|png|webp)/)){toast('JPEG, PNG or WEBP only','er');return;}
+  if(file.size > 10*1024*1024){toast('Max 10MB','er');return;}
+  pimg.src = URL.createObjectURL(file);
+  zone.classList.add('hidden'); prev.classList.remove('hidden');
+  toast('Uploading…','in');
+  try{
+    const b64  = await toB64(file);
+    const ext  = file.type.split('/')[1];
+    const res  = await fetch(UPLOAD,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${API_KEY}`},
+      body:JSON.stringify({base64Data:b64, uploadPath:'images/base64', fileName:`kie_${Date.now()}.${ext}`})
+    });
+    const d = await res.json();
+    if(d.success && d.data?.downloadUrl){
+      urls[k] = d.data.downloadUrl; toast('Uploaded ✓','ok');
+    } else { throw new Error(d.msg||'Upload failed'); }
+  }catch(e){
+    toast('Upload failed: '+e.message,'er');
+    urls[k]=null; prev.classList.add('hidden'); zone.classList.remove('hidden');
+  }
+}
+
+function toB64(file){ return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);}); }
+
+/* ─── Copy buttons ─── */
+function initCopyBtns(){
+  document.querySelectorAll('.btn-cp').forEach(b => b.onclick = () => {
+    const el = document.getElementById(b.dataset.src);
+    if(!el) return;
+    navigator.clipboard.writeText(el.value).then(()=>toast('Copied!','in'));
+  });
+}
+
+/* ─── Model-conditional UI ─── */
+function initEditorModel(){
+  document.getElementById('ed-model')?.addEventListener('change', function(){
+    const opts = document.getElementById('ed-sd-opts');
+    opts.classList.toggle('on', this.value==='seedream/4.5-edit');
+  });
+}
+function initI2VModel(){
+  document.getElementById('i2v-model')?.addEventListener('change', function(){
+    document.getElementById('i2v-kling-opts').style.display =
+      this.value.includes('kling-2.6')||this.value.includes('kling-3.0-i2v') ? '' : 'none';
+  });
+}
+
+/* ─── Generators ─── */
+function initGenerators(){
+  document.getElementById('t2i-gen').onclick  = genT2I;
+  document.getElementById('i2i-gen').onclick  = genI2I;
+  document.getElementById('ed-gen').onclick   = genEditor;
+  document.getElementById('gpt4o-gen').onclick= genGPT4O;
+  document.getElementById('fk-gen').onclick   = genFK;
+  document.getElementById('up-gen').onclick   = genUpscale;
+  document.getElementById('t2v-gen').onclick  = genT2V;
+  document.getElementById('i2v-gen').onclick  = genI2V;
+}
+
+/* Text → Image */
+async function genT2I(){
+  const p  = v('t2i-prompt'); if(!p){toast('Enter a prompt','er');return;}
+  const m  = v('t2i-model');
+  const body = {model:m, input:{prompt:p, image_input:[], aspect_ratio:v('t2i-ratio'), resolution:v('t2i-res'), output_format:v('t2i-format')}};
+  await task(body,'t2i-result','image',{prompt:p,model:m,type:'text-to-image'});
+}
+
+/* Image → Image */
+async function genI2I(){
+  const m = v('i2i-model'); const p = v('i2i-prompt'); const img = urls.i2i;
+  if(!img){toast('Upload an image first','er');return;}
+  const body = {model:m, input:{prompt:p, image_urls:[img]}};
+  await task(body,'i2i-result','image',{prompt:p,model:m,type:'image-to-image'});
+}
+
+/* Editor */
+async function genEditor(){
+  const m = v('ed-model'); const p = v('ed-prompt'); const img = urls.ed;
+  if(!img){toast('Upload an image first','er');return;}
+  if(!p){toast('Enter edit instructions','er');return;}
+  let body;
+  if(m==='seedream/4.5-edit'){
+    body = {model:m, input:{prompt:p, image_urls:[img], aspect_ratio:v('ed-ratio'), quality:v('ed-quality')}};
+  } else {
+    body = {model:m, input:{prompt:p, image_urls:[img]}};
+  }
+  await task(body,'ed-result','image',{prompt:p,model:m,type:'image-edit'});
+}
+
+/* GPT-4o */
+async function genGPT4O(){
+  const p = v('gpt4o-prompt'); if(!p){toast('Enter a prompt','er');return;}
+  const payload = {prompt:p, size:v('gpt4o-size'), nVariants:parseInt(v('gpt4o-var')), isEnhance:v('gpt4o-enh')==='true', enableFallback:true};
+  if(urls.gpt4o) payload.filesUrl=[urls.gpt4o];
+  const ra = document.getElementById('gpt4o-result');
+  if(!checkKey()) return;
+  setLoad(ra,'Submitting to GPT-4o…','pend');
+  try{
+    const r = await fetch(`${BASE_4O}/generate`,{method:'POST',headers:hdr(),body:JSON.stringify(payload)});
+    const d = await r.json();
+    if(d.code!==200||!d.data?.taskId) throw new Error(d.msg||`API ${d.code}`);
+    setLoad(ra,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
+    poll4O(d.data.taskId,'gpt4o-result',{prompt:p,model:'gpt4o-image',type:'text-to-image'});
+  }catch(e){setErr(ra,e.message);toast('Failed: '+e.message,'er');}
+}
+
+/* Flux Kontext */
+async function genFK(){
+  const p = v('fk-prompt'); if(!p){toast('Enter a prompt','er');return;}
+  const payload = {prompt:p, aspectRatio:v('fk-ratio'), model:v('fk-model'), outputFormat:v('fk-format'), enableTranslation:true};
+  if(v('fk-ups')==='true') payload.promptUpsampling=true;
+  if(urls.fk) payload.inputImage=urls.fk;
+  const ra = document.getElementById('fk-result');
+  if(!checkKey()) return;
+  setLoad(ra,'Submitting to Flux Kontext…','pend');
+  try{
+    const r = await fetch(`${BASE_FK}/generate`,{method:'POST',headers:hdr(),body:JSON.stringify(payload)});
+    const d = await r.json();
+    if(d.code!==200||!d.data?.taskId) throw new Error(d.msg||`API ${d.code}`);
+    setLoad(ra,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
+    pollFK(d.data.taskId,'fk-result',{prompt:p,model:v('fk-model'),type:'text-to-image'});
+  }catch(e){setErr(ra,e.message);toast('Failed: '+e.message,'er');}
+}
+
+/* Upscale */
+async function genUpscale(){
+  const img = urls.up; if(!img){toast('Upload an image first','er');return;}
+  const m = v('up-model');
+  const body = {model:m, input:{image_urls:[img]}};
+  await task(body,'up-result','image',{prompt:m,model:m,type:'upscale'});
+}
+
+/* Text → Video */
+async function genT2V(){
+  const p = v('t2v-prompt'); if(!p){toast('Enter a prompt','er');return;}
+  const m = v('t2v-model');
+  const body = {model:m, input:{prompt:p}};
+  await task(body,'t2v-result','video',{prompt:p,model:m,type:'text-to-video'});
+}
+
+/* Image → Video */
+async function genI2V(){
+  const m = v('i2v-model'); const p = v('i2v-prompt'); const img = urls.i2v;
+  if(!img){toast('Upload an image first','er');return;}
+  let body;
+  if(m.includes('kling-2.6')){
+    body = {model:m, input:{prompt:p, image_urls:[img], sound:v('i2v-sound')==='true', duration:v('i2v-dur')}};
+  } else if(m.includes('sora-2')){
+    body = {model:m, input:{prompt:p, image_urls:[img], aspect_ratio:'landscape', n_frames:'10', remove_watermark:true, upload_method:'s3'}};
+  } else {
+    body = {model:m, input:{prompt:p, image_urls:[img], mode:'normal', duration:'6', resolution:'480p'}};
+  }
+  await task(body,'i2v-result','video',{prompt:p,model:m,type:'image-to-video'});
+}
+
+/* ─── Generic task runner ─── */
+function checkKey(){if(!API_KEY){toast('Set your API key first','er');return false;}return true;}
+function hdr(){return{'Content-Type':'application/json','Authorization':`Bearer ${API_KEY}`};}
+function v(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+
+async function task(body, raId, mtype, meta){
+  const ra = document.getElementById(raId);
+  if(!checkKey()) return;
+  setLoad(ra,'Submitting task…','pend');
+  try{
+    const r = await fetch(`${BASE}/createTask`,{method:'POST',headers:hdr(),body:JSON.stringify(body)});
+    const d = await r.json();
+    if(d.code!==200||!d.data?.taskId) throw new Error(d.msg||`API ${d.code}`);
+    const tid = d.data.taskId;
+    setLoad(ra,`Processing… [${tid}]`,'proc',tid);
+    poll(tid,raId,mtype,meta);
+  }catch(e){setErr(ra,e.message);toast('Failed: '+e.message,'er');}
+}
+
+function poll(tid, raId, mtype, meta){
+  if(polls[tid]) clearInterval(polls[tid]);
+  const ra = document.getElementById(raId);
+  polls[tid] = setInterval(async()=>{
+    try{
+      const r = await fetch(`${BASE}/recordInfo?taskId=${encodeURIComponent(tid)}`,{headers:{'Authorization':`Bearer ${API_KEY}`}});
+      const d = await r.json();
+      if(d.code!==200) throw new Error(d.msg||'Query failed');
+      const rec = d.data;
+      const st  = (rec.status||rec.state||'').toLowerCase();
+      if(st==='success'||st==='completed'||st==='finish'){
+        clearInterval(polls[tid]); delete polls[tid];
+        const us = extractUrls(rec,mtype);
+        if(us.length){renderResult(ra,us,mtype,tid);saveHist({...meta,taskId:tid,downloadUrl:us[0],time:Date.now()});toast('Complete ✓','ok');}
+        else setErr(ra,'No media URL found.');
+      } else if(st==='failed'||st==='error'){
+        clearInterval(polls[tid]); delete polls[tid];
+        setErr(ra,rec.errorMsg||rec.failReason||'Failed'); toast('Failed','er');
+      } else {
+        const pct = rec.progress ? ` ${rec.progress}%` : '';
+        setLoad(ra,`Processing…${pct}`,'proc',tid);
+      }
+    }catch(e){console.warn('poll:',e.message);}
+  },POLL_MS);
+}
+
+function poll4O(tid, raId, meta){
+  if(polls[tid]) clearInterval(polls[tid]);
+  const ra = document.getElementById(raId);
+  polls[tid] = setInterval(async()=>{
+    try{
+      const r = await fetch(`${BASE_4O}/record-info?taskId=${encodeURIComponent(tid)}`,{headers:{'Authorization':`Bearer ${API_KEY}`}});
+      const d = await r.json();
+      if(d.code!==200) throw new Error(d.msg);
+      const rec = d.data; const f = rec.successFlag;
+      if(f===1){
+        clearInterval(polls[tid]); delete polls[tid];
+        const us = rec.response?.result_urls||[];
+        if(us.length){renderResult(ra,us,'image',tid);saveHist({...meta,taskId:tid,downloadUrl:us[0],time:Date.now()});toast('GPT-4o done ✓','ok');}
+        else setErr(ra,'No URLs found.');
+      } else if(f===2){clearInterval(polls[tid]);delete polls[tid];setErr(ra,rec.errorMessage||'Failed');toast('Failed','er');}
+      else{const pct=rec.progress?` ${(parseFloat(rec.progress)*100).toFixed(0)}%`:'';setLoad(ra,`Processing…${pct}`,'proc',tid);}
+    }catch(e){console.warn('poll4o:',e.message);}
+  },POLL_MS);
+}
+
+function pollFK(tid, raId, meta){
+  if(polls[tid]) clearInterval(polls[tid]);
+  const ra = document.getElementById(raId);
+  polls[tid] = setInterval(async()=>{
+    try{
+      const r = await fetch(`${BASE_FK}/record-info?taskId=${encodeURIComponent(tid)}`,{headers:{'Authorization':`Bearer ${API_KEY}`}});
+      const d = await r.json();
+      if(d.code!==200) throw new Error(d.msg);
+      const rec = d.data; const f = rec.successFlag;
+      if(f===1){
+        clearInterval(polls[tid]); delete polls[tid];
+        const u = rec.response?.resultImageUrl;
+        if(u){renderResult(ra,[u],'image',tid);saveHist({...meta,taskId:tid,downloadUrl:u,time:Date.now()});toast('Flux Kontext done ✓','ok');}
+        else setErr(ra,'No URL found.');
+      } else if(f===2||f===3){clearInterval(polls[tid]);delete polls[tid];setErr(ra,rec.errorMessage||'Failed');toast('Failed','er');}
+      else setLoad(ra,'Processing…','proc',tid);
+    }catch(e){console.warn('pollFK:',e.message);}
+  },POLL_MS);
+}
+
+function extractUrls(rec, mtype){
+  const us=[]; const data=rec?.data||rec||{};
+  let parsed=null;
+  try{if(data.resultJson) parsed=typeof data.resultJson==='string'?JSON.parse(data.resultJson):data.resultJson;}catch{}
+  const push=vv=>{if(!vv)return;if(typeof vv==='string')us.push(vv);else if(vv?.url)us.push(vv.url);else if(vv?.image_url)us.push(vv.image_url);else if(vv?.imageUrl)us.push(vv.imageUrl);};
+  if(parsed){
+    if(Array.isArray(parsed.resultUrls)) parsed.resultUrls.forEach(push);
+    if(Array.isArray(parsed.images)) parsed.images.forEach(push);
+    push(parsed.url); push(parsed.image_url);
+  }
+  if(Array.isArray(data.resultUrls)) data.resultUrls.forEach(push);
+  if(Array.isArray(data.images)) data.images.forEach(push);
+  [data.downloadUrl,data.imageUrl,data.videoUrl,data.resultUrl].forEach(push);
+  if(!us.length){const s=JSON.stringify(rec||{});const m=s.match(/https?:\/\/[^"'\s]+/g);if(m)us.push(...m);}
+  return[...new Set(us)];
+}
+
+/* ─── UI helpers ─── */
+function setLoad(ra, label, cls, tid=''){
+  ra.innerHTML=`<div class="st"><div class="st-spin"></div><div class="st-lbl ${cls}">${cls.toUpperCase()}</div><div class="st-sub">${label}</div>${tid?`<div class="st-tid">Task: ${tid}</div>`:''}</div>`;
+}
+function setErr(ra, msg){
+  ra.innerHTML=`<div class="st"><div style="font-size:1.8rem;opacity:.5">✕</div><div class="st-lbl fail">FAILED</div><div class="st-sub">${msg}</div></div>`;
+}
+function renderResult(ra, us, mtype, tid){
+  if(mtype==='video'){
+    const u=us[0];
+    ra.innerHTML=`<div class="r-wrap"><video class="r-vid" controls autoplay muted playsinline><source src="${u}"></video><div class="r-acts"><a class="r-act" href="${u}" download target="_blank">⬇ Download</a><button class="r-act" onclick="openModal('${u}','video','${tid}')">⛶ Fullscreen</button></div></div>`;
+  } else if(us.length===1){
+    const u=us[0];
+    ra.innerHTML=`<div class="r-wrap"><img class="r-img" src="${u}" onclick="openModal('${u}','image','${tid}')"/><div class="r-acts"><a class="r-act" href="${u}" download target="_blank">⬇ Download</a><button class="r-act" onclick="openModal('${u}','image','${tid}')">⛶ Fullscreen</button></div></div>`;
+  } else {
+    const imgs=us.map(u=>`<img src="${u}" onclick="openModal('${u}','image','${tid}')" style="width:100%;display:block;cursor:zoom-in;border:1px solid var(--line)"/>`).join('');
+    ra.innerHTML=`<div class="r-grid">${imgs}</div>`;
+  }
+}
+
+/* ─── Modal ─── */
+function initModal(){
+  document.getElementById('moClose').onclick = closeModal;
+  document.getElementById('moRetry').onclick  = closeModal;
+  document.getElementById('modal').addEventListener('click', e=>{if(e.target===e.currentTarget)closeModal();});
+  document.addEventListener('keydown', e=>{if(e.key==='Escape')closeModal();});
+}
+window.openModal = function(url, type, tid){
+  const mo = document.getElementById('modal');
+  const mm = document.getElementById('moMedia');
+  document.getElementById('moDl').href = url;
+  document.getElementById('moMeta').textContent = `Task: ${tid} | ${url}`;
+  mm.innerHTML = type==='video'
+    ? `<video controls autoplay muted playsinline style="width:100%"><source src="${url}"></video>`
+    : `<img src="${url}" style="width:100%"/>`;
+  mo.classList.remove('hidden');
+  document.body.style.overflow='hidden';
+};
+function closeModal(){
+  document.getElementById('modal').classList.add('hidden');
+  document.body.style.overflow='';
+  document.getElementById('moMedia').innerHTML='';
+}
+
+/* ─── History ─── */
+function saveHist(e){
+  const h=getHist(); h.unshift(e); if(h.length>60)h.pop();
+  localStorage.setItem('kie_hist',JSON.stringify(h));
+}
+function getHist(){try{return JSON.parse(localStorage.getItem('kie_hist')||'[]');}catch{return[];}}
+function renderHistory(){
+  const g=document.getElementById('histGrid');
+  const h=getHist();
+  const ct=document.getElementById('histCt');
+  ct.textContent = h.length ? `${h.length} item${h.length!==1?'s':''}` : '';
+  if(!h.length){g.innerHTML='<div class="hist-empty">No history yet. Start generating!</div>';return;}
+  g.innerHTML = h.map(e=>{
+    const isV=e.type==='image-to-video'||e.type==='text-to-video';
+    const ts=e.time?new Date(e.time).toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+    const media=isV?`<div class="hc-vid">🎬</div>`:`<img class="hc-media" src="${e.downloadUrl}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=\\'hc-vid\\'>🖼</div>'"/>`;
+    return`<div class="hc" onclick="openModal('${e.downloadUrl}','${isV?'video':'image'}','${e.taskId}')">
+      <div class="hc-type">${e.type||'generation'}</div>${media}
+      <div class="hc-info"><div class="hc-model">${e.model||'—'}</div><div class="hc-prompt">${e.prompt||'—'}</div><div class="hc-time">${ts}</div></div></div>`;
+  }).join('');
+}
+function initHistory(){
+  document.getElementById('histClear').onclick = () => {
+    if(!confirm('Clear all history?')) return;
+    localStorage.removeItem('kie_hist'); renderHistory(); toast('History cleared','in');
+  };
+}
+
+/* ─── Toast ─── */
+let tt=null;
+function toast(msg, type='in'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className=`toast on ${type}`;
+  if(tt) clearTimeout(tt);
+  tt=setTimeout(()=>el.classList.remove('on'),3000);
+}
+</script>
+</body>
+</html>
