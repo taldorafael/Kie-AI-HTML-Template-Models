@@ -6,193 +6,61 @@
 <title>KIE.AI Studio</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root{
-  --bg:#080808;
-  --s1:#0f0f0f;
-  --s2:#141414;
-  --s3:#1a1a1a;
-  --s4:#222;
-  --line:#1f1f1f;
-  --line2:#2a2a2a;
-  --txt:#e8e6e0;
-  --dim:#6b6b6b;
-  --muted:#333;
-  --hi:#c8ff40;
-  --hi2:#40c8ff;
-  --red:#ff4040;
-  --green:#40ff90;
-  --sb:240px;
-  --r:4px;
-  --t:0.12s ease;
-  font-family:'SF Mono','Fira Mono','Consolas',monospace;
-  font-size:13px;
+  --bg:#080808;--s1:#0f0f0f;--s2:#141414;--s3:#1a1a1a;--s4:#222;
+  --line:#1f1f1f;--line2:#2a2a2a;--txt:#e8e6e0;--dim:#6b6b6b;--muted:#333;
+  --hi:#c8ff40;--hi2:#40c8ff;--red:#ff4040;--green:#40ff90;
+  --sb:248px;--r:4px;--t:0.12s ease;
+  font-family:'SF Mono','Fira Mono','Consolas',monospace;font-size:13px;
 }
-
 html,body{height:100%;background:var(--bg);color:var(--txt)}
 body{display:flex;overflow:hidden}
-
-/* ─── SIDEBAR ─── */
-#sb{
-  width:var(--sb);flex-shrink:0;
-  background:var(--s1);
-  border-right:1px solid var(--line);
-  display:flex;flex-direction:column;
-  overflow-y:auto;overflow-x:hidden;
-  scrollbar-width:none;
-}
+#sb{width:var(--sb);flex-shrink:0;background:var(--s1);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
 #sb::-webkit-scrollbar{display:none}
-
-.sb-logo{
-  padding:1.4rem 1.2rem 1.2rem;
-  border-bottom:1px solid var(--line);
-  display:flex;align-items:baseline;gap:0.4rem;
-}
-.sb-logo-mark{
-  font-size:1.6rem;font-weight:700;letter-spacing:-0.02em;
-  color:var(--txt);
-}
+.sb-logo{padding:1.4rem 1.2rem 1.2rem;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:0.4rem}
+.sb-logo-mark{font-size:1.6rem;font-weight:700;letter-spacing:-0.02em;color:var(--txt)}
 .sb-logo-mark b{color:var(--hi)}
-.sb-logo-sub{
-  font-size:0.58rem;letter-spacing:0.2em;
-  text-transform:uppercase;color:var(--dim);
-}
-
-.sb-group{
-  padding:1rem 1.2rem 0.4rem;
-  font-size:0.55rem;letter-spacing:0.28em;
-  text-transform:uppercase;color:var(--muted);
-  border-top:1px solid var(--line);margin-top:0.5rem;
-}
+.sb-logo-sub{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim)}
+.sb-group{padding:1rem 1.2rem 0.4rem;font-size:0.55rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--line);margin-top:0.5rem}
 .sb-group:first-of-type{border-top:none;margin-top:0}
-
 .sb-nav{list-style:none}
-.sn{
-  display:flex;align-items:center;gap:0.6rem;
-  padding:0.55rem 1.2rem;
-  font-size:0.72rem;letter-spacing:0.06em;
-  color:var(--dim);cursor:pointer;
-  border-left:2px solid transparent;
-  transition:all var(--t);
-  user-select:none;
-}
+.sn{display:flex;align-items:center;gap:0.6rem;padding:0.55rem 1.2rem;font-size:0.72rem;letter-spacing:0.06em;color:var(--dim);cursor:pointer;border-left:2px solid transparent;transition:all var(--t);user-select:none}
 .sn:hover{color:var(--txt);background:rgba(255,255,255,0.02)}
 .sn.on{color:var(--hi);border-left-color:var(--hi);background:rgba(200,255,64,0.04)}
 .sn-ic{font-size:0.85rem;width:14px;text-align:center;flex-shrink:0;opacity:0.6}
 .sn.on .sn-ic{opacity:1}
-.sn-badge{
-  margin-left:auto;font-size:0.5rem;letter-spacing:0.06em;
-  background:rgba(64,200,255,0.1);color:var(--hi2);
-  border:1px solid rgba(64,200,255,0.2);padding:0.08rem 0.3rem;border-radius:2px;
-}
-
-.sb-footer{
-  margin-top:auto;
-  padding:1rem 1.2rem 1.2rem;
-  border-top:1px solid var(--line);
-  display:flex;flex-direction:column;gap:0.7rem;
-}
-.credits-row{
-  display:flex;align-items:center;
-  background:var(--s3);border:1px solid var(--line);
-  border-radius:var(--r);padding:0.45rem 0.7rem;gap:0.5rem;
-}
+.sn-badge{margin-left:auto;font-size:0.5rem;letter-spacing:0.06em;background:rgba(64,200,255,0.1);color:var(--hi2);border:1px solid rgba(64,200,255,0.2);padding:0.08rem 0.3rem;border-radius:2px}
+.sb-footer{margin-top:auto;padding:1rem 1.2rem 1.2rem;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:0.7rem}
+.credits-row{display:flex;align-items:center;background:var(--s3);border:1px solid var(--line);border-radius:var(--r);padding:0.45rem 0.7rem;gap:0.5rem}
 .cr-label{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted)}
 .cr-val{margin-left:auto;font-size:0.75rem;color:var(--hi);font-weight:500}
-.cr-btn{
-  background:none;border:none;color:var(--muted);cursor:pointer;
-  font-size:0.8rem;padding:0;line-height:1;
-  transition:color var(--t),transform var(--t);
-}
+.cr-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.8rem;padding:0;line-height:1;transition:color var(--t),transform var(--t)}
 .cr-btn:hover{color:var(--hi);transform:rotate(90deg)}
-
-.key-area label{
-  display:block;font-size:0.55rem;letter-spacing:0.2em;
-  color:var(--muted);text-transform:uppercase;margin-bottom:0.4rem;
-}
+.key-area label{display:block;font-size:0.55rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:0.4rem}
 .key-row{display:flex;gap:0.35rem}
-.key-input{
-  flex:1;min-width:0;
-  background:var(--s3);border:1px solid var(--line);
-  color:var(--txt);font-family:inherit;font-size:0.68rem;
-  padding:0.42rem 0.55rem;border-radius:var(--r);outline:none;
-  transition:border var(--t);
-}
+.key-input{flex:1;min-width:0;background:var(--s3);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:0.68rem;padding:0.42rem 0.55rem;border-radius:var(--r);outline:none;transition:border var(--t)}
 .key-input:focus{border-color:var(--line2)}
 .key-input::placeholder{color:var(--muted)}
-.key-save{
-  background:var(--hi);color:#000;border:none;
-  font-family:inherit;font-size:0.58rem;letter-spacing:0.1em;
-  text-transform:uppercase;font-weight:600;
-  padding:0 0.7rem;border-radius:var(--r);cursor:pointer;
-  transition:opacity var(--t);flex-shrink:0;
-}
+.key-save{background:var(--hi);color:#000;border:none;font-family:inherit;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;padding:0 0.7rem;border-radius:var(--r);cursor:pointer;transition:opacity var(--t);flex-shrink:0}
 .key-save:hover{opacity:0.8}
-
-/* ─── HAMBURGER ─── */
-.hbg{
-  display:none;position:fixed;top:0.8rem;left:0.8rem;z-index:100;
-  background:var(--s1);border:1px solid var(--line2);
-  padding:0.45rem 0.5rem;cursor:pointer;
-  flex-direction:column;gap:3.5px;border-radius:var(--r);
-}
+.hbg{display:none;position:fixed;top:0.8rem;left:0.8rem;z-index:100;background:var(--s1);border:1px solid var(--line2);padding:0.45rem 0.5rem;cursor:pointer;flex-direction:column;gap:3.5px;border-radius:var(--r)}
 .hbg span{display:block;width:17px;height:1.5px;background:var(--txt);transition:all 0.2s}
-
-/* ─── MAIN ─── */
-#main{
-  flex:1;overflow-y:auto;
-  background:var(--bg);
-  display:flex;flex-direction:column;
-  scrollbar-width:thin;
-  scrollbar-color:var(--line2) transparent;
-}
-
+#main{flex:1;overflow-y:auto;background:var(--bg);display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
 .tab{display:none;flex-direction:column;flex:1;animation:fi 0.18s ease}
 .tab.on{display:flex}
 @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-
-/* ─── PAGE HEADER ─── */
-.ph{
-  padding:1.75rem 2rem 1.4rem;
-  border-bottom:1px solid var(--line);flex-shrink:0;
-}
+.ph{padding:1.75rem 2rem 1.4rem;border-bottom:1px solid var(--line);flex-shrink:0}
 .ph h1{font-size:1.6rem;font-weight:700;letter-spacing:-0.01em;line-height:1}
 .ph h1 em{color:var(--hi);font-style:normal}
 .ph p{color:var(--dim);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;margin-top:0.35rem}
-
-/* ─── WORKSPACE ─── */
-.ws{
-  display:grid;grid-template-columns:320px 1fr;
-  flex:1;min-height:0;
-}
-.ws.wide{grid-template-columns:340px 1fr}
-
-.pn{
-  padding:1.5rem;
-  border-right:1px solid var(--line);
-  display:flex;flex-direction:column;gap:0.8rem;
-  overflow-y:auto;scrollbar-width:thin;
-  scrollbar-color:var(--line2) transparent;
-}
+.ws{display:grid;grid-template-columns:330px 1fr;flex:1;min-height:0}
+.ws.wide{grid-template-columns:350px 1fr}
+.pn{padding:1.5rem;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:0.8rem;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
 .pn::-webkit-scrollbar{width:2px}
 .pn::-webkit-scrollbar-thumb{background:var(--line2)}
-
 .rpn{padding:1.5rem;overflow-y:auto}
-
-.pn-title{
-  font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;
-  color:var(--muted);padding-bottom:0.75rem;border-bottom:1px solid var(--line);
-  flex-shrink:0;
-}
-
-/* ─── UPLOAD ZONE ─── */
-.uz{
-  border:1px dashed var(--line2);border-radius:var(--r);
-  cursor:pointer;transition:border-color 0.2s,background 0.2s;
-  background:var(--s2);position:relative;
-  min-height:110px;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
+.pn-title{font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);padding-bottom:0.75rem;border-bottom:1px solid var(--line);flex-shrink:0}
+.uz{border:1px dashed var(--line2);border-radius:var(--r);cursor:pointer;transition:border-color 0.2s,background 0.2s;background:var(--s2);position:relative;min-height:110px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .uz:hover,.uz.drag{border-color:var(--hi);background:rgba(200,255,64,0.02)}
 .uz-inner{text-align:center;pointer-events:none;padding:1rem}
 .uz-ic{font-size:1.3rem;margin-bottom:0.3rem;opacity:0.3}
@@ -200,111 +68,49 @@ body{display:flex;overflow:hidden}
 .uz-inner p b{color:var(--hi)}
 .uz-inner small{display:block;color:var(--muted);font-size:0.58rem;margin-top:0.2rem}
 .file-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-
 .pv-wrap{position:relative;border-radius:var(--r);overflow:hidden;flex-shrink:0}
 .pv-wrap img{width:100%;max-height:160px;object-fit:cover;display:block;filter:brightness(0.85)}
-.rm-img{
-  position:absolute;top:0.35rem;right:0.35rem;
-  background:rgba(0,0,0,0.8);border:1px solid var(--line2);
-  color:var(--txt);font-family:inherit;font-size:0.58rem;
-  padding:0.18rem 0.45rem;border-radius:var(--r);cursor:pointer;
-  transition:all var(--t);
-}
+.rm-img{position:absolute;top:0.35rem;right:0.35rem;background:rgba(0,0,0,0.8);border:1px solid var(--line2);color:var(--txt);font-family:inherit;font-size:0.58rem;padding:0.18rem 0.45rem;border-radius:var(--r);cursor:pointer;transition:all var(--t)}
 .rm-img:hover{background:var(--red);border-color:var(--red)}
-
-/* ─── FIELDS ─── */
 .fg{display:flex;flex-direction:column;gap:0.35rem;flex-shrink:0}
-.fl{
-  font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;
-  color:var(--muted);display:block;
-}
-.sel{
-  width:100%;background:var(--s2);border:1px solid var(--line);
-  color:var(--txt);font-family:inherit;font-size:0.73rem;
-  padding:0.45rem 1.8rem 0.45rem 0.65rem;border-radius:var(--r);
-  outline:none;cursor:pointer;appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23444'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 0.65rem center;
-  transition:border var(--t);
-}
+.fl{font-size:0.55rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);display:block}
+.sel{width:100%;background:var(--s2);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:0.73rem;padding:0.45rem 1.8rem 0.45rem 0.65rem;border-radius:var(--r);outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23444'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.65rem center;transition:border var(--t)}
 .sel:focus{border-color:var(--line2)}
 .sel optgroup{color:var(--muted);font-size:0.68rem}
 .sel option{background:var(--s2);color:var(--txt)}
-
-.ta{
-  width:100%;background:var(--s2);border:1px solid var(--line);
-  color:var(--txt);font-family:inherit;font-size:0.73rem;
-  padding:0.55rem 0.7rem;border-radius:var(--r);resize:vertical;
-  outline:none;line-height:1.6;transition:border var(--t);
-}
+.ta{width:100%;background:var(--s2);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:0.73rem;padding:0.55rem 0.7rem;border-radius:var(--r);resize:vertical;outline:none;line-height:1.6;transition:border var(--t)}
 .ta:focus{border-color:var(--line2)}
 .ta::placeholder{color:var(--muted)}
-
 .pw{position:relative;flex-shrink:0}
-.cp{
-  position:absolute;top:0.35rem;right:0.35rem;
-  background:var(--s3);border:1px solid var(--line);color:var(--muted);
-  font-size:0.8rem;width:22px;height:22px;border-radius:var(--r);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:all var(--t);
-}
+.cp{position:absolute;top:0.35rem;right:0.35rem;background:var(--s3);border:1px solid var(--line);color:var(--muted);font-size:0.8rem;width:22px;height:22px;border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--t)}
 .cp:hover{color:var(--hi);border-color:var(--hi)}
-
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;flex-shrink:0}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.65rem;flex-shrink:0}
 .og{display:flex;flex-direction:column;gap:0.35rem}
-
 .sep{height:1px;background:var(--line);flex-shrink:0;margin:0.15rem 0}
-
-/* ─── GENERATE BTN ─── */
-.gen-btn{
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--hi);color:#000;border:none;
-  font-family:inherit;font-size:0.78rem;font-weight:600;
-  letter-spacing:0.1em;text-transform:uppercase;
-  padding:0.65rem 1rem;border-radius:var(--r);
-  cursor:pointer;width:100%;margin-top:auto;flex-shrink:0;
-  transition:all var(--t);overflow:hidden;position:relative;
-}
-.gen-btn::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
-  transform:translateX(-100%);transition:transform 0.4s;
-}
+.inp{width:100%;background:var(--s2);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:0.73rem;padding:0.45rem 0.65rem;border-radius:var(--r);outline:none;transition:border var(--t)}
+.inp:focus{border-color:var(--line2)}
+.inp::placeholder{color:var(--muted)}
+.gen-btn{display:flex;align-items:center;justify-content:space-between;background:var(--hi);color:#000;border:none;font-family:inherit;font-size:0.78rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.65rem 1rem;border-radius:var(--r);cursor:pointer;width:100%;margin-top:auto;flex-shrink:0;transition:all var(--t);overflow:hidden;position:relative}
+.gen-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);transform:translateX(-100%);transition:transform 0.4s}
 .gen-btn:hover::after{transform:translateX(100%)}
 .gen-btn:hover{background:#b8e830;transform:translateY(-1px)}
 .gen-btn:active{transform:none}
-
-/* ─── RESULT AREA ─── */
-.ra{
-  background:var(--s2);border:1px solid var(--line);
-  border-radius:var(--r);min-height:200px;
-  display:flex;align-items:center;justify-content:center;
-  flex:1;overflow:hidden;
-}
+.ra{background:var(--s2);border:1px solid var(--line);border-radius:var(--r);min-height:200px;display:flex;align-items:center;justify-content:center;flex:1;overflow:hidden}
 .rp{text-align:center;color:var(--muted);padding:2rem}
 .rp-ic{font-size:1.8rem;margin-bottom:0.4rem;opacity:0.2;animation:pulse 3s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:0.2}50%{opacity:0.45}}
 .rp p{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase}
-
 .ri-wrap,.rv-wrap{width:100%;display:flex;flex-direction:column}
 .ri{width:100%;display:block;cursor:zoom-in}
 .rv{width:100%;display:block}
 .r-acts{display:flex;border-top:1px solid var(--line)}
-.r-act{
-  flex:1;background:none;border:none;border-right:1px solid var(--line);
-  color:var(--dim);font-family:inherit;font-size:0.6rem;letter-spacing:0.1em;
-  text-transform:uppercase;padding:0.55rem;cursor:pointer;
-  text-align:center;text-decoration:none;display:block;transition:all var(--t);
-}
+.r-act{flex:1;background:none;border:none;border-right:1px solid var(--line);color:var(--dim);font-family:inherit;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.55rem;cursor:pointer;text-align:center;text-decoration:none;display:block;transition:all var(--t)}
 .r-act:last-child{border-right:none}
 .r-act:hover{background:var(--s3);color:var(--hi)}
-
 .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:0;width:100%}
 .rgrid img{width:100%;display:block;cursor:zoom-in;border:1px solid var(--line);transition:filter var(--t)}
 .rgrid img:hover{filter:brightness(1.1)}
-
-/* ─── STATUS ─── */
 .sb-block{text-align:center;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:0.6rem}
 .spin{width:22px;height:22px;border:2px solid var(--line2);border-top-color:var(--hi);border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -313,24 +119,11 @@ body{display:flex;overflow:hidden}
 .s-lbl.proc{color:var(--hi)}
 .s-lbl.fail{color:var(--red)}
 .s-tid{font-size:0.55rem;color:var(--muted);word-break:break-all;max-width:260px}
-
-/* ─── HISTORY ─── */
-.h-bar{
-  padding:1rem 2rem;display:flex;align-items:center;gap:1rem;
-  border-bottom:1px solid var(--line);flex-shrink:0;
-}
+.h-bar{padding:1rem 2rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--line);flex-shrink:0}
 .h-count{font-size:0.6rem;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-left:auto}
-.sec-btn{
-  background:transparent;border:1px solid var(--line2);color:var(--dim);
-  font-family:inherit;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
-  padding:0.4rem 0.85rem;border-radius:var(--r);cursor:pointer;transition:all var(--t);
-}
+.sec-btn{background:transparent;border:1px solid var(--line2);color:var(--dim);font-family:inherit;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.4rem 0.85rem;border-radius:var(--r);cursor:pointer;transition:all var(--t)}
 .sec-btn:hover{border-color:var(--red);color:var(--red)}
-
-.h-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:1px;background:var(--line);flex:1;align-content:start;overflow-y:auto;
-}
+.h-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;background:var(--line);flex:1;align-content:start;overflow-y:auto}
 .hc{background:var(--s1);cursor:pointer;display:flex;flex-direction:column;overflow:hidden;transition:background var(--t)}
 .hc:hover{background:var(--s2)}
 .hc-type{font-size:0.5rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);padding:0.45rem 0.65rem 0}
@@ -341,65 +134,29 @@ body{display:flex;overflow:hidden}
 .hc-prompt{font-size:0.65rem;color:var(--dim);margin-top:0.18rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hc-time{font-size:0.53rem;color:var(--muted);margin-top:0.15rem}
 .h-empty{padding:4rem;text-align:center;color:var(--muted);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;grid-column:1/-1}
-
-/* ─── MODAL ─── */
-.mo{
-  position:fixed;inset:0;background:rgba(0,0,0,0.93);
-  z-index:1000;display:flex;align-items:center;justify-content:center;
-  padding:1.5rem;backdrop-filter:blur(8px);
-}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(8px)}
 .mo.hidden{display:none}
-.mc{
-  background:var(--s1);border:1px solid var(--line2);
-  border-radius:var(--r);max-width:800px;width:100%;
-  max-height:90vh;overflow-y:auto;position:relative;scrollbar-width:thin;
-}
-.mc-close{
-  position:absolute;top:0.65rem;right:0.65rem;
-  background:var(--s3);border:1px solid var(--line);
-  color:var(--txt);width:26px;height:26px;border-radius:50%;
-  cursor:pointer;font-size:0.68rem;z-index:2;
-  transition:all var(--t);display:flex;align-items:center;justify-content:center;
-}
+.mc{background:var(--s1);border:1px solid var(--line2);border-radius:var(--r);max-width:800px;width:100%;max-height:90vh;overflow-y:auto;position:relative;scrollbar-width:thin}
+.mc-close{position:absolute;top:0.65rem;right:0.65rem;background:var(--s3);border:1px solid var(--line);color:var(--txt);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:0.68rem;z-index:2;transition:all var(--t);display:flex;align-items:center;justify-content:center}
 .mc-close:hover{background:var(--red);border-color:var(--red)}
 .mm img,.mm video{width:100%;display:block}
 .ma{display:flex;border-top:1px solid var(--line)}
-.dl{
-  flex:1;text-align:center;padding:0.65rem;
-  font-family:inherit;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--hi);text-decoration:none;border-right:1px solid var(--line);transition:background var(--t);
-}
+.dl{flex:1;text-align:center;padding:0.65rem;font-family:inherit;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--hi);text-decoration:none;border-right:1px solid var(--line);transition:background var(--t)}
 .dl:hover{background:var(--s2)}
 .ma .sec-btn{flex:1;border:none;border-radius:0}
 .mmeta{padding:0.65rem 1rem;font-size:0.58rem;color:var(--muted);word-break:break-all;border-top:1px solid var(--line)}
-
-/* ─── TOAST ─── */
-.toast{
-  position:fixed;bottom:1.2rem;right:1.2rem;
-  background:var(--s2);border:1px solid var(--line2);
-  color:var(--txt);font-family:inherit;font-size:0.7rem;letter-spacing:0.03em;
-  padding:0.55rem 0.9rem;border-radius:var(--r);
-  z-index:2000;opacity:0;transform:translateY(8px);
-  transition:opacity 0.18s,transform 0.18s;pointer-events:none;max-width:280px;
-}
+.toast{position:fixed;bottom:1.2rem;right:1.2rem;background:var(--s2);border:1px solid var(--line2);color:var(--txt);font-family:inherit;font-size:0.7rem;letter-spacing:0.03em;padding:0.55rem 0.9rem;border-radius:var(--r);z-index:2000;opacity:0;transform:translateY(8px);transition:opacity 0.18s,transform 0.18s;pointer-events:none;max-width:280px}
 .toast.show{opacity:1;transform:none}
 .toast.ok{border-color:var(--green);color:var(--green)}
 .toast.err{border-color:var(--red);color:var(--red)}
 .toast.info{border-color:var(--hi2);color:var(--hi2)}
-
-/* ─── SCROLLBAR ─── */
 ::-webkit-scrollbar{width:2px;height:2px}
 ::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
 ::-webkit-scrollbar-thumb:hover{background:var(--dim)}
 .hidden{display:none!important}
-
-/* ─── RESPONSIVE ─── */
 @media(max-width:860px){
   body{display:block;overflow:auto;height:auto;min-height:100vh}
-  #sb{
-    position:fixed;left:calc(-1 * var(--sb));top:0;bottom:0;
-    width:var(--sb);transition:left 0.22s;z-index:50;
-  }
+  #sb{position:fixed;left:calc(-1 * var(--sb));top:0;bottom:0;width:var(--sb);transition:left 0.22s;z-index:50}
   #sb.open{left:0;box-shadow:4px 0 20px rgba(0,0,0,0.6)}
   .hbg{display:flex}
   #main{padding-top:3rem}
@@ -413,28 +170,44 @@ body{display:flex;overflow:hidden}
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <nav id="sb">
   <div class="sb-logo">
     <div class="sb-logo-mark">KIE<b>AI</b></div>
-    <div class="sb-logo-sub">Studio</div>
+    <div class="sb-logo-sub">Studio v2</div>
   </div>
 
-  <div class="sb-group">Image</div>
+  <div class="sb-group">Image → Image</div>
   <ul class="sb-nav">
-    <li class="sn on" data-tab="t2i"><span class="sn-ic">🎨</span>Text → Image</li>
-    <li class="sn" data-tab="i2i"><span class="sn-ic">🖼</span>Image → Image</li>
-    <li class="sn" data-tab="edit"><span class="sn-ic">✏️</span>Image Edit</li>
-    <li class="sn" data-tab="gpt4o"><span class="sn-ic">🤖</span>GPT-4o Image<span class="sn-badge">New</span></li>
-    <li class="sn" data-tab="fk"><span class="sn-ic">⚡</span>Flux Kontext</li>
-    <li class="sn" data-tab="tools"><span class="sn-ic">🔍</span>Upscale / Tools</li>
+    <li class="sn on" data-tab="i2i"><span class="sn-ic">🖼</span>Image → Image</li>
+    <li class="sn" data-tab="fk"><span class="sn-ic">⚡</span>Flux Kontext I2I<span class="sn-badge">Hot</span></li>
+    <li class="sn" data-tab="flux2"><span class="sn-ic">🔥</span>Flux 2 I2I</li>
+    <li class="sn" data-tab="gpt4o"><span class="sn-ic">🤖</span>GPT-4o I2I</li>
+    <li class="sn" data-tab="mj"><span class="sn-ic">🎨</span>Midjourney I2I</li>
+    <li class="sn" data-tab="nb"><span class="sn-ic">🍌</span>Nano Banana I2I</li>
+    <li class="sn" data-tab="wan-animate"><span class="sn-ic">🌊</span>Wan Animate I2I</li>
   </ul>
 
-  <div class="sb-group">Video</div>
+  <div class="sb-group">Image → Video</div>
   <ul class="sb-nav">
-    <li class="sn" data-tab="t2v"><span class="sn-ic">🎬</span>Text → Video</li>
     <li class="sn" data-tab="i2v"><span class="sn-ic">▶️</span>Image → Video</li>
-    <li class="sn" data-tab="veo"><span class="sn-ic">🌐</span>Veo 3.1<span class="sn-badge">New</span></li>
+    <li class="sn" data-tab="kling-i2v"><span class="sn-ic">🔮</span>Kling I2V</li>
+    <li class="sn" data-tab="seedance-i2v"><span class="sn-ic">🌱</span>Seedance I2V</li>
+    <li class="sn" data-tab="hailuo-i2v"><span class="sn-ic">🌊</span>Hailuo I2V</li>
+    <li class="sn" data-tab="sora-i2v"><span class="sn-ic">✨</span>Sora 2 I2V</li>
+    <li class="sn" data-tab="wan-i2v"><span class="sn-ic">🌀</span>Wan I2V</li>
+    <li class="sn" data-tab="veo-i2v"><span class="sn-ic">🌐</span>Veo 3 I2V<span class="sn-badge">New</span></li>
+  </ul>
+
+  <div class="sb-group">Edit Image</div>
+  <ul class="sb-nav">
+    <li class="sn" data-tab="edit"><span class="sn-ic">✏️</span>Edit Image</li>
+    <li class="sn" data-tab="edit-seedream"><span class="sn-ic">🌟</span>Seedream Edit</li>
+    <li class="sn" data-tab="edit-qwen"><span class="sn-ic">🧠</span>Qwen Edit</li>
+    <li class="sn" data-tab="edit-nano"><span class="sn-ic">🍃</span>Nano Banana Edit</li>
+    <li class="sn" data-tab="edit-fk"><span class="sn-ic">⚡</span>Flux Kontext Edit</li>
+    <li class="sn" data-tab="edit-gpt4o"><span class="sn-ic">🎭</span>GPT-4o Edit</li>
+    <li class="sn" data-tab="reframe"><span class="sn-ic">📐</span>Ideogram Reframe</li>
+    <li class="sn" data-tab="rmbg"><span class="sn-ic">🪄</span>Remove Background</li>
   </ul>
 
   <div class="sb-group">Manage</div>
@@ -460,132 +233,19 @@ body{display:flex;overflow:hidden}
 
 <button class="hbg" id="hbg"><span></span><span></span><span></span></button>
 
-<!-- MAIN -->
 <main id="main">
 
-<!-- ══ TEXT TO IMAGE ══ -->
-<section class="tab on" id="tab-t2i">
-  <div class="ph">
-    <h1>Text <em>→</em> Image</h1>
-    <p>Generate images from text prompts using state-of-the-art models</p>
-  </div>
-  <div class="ws wide">
-    <div class="pn">
-      <div class="pn-title">Prompt &amp; Settings</div>
-      <div class="fg">
-        <label class="fl">Prompt</label>
-        <div class="pw">
-          <textarea class="ta" id="t2i-p" rows="5" placeholder="Describe the image you want to create…"></textarea>
-          <button class="cp" data-src="t2i-p">⎘</button>
-        </div>
-      </div>
-      <div class="fg">
-        <label class="fl">Model</label>
-        <select class="sel" id="t2i-m">
-          <optgroup label="── Seedream ──">
-            <option value="bytedance/seedream">Seedream 3.0</option>
-            <option value="bytedance/seedream-v4-text-to-image">Seedream 4.0</option>
-            <option value="seedream/4.5-text-to-image">Seedream 4.5</option>
-            <option value="seedream/5-lite-text-to-image">Seedream 5.0 Lite</option>
-          </optgroup>
-          <optgroup label="── Google ──">
-            <option value="google/imagen4">Google Imagen 4</option>
-            <option value="google/imagen4-fast">Google Imagen 4 Fast</option>
-            <option value="google/imagen4-ultra">Google Imagen 4 Ultra</option>
-            <option value="google/nano-banana">Google Nano Banana</option>
-            <option value="nano-banana-2">Google Nano Banana 2</option>
-          </optgroup>
-          <optgroup label="── Flux 2 ──">
-            <option value="flux-2/pro-text-to-image">Flux 2 Pro T2I</option>
-            <option value="flux-2/flex-text-to-image">Flux 2 Flex T2I</option>
-          </optgroup>
-          <optgroup label="── Grok Imagine ──">
-            <option value="grok-imagine/text-to-image">Grok Imagine T2I</option>
-          </optgroup>
-          <optgroup label="── GPT Image ──">
-            <option value="gpt-image/1.5-text-to-image">GPT Image 1.5 T2I</option>
-            <option value="gpt-image-2-text-to-image">GPT Image 2 T2I</option>
-          </optgroup>
-          <optgroup label="── Ideogram ──">
-            <option value="ideogram/v3-text-to-image">Ideogram V3 T2I</option>
-            <option value="ideogram/character">Ideogram Character</option>
-          </optgroup>
-          <optgroup label="── Qwen ──">
-            <option value="qwen/text-to-image">Qwen T2I</option>
-            <option value="qwen2/text-to-image">Qwen2 T2I</option>
-          </optgroup>
-          <optgroup label="── Wan ──">
-            <option value="wan/2-7-image">Wan 2.7 Image</option>
-            <option value="wan/2-7-image-pro">Wan 2.7 Image Pro</option>
-          </optgroup>
-          <optgroup label="── Z-Image ──">
-            <option value="z-image">Z-Image</option>
-          </optgroup>
-        </select>
-      </div>
-      <div class="row3">
-        <div class="og">
-          <label class="fl">Resolution</label>
-          <select class="sel" id="t2i-res">
-            <option value="1K">1K</option>
-            <option value="2K">2K</option>
-            <option value="4K">4K</option>
-          </select>
-        </div>
-        <div class="og">
-          <label class="fl">Aspect Ratio</label>
-          <select class="sel" id="t2i-ar">
-            <option value="1:1">1:1 Square</option>
-            <option value="16:9">16:9 Wide</option>
-            <option value="9:16">9:16 Portrait</option>
-            <option value="4:3">4:3</option>
-            <option value="3:4">3:4</option>
-            <option value="3:2">3:2</option>
-            <option value="2:3">2:3</option>
-            <option value="21:9">21:9 Cine</option>
-            <option value="auto">Auto</option>
-          </select>
-        </div>
-        <div class="og">
-          <label class="fl">Format</label>
-          <select class="sel" id="t2i-fmt">
-            <option value="jpg">JPG</option>
-            <option value="png">PNG</option>
-          </select>
-        </div>
-      </div>
-      <button class="gen-btn" id="t2i-go"><span>Generate Image</span><span>→</span></button>
-    </div>
-    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
-      <div class="pn-title">Result</div>
-      <div class="ra" id="t2i-r" style="flex:1">
-        <div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ IMAGE TO IMAGE ══ -->
-<section class="tab" id="tab-i2i">
-  <div class="ph">
-    <h1>Image <em>→</em> Image</h1>
-    <p>Transform images using AI</p>
-  </div>
+<!-- ══ IMAGE TO IMAGE (multi-model) ══ -->
+<section class="tab on" id="tab-i2i">
+  <div class="ph"><h1>Image <em>→</em> Image</h1><p>Transform images with AI — multi-model selection</p></div>
   <div class="ws">
     <div class="pn">
       <div class="pn-title">Input</div>
       <div class="uz" id="uz-i2i">
-        <div class="uz-inner">
-          <div class="uz-ic">⬆</div>
-          <p>Drop image or <b>browse</b></p>
-          <small>JPEG · PNG · WEBP · max 10MB</small>
-        </div>
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Drop image or <b>browse</b></p><small>JPEG · PNG · WEBP · max 10MB</small></div>
         <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
       </div>
-      <div class="pv-wrap hidden" id="pv-i2i">
-        <img id="pvi-i2i" src="" alt=""/>
-        <button class="rm-img" data-k="i2i">✕ Remove</button>
-      </div>
+      <div class="pv-wrap hidden" id="pv-i2i"><img id="pvi-i2i" src="" alt=""/><button class="rm-img" data-k="i2i">✕ Remove</button></div>
       <div class="fg">
         <label class="fl">Model</label>
         <select class="sel" id="i2i-m">
@@ -594,6 +254,8 @@ body{display:flex;overflow:hidden}
           </optgroup>
           <optgroup label="── Seedream ──">
             <option value="seedream/5-lite-image-to-image">Seedream 5.0 Lite I2I</option>
+            <option value="bytedance/seedream-v4-image-to-image">Seedream 4.0 I2I</option>
+            <option value="seedream/4.5-image-to-image">Seedream 4.5 I2I</option>
           </optgroup>
           <optgroup label="── Flux 2 ──">
             <option value="flux-2/flex-image-to-image">Flux 2 Flex I2I</option>
@@ -601,67 +263,678 @@ body{display:flex;overflow:hidden}
           </optgroup>
           <optgroup label="── Qwen ──">
             <option value="qwen/image-to-image">Qwen I2I</option>
+            <option value="qwen2/image-to-image">Qwen2 I2I</option>
           </optgroup>
           <optgroup label="── GPT Image ──">
             <option value="gpt-image/1.5-image-to-image">GPT Image 1.5 I2I</option>
             <option value="gpt-image-2-image-to-image">GPT Image 2 I2I</option>
           </optgroup>
           <optgroup label="── Ideogram ──">
-            <option value="ideogram/v3-remix">Ideogram V3 Remix</option>
+            <option value="ideogram/v3-remix">Ideogram V3 Remix I2I</option>
             <option value="ideogram/character-remix">Ideogram Character Remix</option>
-            <option value="ideogram/character">Ideogram Character</option>
           </optgroup>
           <optgroup label="── Google ──">
             <option value="google/nano-banana">Google Nano Banana I2I</option>
-            <option value="google/nano-banana-pro">Google Nano Banana Pro</option>
+            <option value="google/nano-banana-pro">Google Nano Banana Pro I2I</option>
+          </optgroup>
+          <optgroup label="── Midjourney ──">
+            <option value="midjourney/img2img">Midjourney I2I</option>
           </optgroup>
         </select>
       </div>
-      <div class="fg">
-        <label class="fl">Prompt</label>
-        <div class="pw">
-          <textarea class="ta" id="i2i-p" rows="4" placeholder="Describe the transformation…"></textarea>
-          <button class="cp" data-src="i2i-p">⎘</button>
+      <div class="row2">
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="i2i-ar">
+            <option value="1:1">1:1</option><option value="16:9">16:9</option>
+            <option value="9:16">9:16</option><option value="4:3">4:3</option>
+            <option value="3:4">3:4</option><option value="3:2">3:2</option>
+            <option value="2:3">2:3</option><option value="auto">Auto</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="i2i-res"><option value="1K">1K</option><option value="2K">2K</option><option value="4K">4K</option></select>
         </div>
       </div>
-      <button class="gen-btn" id="i2i-go"><span>Generate</span><span>→</span></button>
+      <div class="fg"><label class="fl">Prompt (describe transformation)</label>
+        <div class="pw"><textarea class="ta" id="i2i-p" rows="4" placeholder="Describe the transformation…"></textarea><button class="cp" data-src="i2i-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="i2i-go"><span>Transform Image</span><span>→</span></button>
     </div>
     <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
       <div class="pn-title">Result</div>
-      <div class="ra" id="i2i-r" style="flex:1">
-        <div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div>
-      </div>
+      <div class="ra" id="i2i-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ══ IMAGE EDIT ══ -->
-<section class="tab" id="tab-edit">
-  <div class="ph">
-    <h1>Image <em>Edit</em></h1>
-    <p>Edit and transform images with AI instructions</p>
+<!-- ══ FLUX KONTEXT I2I ══ -->
+<section class="tab" id="tab-fk">
+  <div class="ph"><h1>Flux <em>Kontext</em> I2I</h1><p>Advanced image editing with Flux Kontext Pro / Max</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-fk">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Input image or <b>browse</b></p><small>Leave empty for text-to-image</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-fk"><img id="pvi-fk" src="" alt=""/><button class="rm-img" data-k="fk">✕ Remove</button></div>
+      <div class="row2">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="fk-m">
+            <option value="flux-kontext-pro">Flux Kontext Pro</option>
+            <option value="flux-kontext-max">Flux Kontext Max</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="fk-ar">
+            <option value="1:1">1:1</option><option value="16:9">16:9</option>
+            <option value="9:16">9:16</option><option value="4:3">4:3</option>
+            <option value="3:4">3:4</option><option value="21:9">21:9</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Format</label>
+          <select class="sel" id="fk-fmt"><option value="jpeg">JPEG</option><option value="png">PNG</option></select>
+        </div>
+        <div class="og"><label class="fl">Prompt Upsampling</label>
+          <select class="sel" id="fk-up"><option value="false">Off</option><option value="true">On</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Safety Tolerance (edit: 0-2)</label>
+        <select class="sel" id="fk-safe"><option value="2">2 — Balanced</option><option value="1">1 — Strict</option><option value="0">0 — Most Strict</option></select>
+      </div>
+      <div class="fg"><label class="fl">Prompt / Edit Instructions</label>
+        <div class="pw"><textarea class="ta" id="fk-p" rows="4" placeholder="Describe image or edit…"></textarea><button class="cp" data-src="fk-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="fk-go"><span>Run Flux Kontext</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="fk-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div></div>
+    </div>
   </div>
+</section>
+
+<!-- ══ FLUX 2 I2I ══ -->
+<section class="tab" id="tab-flux2">
+  <div class="ph"><h1>Flux <em>2</em> I2I</h1><p>Multi-reference image-to-image with Flux 2 Pro / Flex</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input (up to 8 reference images)</div>
+      <div id="flux2-refs" style="display:flex;flex-direction:column;gap:0.5rem">
+        <div class="uz" id="uz-flux2-0">
+          <div class="uz-inner"><div class="uz-ic">⬆</div><p>Reference image 1 or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
+          <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+        </div>
+        <div class="pv-wrap hidden" id="pv-flux2-0"><img id="pvi-flux2-0" src="" alt=""/><button class="rm-img" data-k="flux2-0">✕ Remove</button></div>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="flux2-m"><option value="pro">Pro (fast)</option><option value="flex">Flex (control)</option></select>
+        </div>
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="flux2-res"><option value="1K">1K</option><option value="2K">2K</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Aspect Ratio</label>
+        <select class="sel" id="flux2-ar">
+          <option value="1:1">1:1</option><option value="16:9">16:9</option>
+          <option value="9:16">9:16</option><option value="4:3">4:3</option>
+          <option value="3:4">3:4</option><option value="auto">Auto (match input)</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="flux2-p" rows="4" placeholder="Describe image or multi-reference composition…"></textarea><button class="cp" data-src="flux2-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="flux2-go"><span>Generate Flux 2</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="flux2-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GPT-4o I2I ══ -->
+<section class="tab" id="tab-gpt4o">
+  <div class="ph"><h1>GPT<em>-4o</em> Image</h1><p>Generate, edit, and create variants via OpenAI GPT-4o</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-gpt4o">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Optional image or <b>browse</b></p><small>Leave empty for text-to-image</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-gpt4o"><img id="pvi-gpt4o" src="" alt=""/><button class="rm-img" data-k="gpt4o">✕ Remove</button></div>
+      <div class="fg"><label class="fl">Mask URL (optional, for inpainting)</label>
+        <input type="text" class="inp" id="gpt4o-mask" placeholder="https://…/mask.png"/>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="gpt4o-model"><option value="gpt-4o-image">GPT-4o Image</option><option value="gpt-4o-image-mini">GPT-4o Mini</option></select>
+        </div>
+        <div class="og"><label class="fl">Size</label>
+          <select class="sel" id="gpt4o-sz">
+            <option value="1024x1024">1024×1024</option><option value="1792x1024">1792×1024</option>
+            <option value="1024x1792">1024×1792</option><option value="512x512">512×512</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Variants</label>
+          <select class="sel" id="gpt4o-n"><option value="1">1</option><option value="2">2</option><option value="4">4</option></select>
+        </div>
+        <div class="og"><label class="fl">Quality</label>
+          <select class="sel" id="gpt4o-q"><option value="standard">Standard</option><option value="hd">HD</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Style</label>
+        <select class="sel" id="gpt4o-style"><option value="vivid">Vivid</option><option value="natural">Natural</option></select>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="gpt4o-p" rows="4" placeholder="Describe image or edit instructions…"></textarea><button class="cp" data-src="gpt4o-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="gpt4o-go"><span>Generate GPT-4o</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="gpt4o-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MIDJOURNEY I2I ══ -->
+<section class="tab" id="tab-mj">
+  <div class="ph"><h1>Midjourney <em>I2I</em></h1><p>Image-to-image, style reference, omni reference with Midjourney</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-mj">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Reference image or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-mj"><img id="pvi-mj" src="" alt=""/><button class="rm-img" data-k="mj">✕ Remove</button></div>
+      <div class="row2">
+        <div class="og"><label class="fl">Task Type</label>
+          <select class="sel" id="mj-task">
+            <option value="mj_img2img">Image → Image</option>
+            <option value="mj_style_reference">Style Reference</option>
+            <option value="mj_omni_reference">Omni Reference</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Version</label>
+          <select class="sel" id="mj-ver"><option value="7">v7</option><option value="6.1">v6.1</option><option value="6">v6</option><option value="niji6">Niji 6</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="mj-ar">
+            <option value="1:1">1:1</option><option value="16:9">16:9</option>
+            <option value="9:16">9:16</option><option value="4:3">4:3</option><option value="3:4">3:4</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Speed</label>
+          <select class="sel" id="mj-spd"><option value="fast">Fast</option><option value="turbo">Turbo</option><option value="relaxed">Relaxed</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Stylization (0-1000)</label>
+          <input type="number" class="inp" id="mj-sty" value="500" min="0" max="1000" step="50"/>
+        </div>
+        <div class="og"><label class="fl">Variety (0-100)</label>
+          <input type="number" class="inp" id="mj-var" value="50" min="0" max="100" step="5"/>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="mj-p" rows="4" placeholder="Describe the image…"></textarea><button class="cp" data-src="mj-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="mj-go"><span>Generate Midjourney</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="mj-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ NANO BANANA I2I ══ -->
+<section class="tab" id="tab-nb">
+  <div class="ph"><h1>Nano Banana <em>I2I</em></h1><p>Google Gemini 3.0 Pro Image — edit with multi-reference (up to 8)</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Reference Images (1-8)</div>
+      <div class="uz" id="uz-nb">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Primary image or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-nb"><img id="pvi-nb" src="" alt=""/><button class="rm-img" data-k="nb">✕ Remove</button></div>
+      <div class="fg"><label class="fl">Extra Reference URL (optional)</label>
+        <input type="text" class="inp" id="nb-ref2" placeholder="https://…/ref2.jpg"/>
+      </div>
+      <div class="row3">
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="nb-res"><option value="1K">1K</option><option value="2K">2K</option><option value="4K">4K</option></select>
+        </div>
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="nb-ar">
+            <option value="1:1">1:1</option><option value="16:9">16:9</option>
+            <option value="9:16">9:16</option><option value="4:3">4:3</option><option value="auto">Auto</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Format</label>
+          <select class="sel" id="nb-fmt"><option value="png">PNG</option><option value="jpg">JPG</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="nb-p" rows="4" placeholder="Describe the edit or transformation…"></textarea><button class="cp" data-src="nb-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="nb-go"><span>Generate Nano Banana</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="nb-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WAN ANIMATE I2I ══ -->
+<section class="tab" id="tab-wan-animate">
+  <div class="ph"><h1>Wan <em>Animate</em></h1><p>Transfer motion or replace character using video reference</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-wana">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Subject image or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-wana"><img id="pvi-wana" src="" alt=""/><button class="rm-img" data-k="wana">✕ Remove</button></div>
+      <div class="fg"><label class="fl">Reference Video URL (required)</label>
+        <input type="text" class="inp" id="wana-vid" placeholder="https://…/reference-video.mp4"/>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Mode</label>
+          <select class="sel" id="wana-mode">
+            <option value="animate">Animate (motion transfer)</option>
+            <option value="replace">Replace (character swap)</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="wana-res"><option value="480p">480p</option><option value="580p">580p</option><option value="720p">720p</option></select>
+        </div>
+      </div>
+      <button class="gen-btn" id="wana-go"><span>Animate</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="wana-r" style="flex:1"><div class="rp"><div class="rp-ic">🎬</div><p>Video result will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ IMAGE TO VIDEO (multi-model) ══ -->
+<section class="tab" id="tab-i2v">
+  <div class="ph"><h1>Image <em>→</em> Video</h1><p>Bring images to life — all major I2V models</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-i2v">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Drop image or <b>browse</b></p><small>JPEG · PNG · WEBP · max 10MB</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-i2v"><img id="pvi-i2v" src="" alt=""/><button class="rm-img" data-k="i2v">✕ Remove</button></div>
+      <div class="fg"><label class="fl">End Frame URL (optional — Kling v2.1 Pro / Hailuo / Seedance)</label>
+        <input type="text" class="inp" id="i2v-end" placeholder="https://…/end-frame.jpg"/>
+      </div>
+      <div class="fg"><label class="fl">Model</label>
+        <select class="sel" id="i2v-m">
+          <optgroup label="── Kling ──">
+            <option value="kling-3.0/image-to-video">Kling 3.0 I2V</option>
+            <option value="kling-2.6/image-to-video">Kling 2.6 I2V</option>
+            <option value="kling/v2-1-master-image-to-video">Kling V2.1 Master</option>
+            <option value="kling/v2-1-pro/image-to-video">Kling V2.1 Pro</option>
+            <option value="kling/v2-1-standard/image-to-video">Kling V2.1 Standard</option>
+            <option value="kling/v25-turbo-image-to-video-pro">Kling V2.5 Turbo Pro</option>
+          </optgroup>
+          <optgroup label="── Bytedance Seedance ──">
+            <option value="bytedance/seedance-2">Seedance 2.0</option>
+            <option value="bytedance/seedance-2-fast">Seedance 2.0 Fast</option>
+            <option value="bytedance/seedance-1-5-pro">Seedance 1.5 Pro</option>
+            <option value="bytedance/v1-pro-image-to-video">Bytedance V1 Pro</option>
+            <option value="bytedance/v1-pro-fast-image-to-video">Bytedance V1 Pro Fast</option>
+          </optgroup>
+          <optgroup label="── Hailuo (Minimax) ──">
+            <option value="hailuo/2-3-image-to-video-pro">Hailuo 2.3 Pro</option>
+            <option value="hailuo/2-3-image-to-video-standard">Hailuo 2.3 Standard</option>
+            <option value="hailuo/02-image-to-video-pro">Hailuo 02 Pro</option>
+            <option value="hailuo/02-image-to-video-standard">Hailuo 02 Standard</option>
+          </optgroup>
+          <optgroup label="── Sora 2 ──">
+            <option value="sora-2-image-to-video">Sora 2 I2V</option>
+            <option value="sora-2-pro-image-to-video">Sora 2 Pro I2V</option>
+          </optgroup>
+          <optgroup label="── Wan ──">
+            <option value="wan/2-7-image-to-video">Wan 2.7 I2V</option>
+            <option value="wan/2-6-image-to-video">Wan 2.6 I2V</option>
+            <option value="wan/2-6-flash-image-to-video">Wan 2.6 Flash I2V</option>
+            <option value="wan/2-5-image-to-video">Wan 2.5 I2V</option>
+          </optgroup>
+          <optgroup label="── Google Veo ──">
+            <option value="veo3/image-to-video">Veo 3 I2V</option>
+            <option value="veo3-fast/image-to-video">Veo 3 Fast I2V</option>
+          </optgroup>
+          <optgroup label="── Grok Imagine ──">
+            <option value="grok-imagine/image-to-video">Grok Imagine I2V</option>
+          </optgroup>
+          <optgroup label="── HappyHorse ──">
+            <option value="happyhorse/image-to-video">HappyHorse I2V</option>
+          </optgroup>
+          <optgroup label="── Midjourney ──">
+            <option value="midjourney/video">Midjourney Video</option>
+            <option value="midjourney/video-hd">Midjourney Video HD</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Prompt (describe the motion)</label>
+        <div class="pw"><textarea class="ta" id="i2v-p" rows="4" placeholder="Describe motion, animation, scene…"></textarea><button class="cp" data-src="i2v-p">⎘</button></div>
+      </div>
+      <div class="row3">
+        <div class="og"><label class="fl">Duration</label>
+          <select class="sel" id="i2v-dur"><option value="5">5s</option><option value="6">6s</option><option value="8">8s</option><option value="10">10s</option></select>
+        </div>
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="i2v-res"><option value="480p">480p</option><option value="720p">720p</option><option value="1080p">1080p</option></select>
+        </div>
+        <div class="og"><label class="fl">Audio</label>
+          <select class="sel" id="i2v-snd"><option value="false">Off</option><option value="true">On</option></select>
+        </div>
+      </div>
+      <button class="gen-btn" id="i2v-go"><span>Animate Image</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="i2v-r" style="flex:1"><div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ KLING I2V ══ -->
+<section class="tab" id="tab-kling-i2v">
+  <div class="ph"><h1>Kling <em>I2V</em></h1><p>Kling AI — image-to-video with optional start+end frames</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-kling">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Start frame image or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-kling"><img id="pvi-kling" src="" alt=""/><button class="rm-img" data-k="kling">✕ Remove</button></div>
+      <div class="fg"><label class="fl">End Frame URL (optional — activates v2.1-pro mode)</label>
+        <input type="text" class="inp" id="kling-tail" placeholder="https://…/end-frame.jpg"/>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Duration</label>
+          <select class="sel" id="kling-dur"><option value="5">5s</option><option value="10">10s</option></select>
+        </div>
+        <div class="og"><label class="fl">CFG Scale</label>
+          <select class="sel" id="kling-cfg"><option value="0.5">0.5 (default)</option><option value="0.3">0.3</option><option value="0.7">0.7</option><option value="1.0">1.0</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Negative Prompt</label>
+        <input type="text" class="inp" id="kling-neg" value="blur, distort, low quality" placeholder="Elements to avoid…"/>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="kling-p" rows="4" placeholder="Describe the motion and scene…"></textarea><button class="cp" data-src="kling-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="kling-go"><span>Generate Kling Video</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="kling-r" style="flex:1"><div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SEEDANCE I2V ══ -->
+<section class="tab" id="tab-seedance-i2v">
+  <div class="ph"><h1>Seedance <em>I2V</em></h1><p>ByteDance Seedance 2.0 — multimodal image-to-video</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-seedance">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>First frame image or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-seedance"><img id="pvi-seedance" src="" alt=""/><button class="rm-img" data-k="seedance">✕ Remove</button></div>
+      <div class="fg"><label class="fl">Last Frame URL (optional)</label>
+        <input type="text" class="inp" id="seedance-last" placeholder="https://…/last-frame.jpg"/>
+      </div>
+      <div class="fg"><label class="fl">Reference Audio URL (optional)</label>
+        <input type="text" class="inp" id="seedance-audio" placeholder="https://…/audio.mp3"/>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Mode</label>
+          <select class="sel" id="seedance-mode"><option value="standard">Standard (quality)</option><option value="fast">Fast</option></select>
+        </div>
+        <div class="og"><label class="fl">Duration</label>
+          <select class="sel" id="seedance-dur"><option value="5">5s</option><option value="8">8s</option><option value="10">10s</option><option value="15">15s</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="seedance-res"><option value="480p">480p</option><option value="720p">720p</option></select>
+        </div>
+        <div class="og"><label class="fl">Audio Generate</label>
+          <select class="sel" id="seedance-gen-audio"><option value="true">Yes</option><option value="false">No</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Aspect Ratio</label>
+        <select class="sel" id="seedance-ar">
+          <option value="adaptive">Adaptive (match frame)</option>
+          <option value="16:9">16:9</option><option value="9:16">9:16</option>
+          <option value="1:1">1:1</option><option value="4:3">4:3</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="seedance-p" rows="4" placeholder="Describe the video scene…"></textarea><button class="cp" data-src="seedance-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="seedance-go"><span>Generate Seedance</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="seedance-r" style="flex:1"><div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HAILUO I2V ══ -->
+<section class="tab" id="tab-hailuo-i2v">
+  <div class="ph"><h1>Hailuo <em>I2V</em></h1><p>Minimax Hailuo 02 / 2.3 — image to video with end frame</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-hailuo">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Start image or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-hailuo"><img id="pvi-hailuo" src="" alt=""/><button class="rm-img" data-k="hailuo">✕ Remove</button></div>
+      <div class="fg"><label class="fl">End Frame URL (optional)</label>
+        <input type="text" class="inp" id="hailuo-end" placeholder="https://…/end-frame.jpg"/>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="hailuo-m">
+            <option value="hailuo/2-3-image-to-video-pro">Hailuo 2.3 Pro</option>
+            <option value="hailuo/2-3-image-to-video-standard">Hailuo 2.3 Standard</option>
+            <option value="hailuo/02-image-to-video-pro">Hailuo 02 Pro</option>
+            <option value="hailuo/02-image-to-video-standard">Hailuo 02 Standard</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Duration</label>
+          <select class="sel" id="hailuo-dur"><option value="6">6s</option><option value="10">10s</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="hailuo-res"><option value="768P">768P</option><option value="512P">512P</option></select>
+        </div>
+        <div class="og"><label class="fl">Prompt Optimizer</label>
+          <select class="sel" id="hailuo-opt"><option value="true">On</option><option value="false">Off</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="hailuo-p" rows="4" placeholder="Describe video motion and scene…"></textarea><button class="cp" data-src="hailuo-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="hailuo-go"><span>Generate Hailuo</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="hailuo-r" style="flex:1"><div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SORA 2 I2V ══ -->
+<section class="tab" id="tab-sora-i2v">
+  <div class="ph"><h1>Sora <em>2</em> I2V</h1><p>OpenAI Sora 2 — image-to-video and storyboard modes</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-sora">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image or <b>browse</b></p><small>For image-to-video or storyboard</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-sora"><img id="pvi-sora" src="" alt=""/><button class="rm-img" data-k="sora">✕ Remove</button></div>
+      <div class="row2">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="sora-m"><option value="sora-2">Sora 2</option><option value="sora-2-pro">Sora 2 Pro</option></select>
+        </div>
+        <div class="og"><label class="fl">Mode</label>
+          <select class="sel" id="sora-mode">
+            <option value="i2v">Image → Video</option>
+            <option value="storyboard">Storyboard</option>
+          </select>
+        </div>
+      </div>
+      <div class="row3">
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="sora-ar"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option></select>
+        </div>
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="sora-res"><option value="720p">720p</option><option value="480p">480p</option><option value="1080p">1080p (pro)</option></select>
+        </div>
+        <div class="og"><label class="fl">Duration</label>
+          <select class="sel" id="sora-dur"><option value="5">5s</option><option value="8">8s</option><option value="10">10s</option><option value="15">15s</option><option value="20">20s</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="sora-p" rows="4" placeholder="Describe the video scene and motion…"></textarea><button class="cp" data-src="sora-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="sora-go"><span>Generate Sora 2</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="sora-r" style="flex:1"><div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WAN I2V ══ -->
+<section class="tab" id="tab-wan-i2v">
+  <div class="ph"><h1>Wan <em>I2V</em></h1><p>Wan 2.5/2.6/2.7 image-to-video generation</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-wan">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-wan"><img id="pvi-wan" src="" alt=""/><button class="rm-img" data-k="wan">✕ Remove</button></div>
+      <div class="row2">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="wan-m">
+            <option value="wan/2-7-image-to-video">Wan 2.7 I2V</option>
+            <option value="wan/2-6-image-to-video">Wan 2.6 I2V</option>
+            <option value="wan/2-6-flash-image-to-video">Wan 2.6 Flash I2V</option>
+            <option value="wan/2-5-image-to-video">Wan 2.5 I2V</option>
+            <option value="wan/2-2-a14b-image-to-video-turbo">Wan 2.2 Turbo I2V</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Duration</label>
+          <select class="sel" id="wan-dur"><option value="5">5s</option><option value="8">8s</option><option value="10">10s</option></select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="wan-res"><option value="480p">480p</option><option value="720p">720p</option></select>
+        </div>
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="wan-ar"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="wan-p" rows="4" placeholder="Describe video motion…"></textarea><button class="cp" data-src="wan-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="wan-go"><span>Generate Wan Video</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="wan-r" style="flex:1"><div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ VEO I2V ══ -->
+<section class="tab" id="tab-veo-i2v">
+  <div class="ph"><h1>Veo <em>3</em> I2V</h1><p>Google Veo 3 — image-to-video generation</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-veo">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image or <b>browse</b></p><small>Leave empty for text-to-video</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-veo"><img id="pvi-veo" src="" alt=""/><button class="rm-img" data-k="veo">✕ Remove</button></div>
+      <div class="row2">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="veo-m"><option value="veo3">Veo 3</option><option value="veo3_fast">Veo 3 Fast</option></select>
+        </div>
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="veo-ar"><option value="16:9">16:9</option><option value="9:16">9:16</option></select>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">Duration (seconds)</label>
+        <select class="sel" id="veo-dur"><option value="5">5s</option><option value="8">8s</option></select>
+      </div>
+      <div class="fg"><label class="fl">Prompt</label>
+        <div class="pw"><textarea class="ta" id="veo-p" rows="5" placeholder="Describe the video scene…"></textarea><button class="cp" data-src="veo-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="veo-go"><span>Generate Veo 3</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result</div>
+      <div class="ra" id="veo-r" style="flex:1"><div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EDIT IMAGE (multi-model) ══ -->
+<section class="tab" id="tab-edit">
+  <div class="ph"><h1>Edit <em>Image</em></h1><p>AI-powered image editing — all edit models</p></div>
   <div class="ws">
     <div class="pn">
       <div class="pn-title">Input</div>
       <div class="uz" id="uz-ed">
-        <div class="uz-inner">
-          <div class="uz-ic">⬆</div>
-          <p>Drop image or <b>browse</b></p>
-          <small>JPEG · PNG · WEBP · max 10MB</small>
-        </div>
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Drop image or <b>browse</b></p><small>JPEG · PNG · WEBP · max 10MB</small></div>
         <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
       </div>
-      <div class="pv-wrap hidden" id="pv-ed">
-        <img id="pvi-ed" src="" alt=""/>
-        <button class="rm-img" data-k="ed">✕ Remove</button>
-      </div>
-      <div class="fg">
-        <label class="fl">Edit Model</label>
+      <div class="pv-wrap hidden" id="pv-ed"><img id="pvi-ed" src="" alt=""/><button class="rm-img" data-k="ed">✕ Remove</button></div>
+      <div class="fg"><label class="fl">Edit Model</label>
         <select class="sel" id="ed-m">
           <optgroup label="── Seedream ──">
             <option value="seedream/4.5-edit">Seedream 4.5 Edit</option>
             <option value="seedream/4.0-edit">Seedream 4.0 Edit</option>
+            <option value="bytedance/seedream-4-5-edit">Seedream 4.5 Edit (alt)</option>
           </optgroup>
           <optgroup label="── Qwen ──">
             <option value="qwen/image-edit">Qwen Image Edit</option>
@@ -674,469 +947,318 @@ body{display:flex;overflow:hidden}
           <optgroup label="── Google ──">
             <option value="google/nano-banana-edit">Google Nano Banana Edit</option>
           </optgroup>
+          <optgroup label="── Flux Kontext ──">
+            <option value="flux-kontext-pro/edit">Flux Kontext Pro Edit</option>
+            <option value="flux-kontext-max/edit">Flux Kontext Max Edit</option>
+          </optgroup>
         </select>
       </div>
-      <div class="row2" id="ed-seedream-opts">
-        <div class="og">
-          <label class="fl">Aspect Ratio</label>
+      <div class="row2" id="ed-opts">
+        <div class="og"><label class="fl">Aspect Ratio</label>
           <select class="sel" id="ed-ar">
-            <option value="1:1">1:1 Square</option>
-            <option value="16:9">16:9 Wide</option>
-            <option value="9:16">9:16 Portrait</option>
-            <option value="4:3">4:3</option>
-            <option value="3:4">3:4</option>
+            <option value="1:1">1:1</option><option value="16:9">16:9</option>
+            <option value="9:16">9:16</option><option value="4:3">4:3</option><option value="3:4">3:4</option>
           </select>
         </div>
-        <div class="og">
-          <label class="fl">Quality</label>
-          <select class="sel" id="ed-q">
-            <option value="basic">Basic (2K)</option>
-            <option value="high">High (4K)</option>
-          </select>
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="ed-res"><option value="1K">1K</option><option value="2K">2K</option><option value="4K">4K</option></select>
         </div>
       </div>
-      <div class="fg">
-        <label class="fl">Edit Instructions</label>
-        <div class="pw">
-          <textarea class="ta" id="ed-p" rows="4" placeholder="What do you want to change?"></textarea>
-          <button class="cp" data-src="ed-p">⎘</button>
-        </div>
+      <div class="fg"><label class="fl">Edit Instructions</label>
+        <div class="pw"><textarea class="ta" id="ed-p" rows="4" placeholder="What do you want to change?"></textarea><button class="cp" data-src="ed-p">⎘</button></div>
       </div>
       <button class="gen-btn" id="ed-go"><span>Apply Edit</span><span>→</span></button>
     </div>
     <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
       <div class="pn-title">Result</div>
-      <div class="ra" id="ed-r" style="flex:1">
-        <div class="rp"><div class="rp-ic">✦</div><p>Edited image will appear here</p></div>
-      </div>
+      <div class="ra" id="ed-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Edited image will appear here</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ══ GPT-4o ══ -->
-<section class="tab" id="tab-gpt4o">
-  <div class="ph">
-    <h1>GPT<em>-4o</em> Image</h1>
-    <p>Generate &amp; edit images via OpenAI GPT-4o through KIE.AI</p>
-  </div>
+<!-- ══ SEEDREAM EDIT ══ -->
+<section class="tab" id="tab-edit-seedream">
+  <div class="ph"><h1>Seedream <em>Edit</em></h1><p>ByteDance Seedream 4.5 Edit — precise image editing</p></div>
   <div class="ws">
     <div class="pn">
       <div class="pn-title">Input</div>
-      <div class="uz" id="uz-gpt4o">
-        <div class="uz-inner">
-          <div class="uz-ic">⬆</div>
-          <p>Optional reference image or <b>browse</b></p>
-          <small>Leave empty for pure text-to-image</small>
-        </div>
+      <div class="uz" id="uz-sdredit">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image to edit or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
         <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
       </div>
-      <div class="pv-wrap hidden" id="pv-gpt4o">
-        <img id="pvi-gpt4o" src="" alt=""/>
-        <button class="rm-img" data-k="gpt4o">✕ Remove</button>
-      </div>
-      <div class="row2">
-        <div class="og">
-          <label class="fl">Aspect Ratio</label>
-          <select class="sel" id="gpt4o-ar">
-            <option value="1:1">1:1 Square</option>
-            <option value="16:9">16:9 Wide</option>
-            <option value="9:16">9:16 Portrait</option>
-            <option value="3:2">3:2</option>
-            <option value="2:3">2:3</option>
+      <div class="pv-wrap hidden" id="pv-sdredit"><img id="pvi-sdredit" src="" alt=""/><button class="rm-img" data-k="sdredit">✕ Remove</button></div>
+      <div class="row3">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="sdredit-m">
+            <option value="seedream/4.5-edit">Seedream 4.5</option>
+            <option value="seedream/4.0-edit">Seedream 4.0</option>
           </select>
         </div>
-        <div class="og">
-          <label class="fl">Variants</label>
-          <select class="sel" id="gpt4o-n">
-            <option value="1">1 image</option>
-            <option value="2">2 images</option>
-            <option value="4">4 images</option>
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="sdredit-ar">
+            <option value="1:1">1:1</option><option value="16:9">16:9</option>
+            <option value="9:16">9:16</option><option value="4:3">4:3</option>
           </select>
         </div>
-      </div>
-      <div class="fg">
-        <label class="fl">Enhance Prompt</label>
-        <select class="sel" id="gpt4o-enh">
-          <option value="true">Yes — AI enhances prompt</option>
-          <option value="false">No — use as-is</option>
-        </select>
-      </div>
-      <div class="fg">
-        <label class="fl">Prompt</label>
-        <div class="pw">
-          <textarea class="ta" id="gpt4o-p" rows="4" placeholder="Describe image or edit instructions…"></textarea>
-          <button class="cp" data-src="gpt4o-p">⎘</button>
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="sdredit-res"><option value="1K">1K</option><option value="2K">2K</option><option value="4K">4K</option></select>
         </div>
       </div>
-      <button class="gen-btn" id="gpt4o-go"><span>Generate</span><span>→</span></button>
+      <div class="fg"><label class="fl">Max Images (1-6)</label>
+        <select class="sel" id="sdredit-n"><option value="1">1</option><option value="2">2</option><option value="4">4</option></select>
+      </div>
+      <div class="fg"><label class="fl">Edit Instructions</label>
+        <div class="pw"><textarea class="ta" id="sdredit-p" rows="4" placeholder="Describe what to change, add, or remove…"></textarea><button class="cp" data-src="sdredit-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="sdredit-go"><span>Apply Seedream Edit</span><span>→</span></button>
     </div>
     <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
       <div class="pn-title">Result</div>
-      <div class="ra" id="gpt4o-r" style="flex:1">
-        <div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div>
-      </div>
+      <div class="ra" id="sdredit-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Edited image will appear here</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ══ FLUX KONTEXT ══ -->
-<section class="tab" id="tab-fk">
-  <div class="ph">
-    <h1>Flux <em>Kontext</em></h1>
-    <p>High-quality text-to-image &amp; image editing with Flux Kontext</p>
-  </div>
+<!-- ══ QWEN EDIT ══ -->
+<section class="tab" id="tab-edit-qwen">
+  <div class="ph"><h1>Qwen <em>Edit</em></h1><p>Qwen image editing with fine-grained control</p></div>
   <div class="ws">
     <div class="pn">
       <div class="pn-title">Input</div>
-      <div class="uz" id="uz-fk">
-        <div class="uz-inner">
-          <div class="uz-ic">⬆</div>
-          <p>Optional reference image or <b>browse</b></p>
-          <small>Leave empty for text-to-image</small>
-        </div>
+      <div class="uz" id="uz-qedit">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image to edit or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
         <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
       </div>
-      <div class="pv-wrap hidden" id="pv-fk">
-        <img id="pvi-fk" src="" alt=""/>
-        <button class="rm-img" data-k="fk">✕ Remove</button>
-      </div>
+      <div class="pv-wrap hidden" id="pv-qedit"><img id="pvi-qedit" src="" alt=""/><button class="rm-img" data-k="qedit">✕ Remove</button></div>
       <div class="row2">
-        <div class="og">
-          <label class="fl">Model</label>
-          <select class="sel" id="fk-m">
-            <option value="flux-kontext-pro">Flux Kontext Pro</option>
-            <option value="flux-kontext-max">Flux Kontext Max</option>
-          </select>
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="qedit-m"><option value="qwen/image-edit">Qwen Edit</option><option value="qwen2/image-edit">Qwen2 Edit</option></select>
         </div>
-        <div class="og">
-          <label class="fl">Aspect Ratio</label>
-          <select class="sel" id="fk-ar">
-            <option value="1:1">1:1 Square</option>
-            <option value="16:9">16:9 Wide</option>
-            <option value="9:16">9:16 Portrait</option>
-            <option value="4:3">4:3</option>
-            <option value="3:4">3:4</option>
-            <option value="21:9">21:9 Cine</option>
+        <div class="og"><label class="fl">Image Size</label>
+          <select class="sel" id="qedit-sz">
+            <option value="square_hd">Square HD</option><option value="square">Square</option>
+            <option value="landscape_16_9">Landscape 16:9</option><option value="portrait_16_9">Portrait 16:9</option>
           </select>
         </div>
       </div>
       <div class="row2">
-        <div class="og">
-          <label class="fl">Format</label>
-          <select class="sel" id="fk-fmt">
-            <option value="jpeg">JPEG</option>
-            <option value="png">PNG</option>
-          </select>
+        <div class="og"><label class="fl">Inference Steps (2-49)</label>
+          <input type="number" class="inp" id="qedit-steps" value="25" min="2" max="49"/>
         </div>
-        <div class="og">
-          <label class="fl">Prompt Upsampling</label>
-          <select class="sel" id="fk-up">
-            <option value="false">Off</option>
-            <option value="true">On (AI enhances)</option>
-          </select>
+        <div class="og"><label class="fl">Guidance Scale (0-20)</label>
+          <input type="number" class="inp" id="qedit-cfg" value="4" min="0" max="20" step="0.5"/>
         </div>
       </div>
-      <div class="fg">
-        <label class="fl">Prompt</label>
-        <div class="pw">
-          <textarea class="ta" id="fk-p" rows="4" placeholder="Describe your image or edit instructions…"></textarea>
-          <button class="cp" data-src="fk-p">⎘</button>
+      <div class="row2">
+        <div class="og"><label class="fl">Num Images</label>
+          <select class="sel" id="qedit-n"><option value="1">1</option><option value="2">2</option><option value="4">4</option></select>
+        </div>
+        <div class="og"><label class="fl">Format</label>
+          <select class="sel" id="qedit-fmt"><option value="png">PNG</option><option value="jpeg">JPEG</option></select>
         </div>
       </div>
-      <button class="gen-btn" id="fk-go"><span>Generate</span><span>→</span></button>
+      <div class="fg"><label class="fl">Negative Prompt</label>
+        <input type="text" class="inp" id="qedit-neg" placeholder="blurry, low quality…"/>
+      </div>
+      <div class="fg"><label class="fl">Edit Instructions</label>
+        <div class="pw"><textarea class="ta" id="qedit-p" rows="4" placeholder="Describe changes…"></textarea><button class="cp" data-src="qedit-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="qedit-go"><span>Apply Qwen Edit</span><span>→</span></button>
     </div>
     <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
       <div class="pn-title">Result</div>
-      <div class="ra" id="fk-r" style="flex:1">
-        <div class="rp"><div class="rp-ic">✦</div><p>Result will appear here</p></div>
-      </div>
+      <div class="ra" id="qedit-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Edited image will appear here</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ══ UPSCALE / TOOLS ══ -->
-<section class="tab" id="tab-tools">
-  <div class="ph">
-    <h1>Upscale <em>&amp; Tools</em></h1>
-    <p>Upscale, remove background, and enhance images</p>
-  </div>
+<!-- ══ NANO BANANA EDIT ══ -->
+<section class="tab" id="tab-edit-nano">
+  <div class="ph"><h1>Nano Banana <em>Edit</em></h1><p>Google Gemini image editing with multi-reference</p></div>
   <div class="ws">
     <div class="pn">
       <div class="pn-title">Input</div>
-      <div class="uz" id="uz-up">
-        <div class="uz-inner">
-          <div class="uz-ic">⬆</div>
-          <p>Drop image or <b>browse</b></p>
-          <small>JPEG · PNG · WEBP · max 10MB</small>
-        </div>
+      <div class="uz" id="uz-nbedit">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image to edit or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
         <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
       </div>
-      <div class="pv-wrap hidden" id="pv-up">
-        <img id="pvi-up" src="" alt=""/>
-        <button class="rm-img" data-k="up">✕ Remove</button>
+      <div class="pv-wrap hidden" id="pv-nbedit"><img id="pvi-nbedit" src="" alt=""/><button class="rm-img" data-k="nbedit">✕ Remove</button></div>
+      <div class="fg"><label class="fl">Extra Reference URL (optional)</label>
+        <input type="text" class="inp" id="nbedit-ref2" placeholder="https://…/ref.jpg"/>
       </div>
-      <div class="fg">
-        <label class="fl">Tool / Model</label>
-        <select class="sel" id="up-m">
-          <optgroup label="── Recraft ──">
-            <option value="recraft/crisp-upscale">Recraft Crisp Upscale</option>
-            <option value="recraft/remove-background">Recraft Remove Background</option>
-          </optgroup>
-          <optgroup label="── Topaz ──">
-            <option value="topaz/image-upscale">Topaz Image Upscale</option>
-          </optgroup>
-          <optgroup label="── Google ──">
-            <option value="google/nano-banana-pro">Google Nano Banana Pro I2I</option>
-          </optgroup>
-        </select>
+      <div class="row3">
+        <div class="og"><label class="fl">Resolution</label>
+          <select class="sel" id="nbedit-res"><option value="1K">1K</option><option value="2K">2K</option><option value="4K">4K</option></select>
+        </div>
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="nbedit-ar">
+            <option value="1:1">1:1</option><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="auto">Auto</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Format</label>
+          <select class="sel" id="nbedit-fmt"><option value="png">PNG</option><option value="jpg">JPG</option></select>
+        </div>
       </div>
-      <button class="gen-btn" id="up-go"><span>Process Image</span><span>→</span></button>
+      <div class="fg"><label class="fl">Edit Instructions</label>
+        <div class="pw"><textarea class="ta" id="nbedit-p" rows="4" placeholder="Describe the edit…"></textarea><button class="cp" data-src="nbedit-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="nbedit-go"><span>Apply Nano Banana Edit</span><span>→</span></button>
     </div>
     <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
       <div class="pn-title">Result</div>
-      <div class="ra" id="up-r" style="flex:1">
-        <div class="rp"><div class="rp-ic">✦</div><p>Processed image will appear here</p></div>
-      </div>
+      <div class="ra" id="nbedit-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Edited image will appear here</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ══ TEXT TO VIDEO ══ -->
-<section class="tab" id="tab-t2v">
-  <div class="ph">
-    <h1>Text <em>→</em> Video</h1>
-    <p>Generate videos from text prompts</p>
-  </div>
+<!-- ══ FLUX KONTEXT EDIT ══ -->
+<section class="tab" id="tab-edit-fk">
+  <div class="ph"><h1>Flux Kontext <em>Edit</em></h1><p>Precise image editing with Flux Kontext Pro / Max</p></div>
   <div class="ws">
     <div class="pn">
-      <div class="pn-title">Settings</div>
-      <div class="fg">
-        <label class="fl">Model</label>
-        <select class="sel" id="t2v-m">
-          <optgroup label="── Kling ──">
-            <option value="kling-3.0/text-to-video">Kling 3.0 T2V</option>
-            <option value="kling-2.6/text-to-video">Kling 2.6 T2V</option>
-            <option value="kling/v2-1-master-text-to-video">Kling V2.1 Master T2V</option>
-            <option value="kling/v2-1-pro/text-to-video">Kling V2.1 Pro T2V</option>
-            <option value="kling/v2-1-standard/text-to-video">Kling V2.1 Standard T2V</option>
-            <option value="kling/v25-turbo-text-to-video-pro">Kling V2.5 Turbo Pro T2V</option>
-          </optgroup>
-          <optgroup label="── Bytedance / Seedance ──">
-            <option value="bytedance/seedance-2">Seedance 2.0</option>
-            <option value="bytedance/seedance-2-fast">Seedance 2.0 Fast</option>
-            <option value="bytedance/seedance-1-5-pro">Seedance 1.5 Pro</option>
-            <option value="bytedance/v1-pro-text-to-video">Bytedance V1 Pro T2V</option>
-            <option value="bytedance/v1-lite-text-to-video">Bytedance V1 Lite T2V</option>
-          </optgroup>
-          <optgroup label="── Hailuo ──">
-            <option value="hailuo/02-text-to-video-pro">Hailuo Pro T2V</option>
-            <option value="hailuo/02-text-to-video-standard">Hailuo Standard T2V</option>
-          </optgroup>
-          <optgroup label="── Sora 2 ──">
-            <option value="sora-2-text-to-video">Sora 2 T2V</option>
-            <option value="sora-2-pro-text-to-video">Sora 2 Pro T2V</option>
-          </optgroup>
-          <optgroup label="── Wan ──">
-            <option value="wan/2-7-text-to-video">Wan 2.7 T2V</option>
-            <option value="wan/2-6-text-to-video">Wan 2.6 T2V</option>
-            <option value="wan/2-5-text-to-video">Wan 2.5 T2V</option>
-            <option value="wan/2-2-a14b-text-to-video-turbo">Wan 2.2 A14B Turbo T2V</option>
-          </optgroup>
-          <optgroup label="── Grok Imagine ──">
-            <option value="grok-imagine/text-to-video">Grok Imagine T2V</option>
-          </optgroup>
-          <optgroup label="── HappyHorse ──">
-            <option value="happyhorse/text-to-video">HappyHorse T2V</option>
-          </optgroup>
-        </select>
+      <div class="pn-title">Input (required for edit mode)</div>
+      <div class="uz" id="uz-fkedit">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image to edit or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
       </div>
-      <div class="fg">
-        <label class="fl">Prompt</label>
-        <div class="pw">
-          <textarea class="ta" id="t2v-p" rows="5" placeholder="Describe the video scene…"></textarea>
-          <button class="cp" data-src="t2v-p">⎘</button>
+      <div class="pv-wrap hidden" id="pv-fkedit"><img id="pvi-fkedit" src="" alt=""/><button class="rm-img" data-k="fkedit">✕ Remove</button></div>
+      <div class="row2">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="fkedit-m"><option value="flux-kontext-pro">Flux Kontext Pro</option><option value="flux-kontext-max">Flux Kontext Max</option></select>
+        </div>
+        <div class="og"><label class="fl">Format</label>
+          <select class="sel" id="fkedit-fmt"><option value="jpeg">JPEG</option><option value="png">PNG</option></select>
         </div>
       </div>
       <div class="row2">
-        <div class="og">
-          <label class="fl">Duration</label>
-          <select class="sel" id="t2v-dur">
-            <option value="5">5s</option>
-            <option value="6">6s</option>
-            <option value="10">10s</option>
+        <div class="og"><label class="fl">Aspect Ratio</label>
+          <select class="sel" id="fkedit-ar">
+            <option value="1:1">1:1</option><option value="16:9">16:9</option>
+            <option value="9:16">9:16</option><option value="4:3">4:3</option>
           </select>
         </div>
-        <div class="og">
-          <label class="fl">Resolution</label>
-          <select class="sel" id="t2v-res">
-            <option value="480p">480p</option>
-            <option value="720p">720p</option>
-            <option value="1080p">1080p</option>
-          </select>
+        <div class="og"><label class="fl">Safety (edit: 0-2)</label>
+          <select class="sel" id="fkedit-safe"><option value="2">2 Balanced</option><option value="1">1 Strict</option><option value="0">0 Strictest</option></select>
         </div>
       </div>
-      <button class="gen-btn" id="t2v-go"><span>Generate Video</span><span>→</span></button>
+      <div class="fg"><label class="fl">Edit Instructions</label>
+        <div class="pw"><textarea class="ta" id="fkedit-p" rows="4" placeholder="Replace the sky… Add a rainbow… Change outfit to…"></textarea><button class="cp" data-src="fkedit-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="fkedit-go"><span>Apply Flux Kontext Edit</span><span>→</span></button>
     </div>
     <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
       <div class="pn-title">Result</div>
-      <div class="ra" id="t2v-r" style="flex:1">
-        <div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div>
-      </div>
+      <div class="ra" id="fkedit-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Edited image will appear here</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ══ IMAGE TO VIDEO ══ -->
-<section class="tab" id="tab-i2v">
-  <div class="ph">
-    <h1>Image <em>→</em> Video</h1>
-    <p>Bring your images to life with AI animation</p>
-  </div>
+<!-- ══ GPT-4o EDIT ══ -->
+<section class="tab" id="tab-edit-gpt4o">
+  <div class="ph"><h1>GPT-4o <em>Edit</em></h1><p>Inpainting / editing with mask — OpenAI GPT-4o</p></div>
   <div class="ws">
     <div class="pn">
       <div class="pn-title">Input</div>
-      <div class="uz" id="uz-i2v">
-        <div class="uz-inner">
-          <div class="uz-ic">⬆</div>
-          <p>Drop image or <b>browse</b></p>
-          <small>JPEG · PNG · WEBP · max 10MB</small>
-        </div>
+      <div class="uz" id="uz-gpt4oedit">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image to edit or <b>browse</b></p><small>JPEG · PNG · WEBP</small></div>
         <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
       </div>
-      <div class="pv-wrap hidden" id="pv-i2v">
-        <img id="pvi-i2v" src="" alt=""/>
-        <button class="rm-img" data-k="i2v">✕ Remove</button>
+      <div class="pv-wrap hidden" id="pv-gpt4oedit"><img id="pvi-gpt4oedit" src="" alt=""/><button class="rm-img" data-k="gpt4oedit">✕ Remove</button></div>
+      <div class="fg"><label class="fl">Mask Image URL (white = edit, black = preserve)</label>
+        <input type="text" class="inp" id="gpt4oedit-mask" placeholder="https://…/mask.png"/>
       </div>
-      <div class="fg">
-        <label class="fl">Model</label>
-        <select class="sel" id="i2v-m">
-          <optgroup label="── Kling ──">
-            <option value="kling-3.0/image-to-video">Kling 3.0 I2V</option>
-            <option value="kling-2.6/image-to-video">Kling 2.6 I2V</option>
-            <option value="kling/v2-1-master-image-to-video">Kling V2.1 Master I2V</option>
-            <option value="kling/v2-1-pro/image-to-video">Kling V2.1 Pro I2V</option>
-            <option value="kling/v2-1-standard/image-to-video">Kling V2.1 Standard I2V</option>
-            <option value="kling/v25-turbo-image-to-video-pro">Kling V2.5 Turbo Pro I2V</option>
-          </optgroup>
-          <optgroup label="── Bytedance / Seedance ──">
-            <option value="bytedance/seedance-2">Seedance 2.0 I2V</option>
-            <option value="bytedance/seedance-2-fast">Seedance 2.0 Fast I2V</option>
-            <option value="bytedance/seedance-1-5-pro">Seedance 1.5 Pro I2V</option>
-            <option value="bytedance/v1-pro-image-to-video">Bytedance V1 Pro I2V</option>
-            <option value="bytedance/v1-pro-fast-image-to-video">Bytedance V1 Pro Fast I2V</option>
-            <option value="bytedance/v1-lite-image-to-video">Bytedance V1 Lite I2V</option>
-          </optgroup>
-          <optgroup label="── Hailuo ──">
-            <option value="hailuo/2-3-image-to-video-pro">Hailuo 2.3 Pro I2V</option>
-            <option value="hailuo/2-3-image-to-video-standard">Hailuo 2.3 Standard I2V</option>
-            <option value="hailuo/02-image-to-video-pro">Hailuo Pro I2V</option>
-            <option value="hailuo/02-image-to-video-standard">Hailuo Standard I2V</option>
-          </optgroup>
-          <optgroup label="── Sora 2 ──">
-            <option value="sora-2-image-to-video">Sora 2 I2V</option>
-            <option value="sora-2-pro-image-to-video">Sora 2 Pro I2V</option>
-          </optgroup>
-          <optgroup label="── Wan ──">
-            <option value="wan/2-7-image-to-video">Wan 2.7 I2V</option>
-            <option value="wan/2-6-image-to-video">Wan 2.6 I2V</option>
-            <option value="wan/2-6-flash-image-to-video">Wan 2.6 Flash I2V</option>
-            <option value="wan/2-5-image-to-video">Wan 2.5 I2V</option>
-            <option value="wan/2-2-a14b-image-to-video-turbo">Wan 2.2 A14B Turbo I2V</option>
-          </optgroup>
-          <optgroup label="── Grok Imagine ──">
-            <option value="grok-imagine/image-to-video">Grok Imagine I2V</option>
-          </optgroup>
-          <optgroup label="── HappyHorse ──">
-            <option value="happyhorse/image-to-video">HappyHorse I2V</option>
-          </optgroup>
-        </select>
-      </div>
-      <div class="fg">
-        <label class="fl">Prompt</label>
-        <div class="pw">
-          <textarea class="ta" id="i2v-p" rows="4" placeholder="Describe the motion or scene…"></textarea>
-          <button class="cp" data-src="i2v-p">⎘</button>
+      <div class="row2">
+        <div class="og"><label class="fl">Model</label>
+          <select class="sel" id="gpt4oedit-m"><option value="gpt-4o-image">GPT-4o Image</option><option value="gpt-4o-image-mini">GPT-4o Mini</option></select>
+        </div>
+        <div class="og"><label class="fl">Size</label>
+          <select class="sel" id="gpt4oedit-sz">
+            <option value="1024x1024">1024×1024</option><option value="1792x1024">1792×1024</option><option value="1024x1792">1024×1792</option>
+          </select>
         </div>
       </div>
       <div class="row2">
-        <div class="og">
-          <label class="fl">Duration</label>
-          <select class="sel" id="i2v-dur">
-            <option value="5">5s</option>
-            <option value="6">6s</option>
-            <option value="10">10s</option>
-          </select>
+        <div class="og"><label class="fl">Variants</label>
+          <select class="sel" id="gpt4oedit-n"><option value="1">1</option><option value="2">2</option></select>
         </div>
-        <div class="og">
-          <label class="fl">Sound</label>
-          <select class="sel" id="i2v-snd">
-            <option value="false">Off</option>
-            <option value="true">On</option>
-          </select>
+        <div class="og"><label class="fl">Quality</label>
+          <select class="sel" id="gpt4oedit-q"><option value="hd">HD</option><option value="standard">Standard</option></select>
         </div>
       </div>
-      <button class="gen-btn" id="i2v-go"><span>Animate</span><span>→</span></button>
+      <div class="fg"><label class="fl">Edit Instructions</label>
+        <div class="pw"><textarea class="ta" id="gpt4oedit-p" rows="4" placeholder="Replace the masked area with…"></textarea><button class="cp" data-src="gpt4oedit-p">⎘</button></div>
+      </div>
+      <button class="gen-btn" id="gpt4oedit-go"><span>Apply GPT-4o Edit</span><span>→</span></button>
     </div>
     <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
       <div class="pn-title">Result</div>
-      <div class="ra" id="i2v-r" style="flex:1">
-        <div class="rp"><div class="rp-ic">🎬</div><p>Video will appear here</p></div>
-      </div>
+      <div class="ra" id="gpt4oedit-r" style="flex:1"><div class="rp"><div class="rp-ic">✦</div><p>Edited image will appear here</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ══ VEO 3.1 ══ -->
-<section class="tab" id="tab-veo">
-  <div class="ph">
-    <h1>Veo <em>3.1</em></h1>
-    <p>Google's state-of-the-art video generation model</p>
-  </div>
+<!-- ══ IDEOGRAM REFRAME ══ -->
+<section class="tab" id="tab-reframe">
+  <div class="ph"><h1>Ideogram <em>Reframe</em></h1><p>Intelligent content-aware image reframing to different aspect ratios</p></div>
   <div class="ws">
     <div class="pn">
-      <div class="pn-title">Settings</div>
-      <div class="uz" id="uz-veo">
-        <div class="uz-inner">
-          <div class="uz-ic">⬆</div>
-          <p>Optional reference image or <b>browse</b></p>
-          <small>Leave empty for text-to-video</small>
-        </div>
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-reframe">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image to reframe or <b>browse</b></p><small>JPEG · PNG · WEBP · max 10MB</small></div>
         <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
       </div>
-      <div class="pv-wrap hidden" id="pv-veo">
-        <img id="pvi-veo" src="" alt=""/>
-        <button class="rm-img" data-k="veo">✕ Remove</button>
-      </div>
-      <div class="fg">
-        <label class="fl">Prompt</label>
-        <div class="pw">
-          <textarea class="ta" id="veo-p" rows="5" placeholder="Describe the video you want to generate…"></textarea>
-          <button class="cp" data-src="veo-p">⎘</button>
+      <div class="pv-wrap hidden" id="pv-reframe"><img id="pvi-reframe" src="" alt=""/><button class="rm-img" data-k="reframe">✕ Remove</button></div>
+      <div class="row2">
+        <div class="og"><label class="fl">Output Size</label>
+          <select class="sel" id="reframe-sz">
+            <option value="square_hd">Square HD</option><option value="square">Square</option>
+            <option value="portrait_4_3">Portrait 4:3</option><option value="portrait_16_9">Portrait 16:9</option>
+            <option value="landscape_4_3">Landscape 4:3</option><option value="landscape_16_9">Landscape 16:9</option>
+          </select>
+        </div>
+        <div class="og"><label class="fl">Rendering Speed</label>
+          <select class="sel" id="reframe-speed"><option value="BALANCED">Balanced</option><option value="TURBO">Turbo</option><option value="QUALITY">Quality</option></select>
         </div>
       </div>
       <div class="row2">
-        <div class="og">
-          <label class="fl">Aspect Ratio</label>
-          <select class="sel" id="veo-ar">
-            <option value="16:9">16:9 Wide</option>
-            <option value="9:16">9:16 Portrait</option>
-            <option value="1:1">1:1 Square</option>
-          </select>
+        <div class="og"><label class="fl">Style</label>
+          <select class="sel" id="reframe-style"><option value="AUTO">Auto</option><option value="REALISTIC">Realistic</option><option value="GENERAL">General</option><option value="DESIGN">Design</option></select>
         </div>
-        <div class="og">
-          <label class="fl">Duration</label>
-          <select class="sel" id="veo-dur">
-            <option value="5">5s</option>
-            <option value="8">8s</option>
-          </select>
+        <div class="og"><label class="fl">Num Images</label>
+          <select class="sel" id="reframe-n"><option value="1">1</option><option value="2">2</option><option value="4">4</option></select>
         </div>
       </div>
-      <button class="gen-btn" id="veo-go"><span>Generate Veo Video</span><span>→</span></button>
+      <button class="gen-btn" id="reframe-go"><span>Reframe Image</span><span>→</span></button>
     </div>
     <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
       <div class="pn-title">Result</div>
-      <div class="ra" id="veo-r" style="flex:1">
-        <div class="rp"><div class="rp-ic">🎬</div><p>Veo video will appear here</p></div>
+      <div class="ra" id="reframe-r" style="flex:1"><div class="rp"><div class="rp-ic">📐</div><p>Reframed image will appear here</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ REMOVE BACKGROUND ══ -->
+<section class="tab" id="tab-rmbg">
+  <div class="ph"><h1>Remove <em>Background</em></h1><p>Recraft AI — professional background removal with transparent PNG</p></div>
+  <div class="ws">
+    <div class="pn">
+      <div class="pn-title">Input</div>
+      <div class="uz" id="uz-rmbg">
+        <div class="uz-inner"><div class="uz-ic">⬆</div><p>Image or <b>browse</b></p><small>PNG · JPG · WEBP · max 5MB · max 4096px</small></div>
+        <input type="file" accept="image/jpeg,image/png,image/webp" class="file-input"/>
+      </div>
+      <div class="pv-wrap hidden" id="pv-rmbg"><img id="pvi-rmbg" src="" alt=""/><button class="rm-img" data-k="rmbg">✕ Remove</button></div>
+      <div style="background:var(--s3);border:1px solid var(--line);border-radius:var(--r);padding:0.75rem;font-size:0.65rem;color:var(--dim);line-height:1.6">
+        <b style="color:var(--hi2)">ℹ Model:</b> Recraft Remove Background<br>
+        Output: PNG with transparent background<br>
+        Limits: Max 5MB · Max 16MP · Max 4096px
+      </div>
+      <button class="gen-btn" id="rmbg-go"><span>Remove Background</span><span>→</span></button>
+    </div>
+    <div class="rpn" style="display:flex;flex-direction:column;gap:0.8rem">
+      <div class="pn-title">Result (transparent PNG)</div>
+      <div class="ra" id="rmbg-r" style="flex:1;background:repeating-conic-gradient(#1a1a1a 0% 25%, #111 0% 50%) 0 0 / 20px 20px">
+        <div class="rp"><div class="rp-ic">🪄</div><p>Transparent PNG will appear here</p></div>
       </div>
     </div>
   </div>
@@ -1144,17 +1266,12 @@ body{display:flex;overflow:hidden}
 
 <!-- ══ HISTORY ══ -->
 <section class="tab" id="tab-history">
-  <div class="ph">
-    <h1>Generation <em>History</em></h1>
-    <p>Your recent creations stored locally</p>
-  </div>
+  <div class="ph"><h1>Generation <em>History</em></h1><p>Your recent creations stored locally</p></div>
   <div class="h-bar">
     <button class="sec-btn" id="clearHist">🗑 Clear All</button>
     <span class="h-count" id="hCount"></span>
   </div>
-  <div class="h-grid" id="hGrid">
-    <div class="h-empty">No history yet. Start generating!</div>
-  </div>
+  <div class="h-grid" id="hGrid"><div class="h-empty">No history yet. Start generating!</div></div>
 </section>
 
 </main>
@@ -1176,21 +1293,29 @@ body{display:flex;overflow:hidden}
 
 <script>
 /* ═══════════════════════════════════════════════════
-   KIE.AI Studio — Full Integration (May 2026)
+   KIE.AI Studio v2 — I2I · I2V · Edit — May 2026
 ═══════════════════════════════════════════════════ */
 
 let KEY = localStorage.getItem('kie_key') || '';
 
-const API       = 'https://api.kie.ai/api/v1/jobs';
-const API_4O    = 'https://api.kie.ai/api/v1/gpt4o-image';
-const API_FK    = 'https://api.kie.ai/api/v1/flux/kontext';
-const API_VEO   = 'https://api.kie.ai/api/v1/veo3';
-const API_CRED  = 'https://api.kie.ai/api/v1/chat/credit';
-const UPLOAD    = 'https://kieai.redpandaai.co/api/file-base64-upload';
-const POLL_MS   = 4000;
+const API        = 'https://api.kie.ai/api/v1/jobs';
+const API_4O     = 'https://api.kie.ai/api/v1/gpt4o-image';
+const API_FK     = 'https://api.kie.ai/api/v1/flux/kontext';
+const API_VEO    = 'https://api.kie.ai/api/v1/veo3';
+const API_CRED   = 'https://api.kie.ai/api/v1/chat/credit';
+const UPLOAD     = 'https://kieai.redpandaai.co/api/file-base64-upload';
+const POLL_MS    = 4000;
 
-const urls     = { i2i:null, i2v:null, ed:null, gpt4o:null, fk:null, up:null, veo:null };
-const pollers  = {};
+// Track uploaded URLs per zone key
+const urls = {};
+const pollers = {};
+
+/* ─ All upload zone keys ─ */
+const UPLOAD_KEYS = [
+  'i2i','fk','flux2-0','gpt4o','mj','nb','wana',
+  'i2v','kling','seedance','hailuo','sora','wan','veo',
+  'ed','sdredit','qedit','nbedit','fkedit','gpt4oedit','reframe','rmbg'
+];
 
 /* ─ Init ─ */
 document.addEventListener('DOMContentLoaded', () => {
@@ -1210,10 +1335,10 @@ function initKey() {
   const btn = document.getElementById('keySave');
   if (KEY) inp.value = KEY;
   btn.onclick = () => {
-    const v = inp.value.trim();
-    if (!v) { toast('Enter a valid API key','err'); return; }
-    KEY = v;
-    localStorage.setItem('kie_key', v);
+    const val = inp.value.trim();
+    if (!val) { toast('Enter a valid API key','err'); return; }
+    KEY = val;
+    localStorage.setItem('kie_key', val);
     toast('API key saved ✓','ok');
     loadCredits();
   };
@@ -1225,17 +1350,16 @@ async function loadCredits() {
   try {
     const r = await fetch(API_CRED, { headers:{ Authorization:`Bearer ${KEY}` }});
     const d = await r.json();
-    const v = d?.data ?? d?.credits ?? '?';
-    document.getElementById('crVal').textContent = v;
+    const val = d?.data?.balance ?? d?.data ?? d?.credits ?? '?';
+    document.getElementById('crVal').textContent = typeof val === 'object' ? JSON.stringify(val) : val;
   } catch { document.getElementById('crVal').textContent = 'err'; }
 }
 
 /* ─ Navigation ─ */
 function initNav() {
-  const items = document.querySelectorAll('.sn');
+  const items   = document.querySelectorAll('.sn');
   const sidebar = document.getElementById('sb');
-  const hbg = document.getElementById('hbg');
-
+  const hbg     = document.getElementById('hbg');
   items.forEach(el => el.onclick = () => {
     items.forEach(i => i.classList.remove('on'));
     el.classList.add('on');
@@ -1244,7 +1368,6 @@ function initNav() {
     if (el.dataset.tab === 'history') renderHistory();
     sidebar.classList.remove('open');
   });
-
   hbg.onclick = () => sidebar.classList.toggle('open');
   document.addEventListener('click', e => {
     if (!sidebar.contains(e.target) && !hbg.contains(e.target)) sidebar.classList.remove('open');
@@ -1253,15 +1376,16 @@ function initNav() {
 
 /* ─ Uploads ─ */
 function initUploads() {
-  ['i2i','i2v','ed','gpt4o','fk','up','veo'].forEach(k => {
+  UPLOAD_KEYS.forEach(k => {
     const zone = document.getElementById('uz-' + k);
     if (!zone) return;
-    const fi   = zone.querySelector('.file-input');
-    const pw   = document.getElementById('pv-' + k);
-    const img  = document.getElementById('pvi-' + k);
+    const fi  = zone.querySelector('.file-input');
+    const pw  = document.getElementById('pv-' + k);
+    const img = document.getElementById('pvi-' + k);
+    if (!fi || !pw || !img) return;
 
     zone.onclick = e => { if (e.target !== fi) fi.click(); };
-    zone.ondragover = e => { e.preventDefault(); zone.classList.add('drag'); };
+    zone.ondragover  = e => { e.preventDefault(); zone.classList.add('drag'); };
     zone.ondragleave = () => zone.classList.remove('drag');
     zone.ondrop = e => {
       e.preventDefault(); zone.classList.remove('drag');
@@ -1286,6 +1410,7 @@ async function handleFile(f, k, zone, pw, img) {
     const b64  = await toB64(f);
     const ext  = f.type.split('/')[1];
     const name = `up_${Date.now()}.${ext}`;
+    if (!KEY) { toast('Set API key first to upload','err'); return; }
     const r = await fetch(UPLOAD, {
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
@@ -1295,10 +1420,14 @@ async function handleFile(f, k, zone, pw, img) {
     if (d.success && d.data?.downloadUrl) {
       urls[k] = d.data.downloadUrl;
       toast('Uploaded ✓','ok');
-    } else throw new Error(d.msg||'Upload failed');
+    } else {
+      // Fallback: use local object URL for preview only
+      urls[k] = img.src;
+      toast('Upload partial — using local URL','info');
+    }
   } catch(e) {
-    toast('Upload failed: '+e.message,'err');
-    urls[k]=null; pw.classList.add('hidden'); zone.classList.remove('hidden');
+    urls[k] = img.src;
+    toast('Upload error: '+e.message,'err');
   }
 }
 
@@ -1322,222 +1451,110 @@ function initCopyButtons() {
   });
 }
 
-/* ─ Generators ─ */
+/* ─ Generators wiring ─ */
 function initGenerators() {
-  document.getElementById('t2i-go').onclick  = genT2I;
-  document.getElementById('i2i-go').onclick  = genI2I;
-  document.getElementById('ed-go').onclick   = genEdit;
-  document.getElementById('gpt4o-go').onclick = genGPT4O;
-  document.getElementById('fk-go').onclick   = genFK;
-  document.getElementById('up-go').onclick   = genUpscale;
-  document.getElementById('t2v-go').onclick  = genT2V;
-  document.getElementById('i2v-go').onclick  = genI2V;
-  document.getElementById('veo-go').onclick  = genVeo;
-}
-
-/* ── Text to Image ── */
-async function genT2I() {
-  const p = v('t2i-p'); if (!p) { toast('Enter a prompt','err'); return; }
-  const body = {
-    model: v('t2i-m'),
-    input: { prompt:p, image_input:[], aspect_ratio:v('t2i-ar'), resolution:v('t2i-res'), output_format:v('t2i-fmt') }
+  const G = {
+    'i2i-go':       genI2I,
+    'fk-go':        genFK,
+    'flux2-go':     genFlux2,
+    'gpt4o-go':     genGPT4O,
+    'mj-go':        genMJ,
+    'nb-go':        genNB,
+    'wana-go':      genWanAnimate,
+    'i2v-go':       genI2V,
+    'kling-go':     genKling,
+    'seedance-go':  genSeedance,
+    'hailuo-go':    genHailuo,
+    'sora-go':      genSora,
+    'wan-go':       genWan,
+    'veo-go':       genVeo,
+    'ed-go':        genEdit,
+    'sdredit-go':   genSdreamEdit,
+    'qedit-go':     genQwenEdit,
+    'nbedit-go':    genNBEdit,
+    'fkedit-go':    genFKEdit,
+    'gpt4oedit-go': genGPT4OEdit,
+    'reframe-go':   genReframe,
+    'rmbg-go':      genRmbg,
   };
-  await run(body,'t2i-r','image',{ prompt:p, model:v('t2i-m'), type:'text-to-image' });
+  Object.entries(G).forEach(([id, fn]) => {
+    const el = document.getElementById(id);
+    if (el) el.onclick = fn;
+  });
 }
 
-/* ── Image to Image ── */
-async function genI2I() {
-  if (!urls.i2i) { toast('Upload an image first','err'); return; }
-  const body = { model:v('i2i-m'), input:{ prompt:v('i2i-p'), image_urls:[urls.i2i] }};
-  await run(body,'i2i-r','image',{ prompt:v('i2i-p'), model:v('i2i-m'), type:'image-to-image' });
-}
-
-/* ── Image Edit ── */
-async function genEdit() {
-  if (!urls.ed) { toast('Upload an image first','err'); return; }
-  const p = v('ed-p'); if (!p) { toast('Enter edit instructions','err'); return; }
-  const m = v('ed-m');
-  let body;
-  if (m.includes('4.5-edit') || m.includes('4.0-edit')) {
-    body = { model:m, input:{ prompt:p, image_urls:[urls.ed], aspect_ratio:v('ed-ar'), quality:v('ed-q') }};
-  } else {
-    body = { model:m, input:{ prompt:p, image_urls:[urls.ed] }};
-  }
-  await run(body,'ed-r','image',{ prompt:p, model:m, type:'image-edit' });
-}
-
-/* ── GPT-4o ── */
-async function genGPT4O() {
-  const p = v('gpt4o-p'); if (!p) { toast('Enter a prompt','err'); return; }
-  if (!checkKey()) return;
-  const area = document.getElementById('gpt4o-r');
-  loading(area,'Submitting to GPT-4o…','pend');
-  try {
-    const payload = {
-      prompt:p, size:v('gpt4o-ar'),
-      nVariants:parseInt(v('gpt4o-n')),
-      isEnhance:v('gpt4o-enh')==='true',
-      enableFallback:true
-    };
-    if (urls.gpt4o) payload.filesUrl = [urls.gpt4o];
-    const r = await fetch(`${API_4O}/generate`,{
-      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
-      body:JSON.stringify(payload)
-    });
-    const d = await r.json();
-    if (d.code!==200||!d.data?.taskId) throw new Error(d.msg||`Error ${d.code}`);
-    loading(area,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
-    poll4O(d.data.taskId,'gpt4o-r',{ prompt:p, model:'gpt4o-image', type:'text-to-image' });
-  } catch(e) { errState(area,e.message); toast('Failed: '+e.message,'err'); }
-}
-
-function poll4O(tid, rid, meta) {
-  clearInterval(pollers[tid]);
-  const area = document.getElementById(rid);
-  pollers[tid] = setInterval(async () => {
-    try {
-      const r = await fetch(`${API_4O}/record-info?taskId=${encodeURIComponent(tid)}`,{ headers:{'Authorization':`Bearer ${KEY}`}});
-      const d = await r.json();
-      if (d.code!==200) throw new Error(d.msg||'Query failed');
-      const rec = d.data;
-      if (rec.successFlag===1) {
-        clearInterval(pollers[tid]);
-        const us = rec.response?.result_urls||[];
-        if (us.length) { render(area,us,'image',tid); hist({...meta,taskId:tid,downloadUrl:us[0],time:Date.now()}); toast('Done ✓','ok'); }
-        else errState(area,'No URLs found.');
-      } else if (rec.successFlag===2) {
-        clearInterval(pollers[tid]); errState(area,rec.errorMessage||'Failed'); toast('Failed','err');
-      } else {
-        const pct = rec.progress?` ${(parseFloat(rec.progress)*100).toFixed(0)}%`:'';
-        loading(area,`Processing…${pct}`,'proc',tid);
-      }
-    } catch {}
-  }, POLL_MS);
-}
-
-/* ── Flux Kontext ── */
-async function genFK() {
-  const p = v('fk-p'); if (!p) { toast('Enter a prompt','err'); return; }
-  if (!checkKey()) return;
-  const area = document.getElementById('fk-r');
-  loading(area,'Submitting to Flux Kontext…','pend');
-  try {
-    const payload = {
-      prompt:p, aspectRatio:v('fk-ar'), model:v('fk-m'),
-      outputFormat:v('fk-fmt'), enableTranslation:true
-    };
-    if (v('fk-up')==='true') payload.promptUpsampling=true;
-    if (urls.fk) payload.inputImage=urls.fk;
-    const r = await fetch(`${API_FK}/generate`,{
-      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
-      body:JSON.stringify(payload)
-    });
-    const d = await r.json();
-    if (d.code!==200||!d.data?.taskId) throw new Error(d.msg||`Error ${d.code}`);
-    loading(area,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
-    pollFK(d.data.taskId,'fk-r',{ prompt:p, model:v('fk-m'), type:'text-to-image' });
-  } catch(e) { errState(area,e.message); toast('Failed: '+e.message,'err'); }
-}
-
-function pollFK(tid, rid, meta) {
-  clearInterval(pollers[tid]);
-  const area = document.getElementById(rid);
-  pollers[tid] = setInterval(async () => {
-    try {
-      const r = await fetch(`${API_FK}/record-info?taskId=${encodeURIComponent(tid)}`,{ headers:{'Authorization':`Bearer ${KEY}`}});
-      const d = await r.json();
-      if (d.code!==200) throw new Error(d.msg||'Query failed');
-      const rec = d.data;
-      if (rec.successFlag===1) {
-        clearInterval(pollers[tid]);
-        const url = rec.response?.resultImageUrl;
-        if (url) { render(area,[url],'image',tid); hist({...meta,taskId:tid,downloadUrl:url,time:Date.now()}); toast('Done ✓','ok'); }
-        else errState(area,'No URL found.');
-      } else if (rec.successFlag===2||rec.successFlag===3) {
-        clearInterval(pollers[tid]); errState(area,rec.errorMessage||'Failed'); toast('Failed','err');
-      } else loading(area,'Processing…','proc',tid);
-    } catch {}
-  }, POLL_MS);
-}
-
-/* ── Upscale / Tools ── */
-async function genUpscale() {
-  if (!urls.up) { toast('Upload an image first','err'); return; }
-  const m = v('up-m');
-  await run({ model:m, input:{ image_urls:[urls.up] }},'up-r','image',{ prompt:m, model:m, type:'upscale' });
-}
-
-/* ── Text to Video ── */
-async function genT2V() {
-  const p = v('t2v-p'); if (!p) { toast('Enter a prompt','err'); return; }
-  const m = v('t2v-m');
-  const body = { model:m, input:{ prompt:p, mode:'normal', duration:v('t2v-dur'), resolution:v('t2v-res') }};
-  await run(body,'t2v-r','video',{ prompt:p, model:m, type:'text-to-video' });
-}
-
-/* ── Image to Video ── */
-async function genI2V() {
-  if (!urls.i2v) { toast('Upload an image first','err'); return; }
-  const m = v('i2v-m');
-  const p = v('i2v-p');
-  let body;
-  if (m.includes('kling')) {
-    body = { model:m, input:{ prompt:p, image_urls:[urls.i2v], sound:v('i2v-snd')==='true', duration:v('i2v-dur') }};
-  } else if (m.includes('sora-2')) {
-    body = { model:m, input:{ prompt:p, image_urls:[urls.i2v], aspect_ratio:'landscape', n_frames:'10', remove_watermark:true, upload_method:'s3' }};
-  } else {
-    body = { model:m, input:{ prompt:p, image_urls:[urls.i2v], mode:'normal', duration:v('i2v-dur'), resolution:'480p' }};
-  }
-  await run(body,'i2v-r','video',{ prompt:p, model:m, type:'image-to-video' });
-}
-
-/* ── Veo 3.1 ── */
-async function genVeo() {
-  const p = v('veo-p'); if (!p) { toast('Enter a prompt','err'); return; }
-  if (!checkKey()) return;
-  const area = document.getElementById('veo-r');
-  loading(area,'Submitting to Veo 3.1…','pend');
-  try {
-    const payload = { prompt:p, aspectRatio:v('veo-ar'), duration:parseInt(v('veo-dur')) };
-    if (urls.veo) payload.imageUrl = urls.veo;
-    const r = await fetch(`${API_VEO}/generate`,{
-      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
-      body:JSON.stringify(payload)
-    });
-    const d = await r.json();
-    if (d.code!==200||!d.data?.taskId) throw new Error(d.msg||`Error ${d.code}`);
-    loading(area,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
-    pollVeo(d.data.taskId,'veo-r',{ prompt:p, model:'veo3.1', type:'text-to-video' });
-  } catch(e) { errState(area,e.message); toast('Failed: '+e.message,'err'); }
-}
-
-function pollVeo(tid, rid, meta) {
-  clearInterval(pollers[tid]);
-  const area = document.getElementById(rid);
-  pollers[tid] = setInterval(async () => {
-    try {
-      const r = await fetch(`${API_VEO}/record-info?taskId=${encodeURIComponent(tid)}`,{ headers:{'Authorization':`Bearer ${KEY}`}});
-      const d = await r.json();
-      if (d.code!==200) throw new Error(d.msg);
-      const rec = d.data;
-      const status = (rec.status||'').toLowerCase();
-      if (status==='success'||status==='completed') {
-        clearInterval(pollers[tid]);
-        const eu = extractUrls(rec,'video');
-        if (eu.length) { render(area,eu,'video',tid); hist({...meta,taskId:tid,downloadUrl:eu[0],time:Date.now()}); toast('Done ✓','ok'); }
-        else errState(area,'No URL found.');
-      } else if (status==='failed'||status==='error') {
-        clearInterval(pollers[tid]); errState(area,rec.errorMsg||'Failed'); toast('Failed','err');
-      } else loading(area,'Processing…','proc',tid);
-    } catch {}
-  }, POLL_MS);
-}
-
-/* ─ Generic Task Runner ─ */
+/* ═══ HELPERS ═══ */
+function v(id) { return (document.getElementById(id)||{}).value||''; }
 function checkKey() {
   if (!KEY) { toast('Set your API key first','err'); return false; } return true;
 }
 
+function loading(area, label, cls, tid='') {
+  area.innerHTML = `<div class="sb-block">
+    <div class="spin"></div>
+    <div class="s-lbl ${cls}">${cls.toUpperCase()}</div>
+    <div style="font-size:0.7rem;color:var(--dim)">${label}</div>
+    ${tid?`<div class="s-tid">${tid}</div>`:''}
+  </div>`;
+}
+
+function errState(area, msg) {
+  area.innerHTML = `<div class="sb-block">
+    <div style="font-size:1.6rem;margin-bottom:0.2rem">✕</div>
+    <div class="s-lbl fail">FAILED</div>
+    <div style="color:var(--muted);font-size:0.72rem;margin-top:0.2rem;max-width:260px;text-align:center">${msg}</div>
+  </div>`;
+}
+
+function render(area, us, type, tid) {
+  if (type==='video') {
+    const u = us[0];
+    area.innerHTML = `<div class="rv-wrap">
+      <video class="rv" controls autoplay muted playsinline><source src="${u}"></video>
+      <div class="r-acts">
+        <a class="r-act" href="${u}" download target="_blank">⬇ Download</a>
+        <button class="r-act" onclick="openModal('${u}','video','${tid}')">⛶ Fullscreen</button>
+      </div></div>`;
+  } else if (us.length===1) {
+    const u = us[0];
+    area.innerHTML = `<div class="ri-wrap">
+      <img class="ri" src="${u}" alt="Result" onclick="openModal('${u}','image','${tid}')"/>
+      <div class="r-acts">
+        <a class="r-act" href="${u}" download target="_blank">⬇ Download</a>
+        <button class="r-act" onclick="openModal('${u}','image','${tid}')">⛶ Fullscreen</button>
+      </div></div>`;
+  } else {
+    const items = us.map(u=>`<img src="${u}" alt="" onclick="openModal('${u}','image','${tid}')">`).join('');
+    area.innerHTML = `<div class="rgrid">${items}</div>`;
+  }
+}
+
+function extractUrls(rec, type) {
+  const us = [];
+  const data = rec?.data||rec||{};
+  let parsed = null;
+  try { if (data.resultJson) parsed = typeof data.resultJson==='string'?JSON.parse(data.resultJson):data.resultJson; } catch {}
+  const push = val => {
+    if (!val) return;
+    if (typeof val==='string' && val.startsWith('http')) us.push(val);
+    else if (val?.url) us.push(val.url);
+    else if (val?.image_url) us.push(val.image_url);
+    else if (val?.imageUrl) us.push(val.imageUrl);
+  };
+  if (parsed) {
+    [parsed.resultUrls, parsed.images, parsed.videos].forEach(arr => Array.isArray(arr) && arr.forEach(push));
+    push(parsed.url); push(parsed.videoUrl);
+  }
+  [data.resultUrls, data.images, data.videos].forEach(arr => Array.isArray(arr) && arr.forEach(push));
+  [data.downloadUrl, data.imageUrl, data.videoUrl, data.resultUrl, data.outputUrl].forEach(push);
+  if (!us.length) {
+    const m = JSON.stringify(rec||{}).match(/https?:\/\/[^\s"'<>]+\.(mp4|jpg|jpeg|png|webp|gif)[^\s"'<>]*/gi);
+    if (m) us.push(...m);
+  }
+  return [...new Set(us)];
+}
+
+/* ─ Generic task runner (POST createTask) ─ */
 async function run(body, rid, type, meta) {
   const area = document.getElementById(rid);
   if (!checkKey()) return;
@@ -1565,7 +1582,7 @@ function poll(tid, rid, type, meta) {
       if (d.code!==200) throw new Error(d.msg||'Query failed');
       const rec  = d.data;
       const stat = (rec.status||rec.state||'').toLowerCase();
-      if (stat==='success'||stat==='completed'||stat==='finish') {
+      if (stat==='success'||stat==='completed'||stat==='finish'||stat==='done') {
         clearInterval(pollers[tid]);
         const us = extractUrls(rec, type);
         if (us.length) { render(area,us,type,tid); hist({...meta,taskId:tid,downloadUrl:us[0],time:Date.now()}); toast('Done ✓','ok'); }
@@ -1580,76 +1597,320 @@ function poll(tid, rid, type, meta) {
   }, POLL_MS);
 }
 
-function extractUrls(rec, type) {
-  const us = [];
-  const data = rec?.data||rec||{};
-  let parsed = null;
-  try { if (data.resultJson) parsed = typeof data.resultJson==='string'?JSON.parse(data.resultJson):data.resultJson; } catch {}
-  const push = v => {
-    if (!v) return;
-    if (typeof v==='string') us.push(v);
-    else if (v?.url) us.push(v.url);
-    else if (v?.image_url) us.push(v.image_url);
-    else if (v?.imageUrl) us.push(v.imageUrl);
+/* ─ Special poller for GPT-4o / FK / Veo (successFlag style) ─ */
+function pollFlag(tid, rid, meta, extractFn) {
+  clearInterval(pollers[tid]);
+  const area = document.getElementById(rid);
+  pollers[tid] = setInterval(async () => {
+    try {
+      const r = await fetch(`${API}/recordInfo?taskId=${encodeURIComponent(tid)}`,{ headers:{'Authorization':`Bearer ${KEY}`}});
+      const d = await r.json();
+      if (d.code!==200) throw new Error(d.msg||'Query failed');
+      const rec = d.data;
+      const stat = (rec.status||rec.state||'').toLowerCase();
+      if (stat==='success'||stat==='completed'||stat==='finish'||rec.successFlag===1) {
+        clearInterval(pollers[tid]);
+        const us = extractFn ? extractFn(rec) : extractUrls(rec, meta.type||'image');
+        if (us.length) { render(area,us,meta.type||'image',tid); hist({...meta,taskId:tid,downloadUrl:us[0],time:Date.now()}); toast('Done ✓','ok'); }
+        else errState(area,'No URL found.');
+      } else if (stat==='failed'||stat==='error'||rec.successFlag===2||rec.successFlag===3) {
+        clearInterval(pollers[tid]); errState(area,rec.errorMessage||rec.errorMsg||'Failed'); toast('Failed','err');
+      } else {
+        const pct = rec.progress?` ${(parseFloat(rec.progress)*100).toFixed(0)}%`:'';
+        loading(area,`Processing…${pct}`,'proc',tid);
+      }
+    } catch {}
+  }, POLL_MS);
+}
+
+async function runSpecial(endpoint, payload, rid, meta, extractFn) {
+  const area = document.getElementById(rid);
+  if (!checkKey()) return;
+  loading(area,'Submitting…','pend');
+  try {
+    const r = await fetch(endpoint,{
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
+      body:JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if (d.code!==200||!d.data?.taskId) throw new Error(d.msg||`Error ${d.code}`);
+    loading(area,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
+    pollFlag(d.data.taskId, rid, meta, extractFn);
+  } catch(e) { errState(area,e.message); toast('Failed: '+e.message,'err'); }
+}
+
+/* ═══ GENERATORS ═══ */
+
+/* ── Image to Image (multi-model) ── */
+async function genI2I() {
+  if (!urls['i2i']) { toast('Upload an image first','err'); return; }
+  const m = v('i2i-m'); const p = v('i2i-p');
+  const body = { model:m, input:{ prompt:p, image_urls:[urls['i2i']], aspect_ratio:v('i2i-ar'), resolution:v('i2i-res') }};
+  await run(body,'i2i-r','image',{ prompt:p, model:m, type:'image-to-image' });
+}
+
+/* ── Flux Kontext I2I/Edit ── */
+async function genFK() {
+  const p = v('fk-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const payload = { prompt:p, aspectRatio:v('fk-ar'), model:v('fk-m'), outputFormat:v('fk-fmt'), enableTranslation:true, safetyTolerance:parseInt(v('fk-safe')) };
+  if (v('fk-up')==='true') payload.promptUpsampling=true;
+  if (urls['fk']) payload.inputImage = urls['fk'];
+  await runSpecial(`${API_FK}/generate`, payload, 'fk-r',
+    { prompt:p, model:v('fk-m'), type:'image-to-image' },
+    rec => { const u = rec?.response?.resultImageUrl||rec?.resultImageUrl; return u?[u]:[]; }
+  );
+}
+
+/* ── Flux 2 I2I ── */
+async function genFlux2() {
+  const p = v('flux2-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const inputUrls = [];
+  if (urls['flux2-0']) inputUrls.push(urls['flux2-0']);
+  const body = {
+    model: inputUrls.length ? `flux-2/${v('flux2-m')}-image-to-image` : `flux-2/${v('flux2-m')}-text-to-image`,
+    input: { prompt:p, aspect_ratio:v('flux2-ar'), resolution:v('flux2-res') }
   };
-  if (parsed) {
-    if (Array.isArray(parsed.resultUrls)) parsed.resultUrls.forEach(push);
-    if (Array.isArray(parsed.images)) parsed.images.forEach(push);
-    if (parsed.url) push(parsed.url);
-  }
-  if (Array.isArray(data.resultUrls)) data.resultUrls.forEach(push);
-  if (Array.isArray(data.images)) data.images.forEach(push);
-  [data.downloadUrl,data.imageUrl,data.videoUrl,data.resultUrl].forEach(push);
-  if (!us.length) {
-    const m = JSON.stringify(rec||{}).match(/https?:\/\/[^"'\s]+/g);
-    if (m) us.push(...m);
-  }
-  return [...new Set(us)];
+  if (inputUrls.length) body.input.input_urls = inputUrls;
+  await run(body,'flux2-r','image',{ prompt:p, model:body.model, type:'image-to-image' });
 }
 
-/* ─ UI Helpers ─ */
-function v(id) { return (document.getElementById(id)||{}).value||''; }
-
-function loading(area, label, cls, tid='') {
-  area.innerHTML = `<div class="sb-block">
-    <div class="spin"></div>
-    <div class="s-lbl ${cls}">${cls.toUpperCase()}</div>
-    <div style="font-size:0.7rem;color:var(--dim)">${label}</div>
-    ${tid?`<div class="s-tid">${tid}</div>`:''}
-  </div>`;
+/* ── GPT-4o Image ── */
+async function genGPT4O() {
+  const p = v('gpt4o-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const payload = { prompt:p, size:v('gpt4o-sz'), nVariants:parseInt(v('gpt4o-n')||'1'), quality:v('gpt4o-q'), style:v('gpt4o-style'), model:v('gpt4o-model'), enableFallback:true };
+  if (urls['gpt4o']) payload.filesUrl = urls['gpt4o'];
+  const maskUrl = v('gpt4o-mask');
+  if (maskUrl) payload.maskUrl = maskUrl;
+  await runSpecial(`${API_4O}/generate`, payload, 'gpt4o-r',
+    { prompt:p, model:v('gpt4o-model'), type:'image-to-image' },
+    rec => rec?.response?.result_urls || rec?.result_urls || extractUrls(rec,'image')
+  );
 }
 
-function errState(area, msg) {
-  area.innerHTML = `<div class="sb-block">
-    <div style="font-size:1.6rem;margin-bottom:0.2rem">✕</div>
-    <div class="s-lbl fail">FAILED</div>
-    <div style="color:var(--muted);font-size:0.72rem;margin-top:0.2rem;max-width:260px;text-align:center">${msg}</div>
-  </div>`;
+/* ── Midjourney I2I ── */
+async function genMJ() {
+  const p = v('mj-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const body = {
+    model:'midjourney/imagine',
+    input:{
+      prompt:p, taskType:v('mj-task'), version:v('mj-ver'),
+      aspectRatio:v('mj-ar'), speed:v('mj-spd'),
+      stylization:parseInt(v('mj-sty')||'500'), variety:parseInt(v('mj-var')||'50'),
+      enableTranslation:false
+    }
+  };
+  if (urls['mj']) body.input.fileUrls = [urls['mj']];
+  await run(body,'mj-r','image',{ prompt:p, model:'midjourney', type:'image-to-image' });
 }
 
-function render(area, us, type, tid) {
-  if (type==='video') {
-    const u = us[0];
-    area.innerHTML = `<div class="rv-wrap">
-      <video class="rv" controls autoplay muted playsinline><source src="${u}"></video>
-      <div class="r-acts">
-        <a class="r-act" href="${u}" download target="_blank">⬇ Download</a>
-        <button class="r-act" onclick="openModal('${u}','video','${tid}')">⛶ Fullscreen</button>
-      </div>
-    </div>`;
-  } else if (us.length===1) {
-    const u = us[0];
-    area.innerHTML = `<div class="ri-wrap">
-      <img class="ri" src="${u}" alt="Result" onclick="openModal('${u}','image','${tid}')"/>
-      <div class="r-acts">
-        <a class="r-act" href="${u}" download target="_blank">⬇ Download</a>
-        <button class="r-act" onclick="openModal('${u}','image','${tid}')">⛶ Fullscreen</button>
-      </div>
-    </div>`;
-  } else {
-    const items = us.map(u=>`<img src="${u}" alt="Result" onclick="openModal('${u}','image','${tid}')">`).join('');
-    area.innerHTML = `<div class="rgrid">${items}</div>`;
+/* ── Nano Banana I2I ── */
+async function genNB() {
+  if (!urls['nb']) { toast('Upload an image first','err'); return; }
+  const p = v('nb-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const imageUrls = [urls['nb']];
+  const ref2 = v('nb-ref2'); if (ref2) imageUrls.push(ref2);
+  const body = { model:'google/nano-banana-pro', input:{ prompt:p, image_urls:imageUrls, aspect_ratio:v('nb-ar'), resolution:v('nb-res'), output_format:v('nb-fmt') }};
+  await run(body,'nb-r','image',{ prompt:p, model:'nano-banana-pro', type:'image-to-image' });
+}
+
+/* ── Wan Animate I2I ── */
+async function genWanAnimate() {
+  if (!urls['wana']) { toast('Upload subject image first','err'); return; }
+  const vidUrl = v('wana-vid'); if (!vidUrl) { toast('Enter reference video URL','err'); return; }
+  const body = { model:'wan/animate', input:{ video_url:vidUrl, image_url:urls['wana'], mode:v('wana-mode'), resolution:v('wana-res') }};
+  await run(body,'wana-r','video',{ prompt:v('wana-mode'), model:'wan/animate', type:'image-to-video' });
+}
+
+/* ── Image to Video (multi-model) ── */
+async function genI2V() {
+  if (!urls['i2v']) { toast('Upload an image first','err'); return; }
+  const m = v('i2v-m'); const p = v('i2v-p');
+  const endUrl = v('i2v-end');
+  let input = { prompt:p, image_urls:[urls['i2v']], mode:'normal', duration:parseInt(v('i2v-dur')||'5'), resolution:v('i2v-res'), generate_audio:v('i2v-snd')==='true' };
+  if (endUrl) input.last_frame_url = endUrl;
+  if (m.includes('kling')) { input = { prompt:p, image_urls:[urls['i2v']], duration:v('i2v-dur'), cfg_scale:0.5 }; if (endUrl) input.tail_image_url=endUrl; }
+  else if (m.includes('sora')) { input = { prompt:p, image_urls:[urls['i2v']], resolution:v('i2v-res'), duration:v('i2v-dur') }; }
+  else if (m.includes('veo')) { input = { prompt:p, imageUrl:urls['i2v'], model:v('veo-m'), aspectRatio:v('veo-ar'), duration:parseInt(v('i2v-dur')||'5') }; }
+  else if (m.includes('midjourney')) { input = { prompt:p, fileUrls:[urls['i2v']], motion:'high', videoBatchSize:'1' }; }
+  const body = { model:m, input };
+  await run(body,'i2v-r','video',{ prompt:p, model:m, type:'image-to-video' });
+}
+
+/* ── Kling I2V ── */
+async function genKling() {
+  if (!urls['kling']) { toast('Upload a start frame image','err'); return; }
+  const p = v('kling-p');
+  const tailUrl = v('kling-tail');
+  let model = tailUrl ? 'kling/v2-1-pro' : 'kling/v25-turbo-image-to-video-pro';
+  const input = { prompt:p, image_url:urls['kling'], duration:v('kling-dur'), cfg_scale:parseFloat(v('kling-cfg')||'0.5'), negative_prompt:v('kling-neg')||'blur, distort, low quality' };
+  if (tailUrl) input.tail_image_url = tailUrl;
+  await run({ model, input },'kling-r','video',{ prompt:p, model, type:'image-to-video' });
+}
+
+/* ── Seedance I2V ── */
+async function genSeedance() {
+  if (!urls['seedance']) { toast('Upload an image first','err'); return; }
+  const p = v('seedance-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const mode = v('seedance-mode');
+  const model = mode==='fast' ? 'bytedance/seedance-2-fast' : 'bytedance/seedance-2';
+  const input = { prompt:p, first_frame_url:urls['seedance'], aspect_ratio:v('seedance-ar'), resolution:v('seedance-res'), duration:parseInt(v('seedance-dur')||'5'), generate_audio:v('seedance-gen-audio')==='true' };
+  const lastUrl = v('seedance-last'); if (lastUrl) input.last_frame_url=lastUrl;
+  const audioUrl = v('seedance-audio'); if (audioUrl) input.reference_audio_urls=[audioUrl];
+  await run({ model, input },'seedance-r','video',{ prompt:p, model, type:'image-to-video' });
+}
+
+/* ── Hailuo I2V ── */
+async function genHailuo() {
+  if (!urls['hailuo']) { toast('Upload an image first','err'); return; }
+  const p = v('hailuo-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const model = v('hailuo-m');
+  const input = { prompt:p, imageUrl:urls['hailuo'], duration:v('hailuo-dur'), resolution:v('hailuo-res'), promptOptimizer:v('hailuo-opt')==='true' };
+  const endUrl = v('hailuo-end'); if (endUrl) input.endImageUrl=endUrl;
+  await run({ model, input },'hailuo-r','video',{ prompt:p, model, type:'image-to-video' });
+}
+
+/* ── Sora 2 I2V ── */
+async function genSora() {
+  if (!urls['sora']) { toast('Upload an image first','err'); return; }
+  const p = v('sora-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const soraModel = v('sora-m'); const mode = v('sora-mode');
+  const modelStr = mode==='storyboard' ? `${soraModel}-storyboard-to-video` : `${soraModel}-image-to-video`;
+  const input = { prompt:p, resolution:v('sora-res'), aspect_ratio:v('sora-ar'), duration:v('sora-dur') };
+  if (mode==='storyboard') input.storyboard_image_url=urls['sora'];
+  else input.image_url=urls['sora'];
+  await run({ model:modelStr, input },'sora-r','video',{ prompt:p, model:modelStr, type:'image-to-video' });
+}
+
+/* ── Wan I2V ── */
+async function genWan() {
+  if (!urls['wan']) { toast('Upload an image first','err'); return; }
+  const p = v('wan-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  const model = v('wan-m');
+  const input = { prompt:p, image_urls:[urls['wan']], duration:parseInt(v('wan-dur')||'5'), resolution:v('wan-res'), aspect_ratio:v('wan-ar') };
+  await run({ model, input },'wan-r','video',{ prompt:p, model, type:'image-to-video' });
+}
+
+/* ── Veo 3 I2V ── */
+async function genVeo() {
+  const p = v('veo-p'); if (!p) { toast('Enter a prompt','err'); return; }
+  if (!checkKey()) return;
+  const area = document.getElementById('veo-r');
+  loading(area,'Submitting to Veo 3…','pend');
+  try {
+    const payload = { prompt:p, model:v('veo-m'), aspectRatio:v('veo-ar'), duration:parseInt(v('veo-dur')||'5') };
+    if (urls['veo']) payload.imageUrl = urls['veo'];
+    const r = await fetch(`${API_VEO}/generate`,{
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${KEY}`},
+      body:JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if (d.code!==200||!d.data?.taskId) throw new Error(d.msg||`Error ${d.code}`);
+    loading(area,`Processing… [${d.data.taskId}]`,'proc',d.data.taskId);
+    pollVeo(d.data.taskId,'veo-r',{ prompt:p, model:'veo3', type:'image-to-video' });
+  } catch(e) { errState(area,e.message); toast('Failed: '+e.message,'err'); }
+}
+
+function pollVeo(tid, rid, meta) {
+  clearInterval(pollers[tid]);
+  const area = document.getElementById(rid);
+  pollers[tid] = setInterval(async () => {
+    try {
+      const r = await fetch(`${API_VEO}/record-info?taskId=${encodeURIComponent(tid)}`,{ headers:{'Authorization':`Bearer ${KEY}`}});
+      const d = await r.json();
+      if (d.code!==200) throw new Error(d.msg);
+      const rec = d.data;
+      const status = (rec.status||'').toLowerCase();
+      if (status==='success'||status==='completed') {
+        clearInterval(pollers[tid]);
+        const eu = extractUrls(rec,'video');
+        if (eu.length) { render(area,eu,'video',tid); hist({...meta,taskId:tid,downloadUrl:eu[0],time:Date.now()}); toast('Done ✓','ok'); }
+        else errState(area,'No URL found.');
+      } else if (status==='failed'||status==='error') {
+        clearInterval(pollers[tid]); errState(area,rec.errorMsg||'Failed'); toast('Failed','err');
+      } else loading(area,'Processing…','proc',tid);
+    } catch {}
+  }, POLL_MS);
+}
+
+/* ── Edit Image (multi-model) ── */
+async function genEdit() {
+  if (!urls['ed']) { toast('Upload an image first','err'); return; }
+  const p = v('ed-p'); if (!p) { toast('Enter edit instructions','err'); return; }
+  const m = v('ed-m');
+  let input = { prompt:p, image_urls:[urls['ed']] };
+  if (m.includes('seedream')||m.includes('4.5')||m.includes('4.0')) {
+    input.aspect_ratio=v('ed-ar'); input.image_resolution=v('ed-res'); input.image_size=v('ed-ar');
+  } else if (m.includes('nano-banana')) {
+    input.resolution=v('ed-res'); input.aspect_ratio=v('ed-ar');
+  } else if (m.includes('flux-kontext')) {
+    input.aspectRatio=v('ed-ar'); input.safetyTolerance=2;
   }
+  await run({ model:m, input },'ed-r','image',{ prompt:p, model:m, type:'image-edit' });
+}
+
+/* ── Seedream Edit ── */
+async function genSdreamEdit() {
+  if (!urls['sdredit']) { toast('Upload an image first','err'); return; }
+  const p = v('sdredit-p'); if (!p) { toast('Enter edit instructions','err'); return; }
+  const m = v('sdredit-m');
+  const body = { model:m, input:{ prompt:p, image_urls:[urls['sdredit']], image_size:v('sdredit-ar'), image_resolution:v('sdredit-res'), max_images:parseInt(v('sdredit-n')||'1') }};
+  await run(body,'sdredit-r','image',{ prompt:p, model:m, type:'image-edit' });
+}
+
+/* ── Qwen Edit ── */
+async function genQwenEdit() {
+  if (!urls['qedit']) { toast('Upload an image first','err'); return; }
+  const p = v('qedit-p'); if (!p) { toast('Enter edit instructions','err'); return; }
+  const m = v('qedit-m');
+  const body = { model:m, input:{ prompt:p, image_url:urls['qedit'], image_size:v('qedit-sz'), num_inference_steps:parseInt(v('qedit-steps')||'25'), guidance_scale:parseFloat(v('qedit-cfg')||'4'), num_images:v('qedit-n'), output_format:v('qedit-fmt'), negative_prompt:v('qedit-neg')||' ' }};
+  await run(body,'qedit-r','image',{ prompt:p, model:m, type:'image-edit' });
+}
+
+/* ── Nano Banana Edit ── */
+async function genNBEdit() {
+  if (!urls['nbedit']) { toast('Upload an image first','err'); return; }
+  const p = v('nbedit-p'); if (!p) { toast('Enter edit instructions','err'); return; }
+  const imageUrls = [urls['nbedit']];
+  const ref2 = v('nbedit-ref2'); if (ref2) imageUrls.push(ref2);
+  const body = { model:'google/nano-banana-edit', input:{ prompt:p, image_urls:imageUrls, resolution:v('nbedit-res'), aspect_ratio:v('nbedit-ar'), output_format:v('nbedit-fmt') }};
+  await run(body,'nbedit-r','image',{ prompt:p, model:'nano-banana-edit', type:'image-edit' });
+}
+
+/* ── Flux Kontext Edit ── */
+async function genFKEdit() {
+  if (!urls['fkedit']) { toast('Upload an image first','err'); return; }
+  const p = v('fkedit-p'); if (!p) { toast('Enter edit instructions','err'); return; }
+  const payload = { prompt:p, inputImage:urls['fkedit'], aspectRatio:v('fkedit-ar'), model:v('fkedit-m'), outputFormat:v('fkedit-fmt'), enableTranslation:true, safetyTolerance:parseInt(v('fkedit-safe')||'2') };
+  await runSpecial(`${API_FK}/generate`, payload, 'fkedit-r',
+    { prompt:p, model:v('fkedit-m'), type:'image-edit' },
+    rec => { const u = rec?.response?.resultImageUrl||rec?.resultImageUrl; return u?[u]:[]; }
+  );
+}
+
+/* ── GPT-4o Edit (inpainting) ── */
+async function genGPT4OEdit() {
+  if (!urls['gpt4oedit']) { toast('Upload an image first','err'); return; }
+  const p = v('gpt4oedit-p'); if (!p) { toast('Enter edit instructions','err'); return; }
+  const payload = { prompt:p, filesUrl:urls['gpt4oedit'], size:v('gpt4oedit-sz'), nVariants:parseInt(v('gpt4oedit-n')||'1'), quality:v('gpt4oedit-q'), model:v('gpt4oedit-m'), enableFallback:true };
+  const maskUrl = v('gpt4oedit-mask'); if (maskUrl) payload.maskUrl=maskUrl;
+  await runSpecial(`${API_4O}/generate`, payload, 'gpt4oedit-r',
+    { prompt:p, model:v('gpt4oedit-m'), type:'image-edit' },
+    rec => rec?.response?.result_urls || rec?.result_urls || extractUrls(rec,'image')
+  );
+}
+
+/* ── Ideogram Reframe ── */
+async function genReframe() {
+  if (!urls['reframe']) { toast('Upload an image first','err'); return; }
+  const body = { model:'ideogram/v3-reframe', input:{ image_url:urls['reframe'], image_size:v('reframe-sz'), rendering_speed:v('reframe-speed'), style:v('reframe-style'), num_images:v('reframe-n') }};
+  await run(body,'reframe-r','image',{ prompt:'reframe', model:'ideogram/v3-reframe', type:'image-edit' });
+}
+
+/* ── Remove Background ── */
+async function genRmbg() {
+  if (!urls['rmbg']) { toast('Upload an image first','err'); return; }
+  const body = { model:'recraft/remove-background', input:{ image_urls:[urls['rmbg']] }};
+  await run(body,'rmbg-r','image',{ prompt:'remove-bg', model:'recraft/remove-background', type:'image-edit' });
 }
 
 /* ─ Modal ─ */
@@ -1682,7 +1943,7 @@ function closeModal() {
 function hist(e) {
   const h = getHist();
   h.unshift(e);
-  if (h.length>50) h.pop();
+  if (h.length>100) h.pop();
   localStorage.setItem('kie_hist', JSON.stringify(h));
 }
 function getHist() {
@@ -1697,7 +1958,9 @@ function renderHistory() {
   grid.innerHTML = h.map(e => {
     const isVid = e.type?.includes('video');
     const ts = e.time ? new Date(e.time).toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
-    const media = isVid ? `<div class="hc-vid">🎬</div>` : `<img class="hc-img" src="${e.downloadUrl}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<div class=\\'hc-vid\\'>🖼</div>'"/>`;
+    const media = isVid
+      ? `<div class="hc-vid">🎬</div>`
+      : `<img class="hc-img" src="${e.downloadUrl}" alt="" loading="lazy" onerror="this.parentNode.innerHTML='<div class=\\'hc-vid\\'>🖼</div>'"/>`;
     return `<div class="hc" onclick="openModal('${e.downloadUrl}','${isVid?'video':'image'}','${e.taskId}')">
       <div class="hc-type">${e.type||'gen'}</div>
       ${media}
@@ -1705,8 +1968,7 @@ function renderHistory() {
         <div class="hc-model">${e.model||'?'}</div>
         <div class="hc-prompt">${e.prompt||'—'}</div>
         <div class="hc-time">${ts}</div>
-      </div>
-    </div>`;
+      </div></div>`;
   }).join('');
 }
 function initHistory() {
@@ -1725,7 +1987,7 @@ function toast(msg, type='info') {
   el.textContent = msg;
   el.className = `toast show ${type}`;
   clearTimeout(toastT);
-  toastT = setTimeout(()=>el.classList.remove('show'), 3000);
+  toastT = setTimeout(()=>el.classList.remove('show'), 3500);
 }
 </script>
 </body>
